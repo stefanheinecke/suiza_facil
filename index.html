@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SuizaFácil – Tu nueva vida en Suiza, paso a paso</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="SuizaFácil: Tu nueva vida en Suiza, paso a paso. Guías, herramientas y asesoría para españoles que quieren vivir y trabajar en Suiza."
+  />
+  <style>
+    :root {
+      --red: #e63946;
+      --yellow: #f4d35e;
+      --blue: #1d3557;
+      --bg: #f7f7fb;
+      --text: #222222;
+      --muted: #666666;
+      --white: #ffffff;
+      --radius: 10px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), var(--yellow));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text-title {
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      color: var(--blue);
+    }
+
+    .logo-text-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    nav {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    nav a {
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      transition: width 0.2s ease;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+      padding: 24px 0 40px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(230, 57, 70, 0.06);
+      color: var(--red);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .hero-slogan {
+      font-style: italic;
+      color: var(--red);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease,
+        background 0.1s ease, color 0.1s ease;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(230, 57, 70, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--blue);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-secondary:hover {
+      background: #f0f0f5;
+    }
+
+    .hero-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .hero-visual {
+      background: radial-gradient(circle at top, #ffe8d6, #f7f7fb);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual-flag-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .flag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .flag {
+      width: 18px;
+      height: 12px;
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    .flag-es {
+      background: linear-gradient(to bottom, #aa151b 33%, #f1bf00 33%, #f1bf00 66%, #aa151b 66%);
+    }
+
+    .flag-ch {
+      background: #d52b1e;
+      position: relative;
+    }
+
+    .flag-ch::before,
+    .flag-ch::after {
+      content: "";
+      position: absolute;
+      background: #ffffff;
+    }
+
+    .flag-ch::before {
+      width: 60%;
+      height: 30%;
+      top: 35%;
+      left: 20%;
+    }
+
+    .flag-ch::after {
+      width: 30%;
+      height: 60%;
+      top: 20%;
+      left: 35%;
+    }
+
+    .hero-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      font-size: 13px;
+    }
+
+    .hero-card-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--blue);
+    }
+
+    .hero-card-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .hero-card-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .hero-card-list li span {
+      font-size: 14px;
+      color: var(--red);
+      margin-top: 2px;
+    }
+
+    .hero-tagline {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .section {
+      padding: 40px 0 20px;
+    }
+
+    .section-header {
+      margin-bottom: 18px;
+    }
+
+    .section-kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px 14px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      font-size: 14px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--blue);
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .card-list {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 6px;
+    }
+
+    .card-list li {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f0f0f7;
+      color: var(--muted);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--blue);
+      margin: 4px 0;
+    }
+
+    .price-note {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .founder {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .founder-photo {
+      width: 100%;
+      height: 180px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--blue), var(--red));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .founder-note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .newsletter {
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 18px;
+      padding: 18px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .newsletter-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .newsletter-sub {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .newsletter-input {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: none;
+      min-width: 220px;
+      font-size: 13px;
+    }
+
+    .newsletter-btn {
+      background: var(--yellow);
+      color: #3a3a3a;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    footer a {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 800px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      nav {
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .grid-3,
+      .pricing-grid,
+      .grid-2,
+      .founder {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .page {
+        padding: 16px 12px 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">
+        <div class="logo-mark">S</div>
+        <div class="logo-text">
+          <div class="logo-text-title">SuizaFácil</div>
+          <div class="logo-text-sub">Tu nueva vida en Suiza, paso a paso.</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#problema">Problema</a>
+        <a href="#solucion">Solución</a>
+        <a href="#features">Plataforma</a>
+        <a href="#pricing">Precios</a>
+        <a href="#founder">Quién soy</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div>
+          <div class="hero-badge">
+            <span>🇪🇸 → 🇨🇭</span>
+            <span>Guía para españoles en Suiza</span>
+          </div>
+          <h1 class="hero-title">La forma más fácil de empezar tu vida en Suiza.</h1>
+          <p class="hero-subtitle">
+            Información clara, herramientas inteligentes y acompañamiento personal para que no te pierdas en el laberinto de trámites, seguros y vivienda.
+          </p>
+          <p class="hero-slogan">“Tu nueva vida en Suiza, paso a paso.”</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToSection('pricing')">
+              Empieza ahora
+              <span>→</span>
+            </button>
+            <button class="btn btn-secondary" onclick="scrollToSection('newsletter')">
+              Únete a la comunidad
+            </button>
+          </div>
+          <p class="hero-meta">
+            Guías en español · Basado en 17 años de experiencia real en Suiza · Pensado para ti
+          </p>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-visual-flag-row">
+            <div class="flag-pill">
+              <div class="flag flag-es"></div>
+              <span>Desde España</span>
+            </div>
+            <div class="flag-pill">
+              <div class="flag flag-ch"></div>
+              <span>Hacia Suiza</span>
+            </div>
+          </div>
+          <div class="hero-card">
+            <div class="hero-card-title">¿Listo para mudarte a Suiza?</div>
+            <ul class="hero-card-list">
+              <li>
+                <span>✓</span>
+                <div>Checklist completa de llegada: empadronamiento, seguro médico, cuenta bancaria y más.</div>
+              </li>
+              <li>
+                <span>✓</span>
+                <div>Calcula tu salario neto y entiende tus deducciones antes de aceptar una oferta.</div>
+              </li>
+              <li>
+                <span>✓</span>
+                <div>Plantillas de emails y documentos para buscar piso, trabajo y hacer trámites.</div>
+              </li>
+            </ul>
+            <div class="hero-tagline">
+              Todo explicado en español, con ejemplos reales y sin tecnicismos innecesarios.
+            </div>
+          </div>
+          <div class="hero-card" style="background:#1d3557;color:#ffffff;">
+            <div class="hero-card-title" style="color:#ffffff;">Asesoría 1:1</div>
+            <div style="font-size:13px;margin-bottom:6px;">
+              ¿Quieres que revisemos juntos tu situación? Reserva una sesión personalizada.
+            </div>
+            <div style="font-size:12px;opacity:0.9;">
+              Trámites · Trabajo · Vivienda · Seguros · Impuestos
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROBLEM -->
+      <section id="problema" class="section">
+        <div class="section-header">
+          <div class="section-kicker">El problema</div>
+          <h2 class="section-title">Mudarse a Suiza es una oportunidad… pero también un laberinto.</h2>
+          <p class="section-subtitle">
+            Trámites en alemán, sistemas que no conoces, reglas distintas en cada cantón. La información existe, pero está dispersa, incompleta o solo en alemán/francés.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">Burocracia compleja</div>
+            <p>
+              Formularios, plazos, permisos, registros… y casi todo en alemán o francés. Un error puede costarte tiempo y dinero.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-title">Seguro médico e impuestos</div>
+            <p>
+              El sistema suizo es muy diferente al español. Es fácil pagar de más o elegir opciones que no te convienen.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-title">Vivienda y trabajo</div>
+            <p>
+              Mercados competitivos, requisitos estrictos y expectativas culturales distintas. Sin guía, es fácil frustrarse.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOLUTION -->
+      <section id="solucion" class="section">
+        <div class="section-header">
+          <div class="section-kicker">La solución</div>
+          <h2 class="section-title">SuizaFácil: todo lo que necesitas, en un solo lugar.</h2>
+          <p class="section-subtitle">
+            Una plataforma pensada específicamente para españoles que quieren vivir y trabajar en Suiza: información clara, herramientas prácticas y acompañamiento real.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-tag">01</div>
+            <div class="card-title">Guías paso a paso</div>
+            <p>
+              Desde el primer día hasta tu primera declaración de impuestos. Explicado en español, con ejemplos y checklists descargables.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag">02</div>
+            <div class="card-title">Herramientas inteligentes</div>
+            <p>
+              Calculadoras, comparadores y generadores de documentos para que tomes decisiones con datos, no con suposiciones.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-tag">03</div>
+            <div class="card-title">Acompañamiento personal</div>
+            <p>
+              Asesoría 1:1, revisión de documentos y ayuda con formularios. No estás solo: caminamos contigo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section id="features" class="section">
+        <div class="section-header">
+          <div class="section-kicker">Plataforma</div>
+          <h2 class="section-title">Lo que encontrarás dentro de SuizaFácil.</h2>
+          <p class="section-subtitle">
+            Empezamos con lo esencial para tu llegada y primeros meses en Suiza. Poco a poco, añadimos más herramientas y contenidos según las necesidades de la comunidad.
+          </p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Guías esenciales</div>
+            <ul class="card-list">
+              <li>✔ Empadronamiento y permisos de residencia</li>
+              <li>✔ Cómo elegir tu seguro médico</li>
+              <li>✔ Entender tu nómina y tus deducciones</li>
+              <li>✔ Buscar piso y preparar tu dossier</li>
+              <li>✔ Primeros pasos en el sistema fiscal suizo</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Herramientas digitales</div>
+            <ul class="card-list">
+              <li>✔ Calculadora de salario neto (prototipo MVP)</li>
+              <li>✔ Checklist interactiva de llegada</li>
+              <li>✔ Plantillas de emails para vivienda y trabajo</li>
+              <li>✔ Próximamente: comparador de seguros y simulador de impuestos</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Servicios premium</div>
+          <ul class="card-list">
+            <li>✔ Asesoría 1:1 por videollamada</li>
+            <li>✔ Revisión de contratos y documentos (en la medida legalmente posible)</li>
+            <li>✔ Acompañamiento en trámites clave</li>
+            <li>✔ Coaching laboral para adaptar tu CV y perfil a Suiza</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PRICING -->
+      <section id="pricing" class="section">
+        <div class="section-header">
+          <div class="section-kicker">Precios</div>
+          <h2 class="section-title">Empieza gratis. Paga solo si necesitas más acompañamiento.</h2>
+          <p class="section-subtitle">
+            El objetivo de SuizaFácil es que tomes buenas decisiones desde el principio. Por eso, la base es gratuita y los servicios premium son claros y transparentes.
+          </p>
+        </div>
+        <div class="pricing-grid">
+          <div class="card">
+            <div class="card-tag">Plan</div>
+            <div class="card-title">Gratis</div>
+            <div class="price">CHF 0</div>
+            <div class="price-note">Para empezar con seguridad.</div>
+            <ul class="card-list">
+              <li>✔ Guías básicas</li>
+              <li>✔ Checklist de llegada</li>
+              <li>✔ Acceso a la comunidad</li>
+              <li>✔ Actualizaciones por email</li>
+            </ul>
+          </div>
+          <div class="card" style="border:2px solid var(--red);">
+            <div class="card-tag">Recomendado</div>
+            <div class="card-title">Premium</div>
+            <div class="price">CHF 9–19/mes</div>
+            <div class="price-note">Para quienes quieren ir un paso más allá.</div>
+            <ul class="card-list">
+              <li>✔ Guías avanzadas y vídeos</li>
+              <li>✔ Plantillas descargables</li>
+              <li>✔ Herramientas completas</li>
+              <li>✔ Sesiones grupales de preguntas y respuestas</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-tag">Servicios</div>
+            <div class="card-title">Asesoría 1:1</div>
+            <div class="price">CHF 80–150/h</div>
+            <div class="price-note">Para casos específicos y acompañamiento personal.</div>
+            <ul class="card-list">
+              <li>✔ Sesiones individuales</li>
+              <li>✔ Revisión de documentos</li>
+              <li>✔ Acompañamiento en decisiones clave</li>
+              <li>✔ Opciones de paquetes a medida</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOUNDER -->
+      <section id="founder" class="section">
+        <div class="section-header">
+          <div class="section-kicker">Quién está detrás</div>
+          <h2 class="section-title">Hola, soy Stefan.</h2>
+          <p class="section-subtitle">
+            Economista, desarrollador de software y viviendo en Suiza desde hace 17 años. Conozco este país desde dentro: como extranjero, como profesional y como padre de familia.
+          </p>
+        </div>
+        <div class="founder">
+          <div>
+            <p>
+              He visto a muchos españoles llegar con ilusión… y perder tiempo, dinero y energía por falta de información clara y acompañamiento.
+            </p>
+            <p style="margin-top:8px;">
+              Por eso he creado SuizaFácil: para que tengas en un solo lugar lo que a mí me costó años aprender. Mi objetivo es que tomes decisiones informadas, sin miedo y sin sorpresas desagradables.
+            </p>
+            <p class="founder-note">
+              Hablo español, alemán e inglés. Puedo ser tu puente entre lo que conoces y lo que te espera en Suiza.
+            </p>
+          </div>
+          <div class="founder-photo">
+            <span>SF</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEWSLETTER / COMMUNITY -->
+      <section id="newsletter" class="section">
+        <div class="newsletter">
+          <div>
+            <div class="newsletter-title">Únete a la lista de espera de SuizaFácil.</div>
+            <div class="newsletter-sub">
+              Recibe guías gratuitas, novedades de la plataforma y acceso prioritario a la comunidad cuando abramos.
+            </div>
+          </div>
+          <form
+            class="newsletter-form"
+            onsubmit="handleNewsletterSubmit(event)"
+          >
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Tu email"
+              required
+            />
+            <button type="submit" class="newsletter-btn">
+              Quiero estar al tanto
+              <span>→</span>
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> SuizaFácil. Todos los derechos reservados.</div>
+      <div>
+        <a href="#founder">Contacto</a> ·
+        <a href="#pricing">Precios</a> ·
+        <a href="#problema">Cómo funciona</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function handleNewsletterSubmit(event) {
+      event.preventDefault();
+      const input = event.target.querySelector("input[type='email']");
+      const email = input.value.trim();
+      if (!email) return;
+      alert(
+        "¡Gracias por tu interés en SuizaFácil! Guardaremos tu email para avisarte cuando lancemos la plataforma."
+      );
+      input.value = "";
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
