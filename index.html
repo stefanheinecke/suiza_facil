@@ -1291,8 +1291,28 @@
       const input = event.target.querySelector("input[type='email']");
       const email = input.value.trim();
       if (!email) return;
-      alert(translations[currentLanguage].newsletter_alert);
-      input.value = "";
+      
+      // Send email to backend
+      const formData = new FormData();
+      formData.append('email', email);
+      
+      fetch('subscribe.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(translations[currentLanguage].newsletter_alert);
+          input.value = "";
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error subscribing. Please try again.');
+      });
     }
 
     // Set year in footer
