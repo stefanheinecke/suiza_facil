@@ -905,14 +905,29 @@
     // Multi-language translations
     let translations = {};
 
-    // Fetch translations from API
+    // Fetch translations from API (always fresh on reload)
     async function fetchTranslations() {
       try {
-        const response = await fetch("https://suizafacil-production.up.railway.app/translations");
+        // remove any cached translations stored in localStorage
+        try { localStorage.removeItem('translations'); } catch(e) {}
+
+        // cache-busting query + instruct browser not to use cache
+        const url = "https://suizafacil-production.up.railway.app/translations?cb=" + Date.now();
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) {
+          console.error('Translations fetch failed', response.status, response.statusText);
+          document.documentElement.style.visibility = '';
+          return;
+        }
+
         translations = await response.json();
+        // optional: persist if you later want caching
+        // try { localStorage.setItem('translations', JSON.stringify(translations)); } catch(e) {}
+
         initializeLanguage();
       } catch (error) {
         console.error("Error loading translations:", error);
+        document.documentElement.style.visibility = '';
       }
     }
 
