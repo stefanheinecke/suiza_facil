@@ -888,7 +888,7 @@
       </section>
 
       <pre id="output">Lade...</pre>
-      
+
     </main>
 
     <footer>
@@ -1302,7 +1302,7 @@
     }
 
     async function loadText() {
-        const response = await fetch("http://localhost:8000/text");
+        const response = await fetch("https://stefanheinecke.github.io/suiza_facil/text");
         const data = await response.json();
         document.getElementById("output").textContent = data.text;
     }
