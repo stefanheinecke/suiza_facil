@@ -1302,7 +1302,7 @@
     }
 
     async function loadText() {
-        const response = await fetch("https://stefanheinecke.github.io/suiza_facil/text");
+        const response = await fetch("https://suizafacil-production.up.railway.app/text");
         const data = await response.json();
         document.getElementById("output").textContent = data.text;
     }

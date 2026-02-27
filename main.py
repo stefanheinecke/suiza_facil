@@ -21,4 +21,4 @@ def get_root():
 
 @app.get("/text")
 def get_text():
-    return "Test-Text"
+    return {"message": "Test-Text"}
