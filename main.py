@@ -8,12 +8,15 @@ import psycopg2
 
 # helper to get connection using DATABASE_URL env variable
 DATABASE_URL = os.getenv("DATABASE_URL")
+print("DATABASE_URL=", DATABASE_URL)
 
 def get_conn():
     # Expect DATABASE_URL to be set in production; raise otherwise
     if not DATABASE_URL:
         raise RuntimeError("DATABASE_URL is not configured")
-    return psycopg2.connect(DATABASE_URL)
+    conn = psycopg2.connect(DATABASE_URL)
+    print("established connection dsn", conn.dsn)
+    return conn
 
 # ensure subscriber table exists
 def init_db():
@@ -57,14 +60,20 @@ def post_subscriber(email: str = Form(...)):
     try:
         conn = get_conn()
         cur = conn.cursor()
+        print(email)
+        print(datetime.datetime.utcnow())
         cur.execute(
             "INSERT INTO subscriber (email, subscription_date) VALUES (%s, %s)",
             (email, datetime.datetime.utcnow())
         )
         conn.commit()
+        # verify insertion
+        cur.execute("SELECT count(*) FROM subscriber")
+        count = cur.fetchone()[0]
+        print("subscriber count after insert", count)
         cur.close()
         conn.close()
-        return {"status": "ok"}
+        return {"status": "ok", "count": count}
     except Exception as e:
         return {"error": str(e)}
 
