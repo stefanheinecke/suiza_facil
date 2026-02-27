@@ -886,6 +886,9 @@
           </form>
         </div>
       </section>
+
+      <pre id="output">Lade...</pre>
+      
     </main>
 
     <footer>
@@ -1297,8 +1300,6 @@
     } else {
       initializeLanguage();
     }
-
-    <pre id="output">Lade...</pre>
 
     async function loadText() {
         const response = await fetch("http://localhost:8000/text");
