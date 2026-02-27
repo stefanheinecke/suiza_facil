@@ -1316,7 +1316,7 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fetchTranslations);
     } else {
-      fetchTranslations();
+      await fetchTranslations();
     }
 
   </script>
