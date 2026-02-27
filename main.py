@@ -20,6 +20,13 @@ def get_root():
 
 @app.get("/translations")
 def get_translations():
-    with open("translations.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data 
+    try:
+        with open("translations.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        return {"error": "translations.json not found"}
+    except json.JSONDecodeError as e:
+        return {"error": f"Invalid JSON: {str(e)}"}
+    except Exception as e:
+        return {"error": str(e)} 
