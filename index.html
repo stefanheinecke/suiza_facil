@@ -1304,7 +1304,7 @@
     async function loadText() {
         const response = await fetch("https://suizafacil-production.up.railway.app/text");
         const data = await response.json();
-        document.getElementById("output").textContent = data.text;
+        document.getElementById("output").textContent = data.message;
     }
 
     loadText();
