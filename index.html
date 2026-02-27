@@ -900,6 +900,8 @@
   </div>
 
   <script>
+    // hide content until translations load
+    document.documentElement.style.visibility = 'hidden';
     // Multi-language translations
     let translations = {};
 
@@ -959,6 +961,7 @@
     // Initialize page with saved language
     function initializeLanguage() {
       changeLanguage(currentLanguage);
+      document.documentElement.style.visibility = '';
     }
 
     // Scroll function
@@ -978,7 +981,7 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fetchTranslations);
     } else {
-      await fetchTranslations();
+      fetchTranslations();
     }
 
   </script>
