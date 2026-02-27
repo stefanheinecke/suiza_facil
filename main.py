@@ -21,4 +21,5 @@ def get_root():
 @app.get("/translations")
 def get_translations():
     with open("translations.json", "r", encoding="utf-8") as f:
-        return json.load(f) 
+        data = json.load(f)
+    return data 
