@@ -1,5 +1,6 @@
 import json
-from fastapi import FastAPI
+import datetime
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -17,6 +18,17 @@ app.add_middleware(
 @app.get("/")
 def get_root():
     return FileResponse("index.html")
+
+@app.post("/subscriber")
+def post_subscriber(email: str = Form(...)):
+    try:
+        with open("subscribers.txt", "a", encoding="utf-8") as f:
+            f.write(f"{email} | {datetime.utcnow().isoformat()}\n")
+
+        return {"status": "ok"}
+
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/translations")
 def get_translations():

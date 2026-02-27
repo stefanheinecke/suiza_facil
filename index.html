@@ -870,7 +870,7 @@
           </div>
           <form
             class="newsletter-form"
-            onsubmit=""
+            onsubmit="subscribeNewsletter(event)"
           >
             <input
               type="email"
@@ -984,6 +984,38 @@
       const el = document.getElementById(id);
       if (!el) return;
       el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Subscribe to newsletter
+    async function subscribeNewsletter(event) {
+      event.preventDefault();
+      const emailInput = event.target.querySelector('.newsletter-input');
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        console.error('Email is required');
+        return;
+      }
+
+      try {
+        const response = await fetch('/subscriber', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'email=' + encodeURIComponent(email)
+        });
+
+        if (response.ok) {
+          console.log('Subscriber email stored successfully');
+          emailInput.value = '';
+          alert('¡Gracias por suscribirse!');
+        } else {
+          console.error('Failed to subscribe:', response.status);
+          alert('Hubo un error al suscribirse. Intenta de nuevo.');
+        }
+      } catch (error) {
+        console.error('Error subscribing:', error);
+        alert('Error al procesar tu suscripción.');
+      }
     }
 
     // Set year in footer
