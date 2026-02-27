@@ -870,7 +870,7 @@
           </div>
           <form
             class="newsletter-form"
-            onsubmit="handleNewsletterSubmit(event)"
+            onsubmit=""
           >
             <input
               type="email"
@@ -1285,36 +1285,6 @@
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    // Newsletter submission
-    function handleNewsletterSubmit(event) {
-      event.preventDefault();
-      const input = event.target.querySelector("input[type='email']");
-      const email = input.value.trim();
-      if (!email) return;
-      
-      // Send email to backend
-      const formData = new FormData();
-      formData.append('email', email);
-      
-      fetch('subscribe.php', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert(translations[currentLanguage].newsletter_alert);
-          input.value = "";
-        } else {
-          alert('Error: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error subscribing. Please try again.');
-      });
-    }
-
     // Set year in footer
     document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -1327,6 +1297,17 @@
     } else {
       initializeLanguage();
     }
+
+    <pre id="output">Lade...</pre>
+
+    async function loadText() {
+        const response = await fetch("http://localhost:8000/text");
+        const data = await response.json();
+        document.getElementById("output").textContent = data.text;
+    }
+
+    loadText();
+
   </script>
 </body>
 </html>
