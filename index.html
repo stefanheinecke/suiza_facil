@@ -887,8 +887,6 @@
         </div>
       </section>
 
-      <pre id="output">Lade...</pre>
-
     </main>
 
     <footer>
@@ -1314,14 +1312,6 @@
     } else {
       fetchTranslations();
     }
-
-    async function loadTranslations() {
-        const response = await fetch("https://suizafacil-production.up.railway.app/translations");
-        const data = await response.json();
-        document.getElementById("output").textContent = data.message;
-    }
-
-    loadTranslations();
 
   </script>
 </body>
