@@ -1007,7 +1007,7 @@
         if (response.ok) {
           console.log('Subscriber email stored successfully');
           emailInput.value = '';
-          alert('¡Gracias por suscribirse!');
+          alert(translations[currentLanguage]['newsletter_thank_you'] || '¡Gracias por suscribirse!');
         } else {
           console.error('Failed to subscribe:', response.status);
           alert('Hubo un error al suscribirse. Intenta de nuevo.');

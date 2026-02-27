@@ -108,7 +108,8 @@
     "footer_copyright": "Todos los derechos reservados.",
     "footer_contact": "Contacto",
     "footer_pricing": "Precios",
-    "footer_how": "Cómo funciona"
+    "footer_how": "Cómo funciona",
+    "newsletter_thank_you": "¡Gracias por suscribirse!"
   },
   "de": {
     "pageTitle": "SuizaFácil – Dein neues Leben in der Schweiz, Schritt für Schritt",
@@ -219,7 +220,8 @@
     "footer_copyright": "Alle Rechte vorbehalten.",
     "footer_contact": "Kontakt",
     "footer_pricing": "Preise",
-    "footer_how": "Wie funktioniert es"
+    "footer_how": "Wie funktioniert es",
+    "newsletter_thank_you": "Vielen Dank!"
   },
   "en": {
     "pageTitle": "SuizaFácil – Your new life in Switzerland, step by step",
@@ -330,6 +332,7 @@
     "footer_copyright": "All rights reserved.",
     "footer_contact": "Contact",
     "footer_pricing": "Pricing",
-    "footer_how": "How it works"
+    "footer_how": "How it works",
+    "newsletter_thank_you": "Thank you for subscribing!"
   }
 }
