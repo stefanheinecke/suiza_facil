@@ -1,8 +1,7 @@
+import json
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import os
 
 app = FastAPI()
 
@@ -19,6 +18,7 @@ app.add_middleware(
 def get_root():
     return FileResponse("index.html")
 
-@app.get("/text")
-def get_text():
-    return {"message": "Test-Text"}
+@app.get("/translations")
+def get_translations():
+    with open("translations.json", "r", encoding="utf-8") as f:
+        return json.load(f) 

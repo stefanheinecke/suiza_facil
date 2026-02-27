@@ -903,7 +903,21 @@
 
   <script>
     // Multi-language translations
-    const translations = {
+    let translations = {};
+
+    // Fetch translations from API
+    async function fetchTranslations() {
+      try {
+        const response = await fetch("https://suizafacil-production.up.railway.app/translations");
+        translations = await response.json();
+        initializeLanguage();
+      } catch (error) {
+        console.error("Error loading translations:", error);
+      }
+    }
+
+    // Fallback translations (in case API fails)
+    const fallbackTranslations = {
       es: {
         pageTitle: "SuizaFácil – Tu nueva vida en Suiza, paso a paso",
         pageDescription: "SuizaFácil: Tu nueva vida en Suiza, paso a paso. Guías, herramientas y asesoría para españoles que quieren vivir y trabajar en Suiza.",
@@ -1292,22 +1306,22 @@
     document.getElementById("year").textContent = new Date().getFullYear();
 
     // Initialize on page load
-    document.addEventListener('DOMContentLoaded', initializeLanguage);
+    document.addEventListener('DOMContentLoaded', fetchTranslations);
     
-    // Also try to initialize immediately in case DOM is ready
+    // Also try to fetch immediately in case DOM is ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initializeLanguage);
+      document.addEventListener('DOMContentLoaded', fetchTranslations);
     } else {
-      initializeLanguage();
+      fetchTranslations();
     }
 
-    async function loadText() {
-        const response = await fetch("https://suizafacil-production.up.railway.app/text");
+    async function loadTranslations() {
+        const response = await fetch("https://suizafacil-production.up.railway.app/translations");
         const data = await response.json();
         document.getElementById("output").textContent = data.message;
     }
 
-    loadText();
+    loadTranslations();
 
   </script>
 </body>
