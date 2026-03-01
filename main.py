@@ -54,6 +54,7 @@ app = FastAPI()
 
 # password hashing context: use bcrypt_sha256 to avoid bcrypt's 72-byte password limit
 pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
+print(pwd_context.schemes())
 
 # CORS erlauben, damit dein HTML/JS im Browser zugreifen darf
 app.add_middleware(
@@ -73,8 +74,6 @@ def post_subscriber(email: str = Form(...)):
     try:
         conn = get_conn()
         cur = conn.cursor()
-        print(email)
-        print(datetime.datetime.utcnow())
         cur.execute(
             "INSERT INTO subscriber (email, subscription_date) VALUES (%s, %s)",
             (email, datetime.datetime.utcnow())
@@ -83,7 +82,6 @@ def post_subscriber(email: str = Form(...)):
         # verify insertion
         cur.execute("SELECT count(*) FROM subscriber")
         count = cur.fetchone()[0]
-        print("subscriber count after insert", count)
         cur.close()
         conn.close()
         return {"status": "ok", "count": count}
@@ -94,6 +92,7 @@ def post_subscriber(email: str = Form(...)):
 @app.post("/register")
 def register(username: str = Form(...), password: str = Form(...)):
     try:
+        print("Start register")
         conn = get_conn()
         cur = conn.cursor()
         # check exists
