@@ -144,7 +144,7 @@ def login(username: str = Form(...), password: str = Form(...)):
     except Exception as e:
         return {"error": str(e)}
 
-@app.get("/docs/{filename}")
+@app.get("/download/{filename}")
 def download_doc(filename: str, loggedInUser: str = Cookie(None)):
     try:
         # Check if user is authenticated via cookie
@@ -156,7 +156,7 @@ def download_doc(filename: str, loggedInUser: str = Cookie(None)):
         if filename not in allowed_files:
             return {"error": "not_found"}
         
-        file_path = os.path.join("docs", filename)
+        file_path = os.path.join("download", filename)
         if not os.path.exists(file_path):
             return {"error": "file_not_found"}
         
