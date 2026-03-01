@@ -1,44 +1,3 @@
-# List all users and their permissions (for admin UI)
-@app.get("/admin/list_users")
-def admin_list_users(session_id: str = Cookie(None)):
-    if not is_admin_user(session_id):
-        return {"error": "unauthorized"}
-    try:
-        conn = get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT username, is_admin FROM users")
-        users = cur.fetchall()
-        cur.execute("SELECT username, filename FROM permissions")
-        perms = cur.fetchall()
-        cur.close()
-        conn.close()
-        # Build user-permissions map
-        user_map = [
-            {"username": u[0], "is_admin": u[1], "files": []}
-            for u in users
-        ]
-        user_dict = {u["username"]: u for u in user_map}
-        for username, filename in perms:
-            if username in user_dict:
-                user_dict[username]["files"].append(filename)
-        return {"users": user_map}
-    except Exception as e:
-        return {"error": str(e)}
-# Helper to check if session user is admin
-def is_admin_user(session_id: str):
-    user = get_username_from_session(session_id)
-    if not user:
-        return False
-    try:
-        conn = get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT is_admin FROM users WHERE username = %s", (user,))
-        row = cur.fetchone()
-        cur.close()
-        conn.close()
-        return row and row[0]
-    except Exception:
-        return False
 import json
 import os
 import datetime
@@ -112,6 +71,49 @@ init_db()
 
 
 app = FastAPI()
+
+
+# List all users and their permissions (for admin UI)
+@app.get("/admin/list_users")
+def admin_list_users(session_id: str = Cookie(None)):
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT username, is_admin FROM users")
+        users = cur.fetchall()
+        cur.execute("SELECT username, filename FROM permissions")
+        perms = cur.fetchall()
+        cur.close()
+        conn.close()
+        # Build user-permissions map
+        user_map = [
+            {"username": u[0], "is_admin": u[1], "files": []}
+            for u in users
+        ]
+        user_dict = {u["username"]: u for u in user_map}
+        for username, filename in perms:
+            if username in user_dict:
+                user_dict[username]["files"].append(filename)
+        return {"users": user_map}
+    except Exception as e:
+        return {"error": str(e)}
+# Helper to check if session user is admin
+def is_admin_user(session_id: str):
+    user = get_username_from_session(session_id)
+    if not user:
+        return False
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT is_admin FROM users WHERE username = %s", (user,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        return row and row[0]
+    except Exception:
+        return False
 
 
 def get_username_from_session(session_id: str):
