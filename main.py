@@ -5,6 +5,7 @@ from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import psycopg2
+from passlib.context import CryptContext
 
 # helper to get connection using DATABASE_URL env variable
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -31,6 +32,14 @@ def init_db():
                 subscription_date TIMESTAMP NOT NULL
             )
         """)
+        # users table for simple auth
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                username VARCHAR(150) PRIMARY KEY,
+                password_hash TEXT NOT NULL,
+                created_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -41,6 +50,9 @@ init_db()
 
 
 app = FastAPI()
+
+# password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # CORS erlauben, damit dein HTML/JS im Browser zugreifen darf
 app.add_middleware(
@@ -74,6 +86,50 @@ def post_subscriber(email: str = Form(...)):
         cur.close()
         conn.close()
         return {"status": "ok", "count": count}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/register")
+def register(username: str = Form(...), password: str = Form(...)):
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # check exists
+        cur.execute("SELECT username FROM users WHERE username = %s", (username,))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return {"error": "user_exists"}
+
+        pwd_hash = pwd_context.hash(password)
+        cur.execute(
+            "INSERT INTO users (username, password_hash, created_at) VALUES (%s, %s, %s)",
+            (username, pwd_hash, datetime.datetime.utcnow())
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/login")
+def login(username: str = Form(...), password: str = Form(...)):
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT password_hash FROM users WHERE username = %s", (username,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not row:
+            return {"error": "invalid_credentials"}
+        pwd_hash = row[0]
+        if not pwd_context.verify(password, pwd_hash):
+            return {"error": "invalid_credentials"}
+        return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
 

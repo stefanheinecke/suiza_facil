@@ -604,6 +604,7 @@
           <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
           <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
           <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+          <button class="lang-btn" id="authBtn" onclick="openAuth()">Login</button>
         </div>
       </nav>
     </header>
@@ -899,6 +900,20 @@
     </footer>
   </div>
 
+  <!-- Simple auth modal -->
+  <div id="authModal" style="display:none;position:fixed;right:20px;bottom:20px;padding:16px;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.08);z-index:1000;">
+    <h4 style="margin:0 0 8px 0;">Login / Register</h4>
+    <div style="display:flex;flex-direction:column;gap:8px;min-width:220px;">
+      <input id="authUsername" placeholder="Username" />
+      <input id="authPassword" placeholder="Password" type="password" />
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="submitRegister()" class="btn btn-secondary">Register</button>
+        <button onclick="submitLogin()" class="btn btn-primary">Login</button>
+        <button onclick="closeAuth()" class="btn" style="background:transparent;border:1px solid #eee;">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // hide content until translations load
     document.documentElement.style.visibility = 'hidden';
@@ -1016,6 +1031,39 @@
         console.error('Error subscribing:', error);
         alert('Error al procesar tu suscripción.');
       }
+    }
+
+    // Auth modal controls
+    function openAuth() {
+      document.getElementById('authModal').style.display = 'block';
+    }
+    function closeAuth() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    async function submitRegister() {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!username || !password) { alert('Please provide username and password'); return; }
+      try {
+        const res = await fetch('/register', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) });
+        const data = await res.json();
+        if (data.status === 'ok') { alert('Registered'); closeAuth(); }
+        else if (data.error === 'user_exists') { alert('User already exists'); }
+        else { alert('Error: ' + (data.error || 'unknown')) }
+      } catch (e) { console.error(e); alert('Register failed'); }
+    }
+
+    async function submitLogin() {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!username || !password) { alert('Please provide username and password'); return; }
+      try {
+        const res = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) });
+        const data = await res.json();
+        if (data.status === 'ok') { alert('Login successful'); closeAuth(); }
+        else { alert('Invalid credentials'); }
+      } catch (e) { console.error(e); alert('Login failed'); }
     }
 
     // Set year in footer
