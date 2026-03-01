@@ -1,13 +1,12 @@
 import json
 import os
 import datetime
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, Cookie
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import psycopg2
 from passlib.context import CryptContext
 import hashlib
-from fastapi.staticfiles import StaticFiles
 
 # helper to get connection using DATABASE_URL env variable
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -53,8 +52,6 @@ init_db()
 
 app = FastAPI()
 
-# serve every file under ./files/ at URL “/files/...”
-app.mount("/files", StaticFiles(directory="files"), name="files")
 
 # password hashing context: use bcrypt_sha256 to avoid bcrypt's 72-byte password limit
 pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
@@ -144,6 +141,26 @@ def login(username: str = Form(...), password: str = Form(...)):
         if not pwd_context.verify(pw_try, pwd_hash):
             return {"error": "invalid_credentials"}
         return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/download/{filename}")
+def download_doc(filename: str, loggedInUser: str = Cookie(None)):
+    try:
+        # Check if user is authenticated via cookie
+        if not loggedInUser:
+            return {"error": "unauthorized"}
+        
+        # Only allow specific filenames (whitelist)
+        allowed_files = ["doc1.pdf", "doc2.pdf"]
+        if filename not in allowed_files:
+            return {"error": "not_found"}
+        
+        file_path = os.path.join("docs", filename)
+        if not os.path.exists(file_path):
+            return {"error": "file_not_found"}
+        
+        return FileResponse(file_path, media_type="application/pdf", filename=filename)
     except Exception as e:
         return {"error": str(e)}
 

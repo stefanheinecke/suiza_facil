@@ -897,8 +897,8 @@
         </div>
         <p>Here you can download documents.</p>
         <div class="docs-grid">
-          <div class="doc-card"><a href="/files/doc1.pdf" download>Document 1</a></div>
-          <div class="doc-card"><a href="/files/doc2.pdf" download>Document 2</a></div>
+          <div class="doc-card"><a href="/download/doc1.pdf" download>Document 1</a></div>
+          <div class="doc-card"><a href="/download/doc2.pdf" download>Document 2</a></div>
         </div>
       </section>
 
@@ -1105,6 +1105,8 @@
         const data = await res.json();
         if (data.status === 'ok') {
           localStorage.setItem('loggedInUser', username);
+          // Set cookie so backend can verify auth on /download/ requests
+          document.cookie = 'loggedInUser=' + encodeURIComponent(username) + '; path=/; max-age=86400';
           updateAuthUI();
           closeAuth();
         } else { alert('Invalid credentials'); }
@@ -1113,6 +1115,8 @@
 
     function logout() {
       localStorage.removeItem('loggedInUser');
+      // Clear auth cookie
+      document.cookie = 'loggedInUser=; path=/; max-age=0';
       updateAuthUI();
     }
 
