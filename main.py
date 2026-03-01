@@ -144,7 +144,7 @@ def login(username: str = Form(...), password: str = Form(...)):
     except Exception as e:
         return {"error": str(e)}
 
-@app.get("/download/{filename}")
+@app.get("/docs/{filename}")
 def download_doc(filename: str, loggedInUser: str = Cookie(None)):
     try:
         # Check if user is authenticated via cookie
