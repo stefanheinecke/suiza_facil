@@ -164,6 +164,14 @@ app.add_middleware(
 def get_root():
     return FileResponse("index.html")
 
+
+@app.get("/admin.html")
+def get_admin_html(session_id: str = Cookie(None)):
+    # optionally restrict the admin UI itself to admin users
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    return FileResponse("admin.html")
+
 @app.post("/subscriber")
 def post_subscriber(email: str = Form(...)):
     try:
