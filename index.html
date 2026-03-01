@@ -605,7 +605,6 @@
           <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
           <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
           <div id="authContainer" style="display:flex;gap:8px;align-items:center;">
-            <button class="lang-btn" id="docsBtn" style="display:none;" onclick="scrollToSection('documents')">Documents</button>
             <button class="lang-btn" id="authBtn" onclick="openAuth()">Login</button>
             <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
             <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
@@ -1096,20 +1095,17 @@
       const authBtn = document.getElementById('authBtn');
       const usernameDisplay = document.getElementById('usernameDisplay');
       const logoutBtn = document.getElementById('logoutBtn');
-      const docsBtn = document.getElementById('docsBtn');
       const docsSection = document.getElementById('documents');
       if (user) {
         authBtn.style.display = 'none';
         usernameDisplay.textContent = user;
         usernameDisplay.style.display = 'inline';
         logoutBtn.style.display = 'block';
-        docsBtn.style.display = 'block';
         if (docsSection) docsSection.style.display = '';
       } else {
         authBtn.style.display = 'block';
         usernameDisplay.style.display = 'none';
         logoutBtn.style.display = 'none';
-        docsBtn.style.display = 'none';
         if (docsSection) docsSection.style.display = 'none';
       }
     }
