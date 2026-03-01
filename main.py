@@ -51,8 +51,8 @@ init_db()
 
 app = FastAPI()
 
-# password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# password hashing context: use bcrypt_sha256 to avoid bcrypt's 72-byte password limit
+pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
 
 # CORS erlauben, damit dein HTML/JS im Browser zugreifen darf
 app.add_middleware(
