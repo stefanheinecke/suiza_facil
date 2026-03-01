@@ -1,6 +1,8 @@
 import json
 import os
 import datetime
+import uuid
+import secrets
 from fastapi import FastAPI, Form, Cookie, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -41,6 +43,15 @@ def init_db():
                 created_at TIMESTAMP NOT NULL
             )
         """)
+        # sessions table for server-side session IDs
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                session_id VARCHAR(100) PRIMARY KEY,
+                username VARCHAR(150) REFERENCES users(username) ON DELETE CASCADE,
+                created_at TIMESTAMP NOT NULL,
+                expires_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -52,6 +63,23 @@ init_db()
 
 app = FastAPI()
 
+
+def get_username_from_session(session_id: str):
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # cleanup expired sessions first
+        cur.execute("DELETE FROM sessions WHERE expires_at < %s", (datetime.datetime.utcnow(),))
+        cur.execute("SELECT username FROM sessions WHERE session_id = %s", (session_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.commit()
+        conn.close()
+        if row:
+            return row[0]
+    except Exception as e:
+        print("session lookup error", e)
+    return None
 
 # password hashing context: use bcrypt_sha256 to avoid bcrypt's 72-byte password limit
 pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
@@ -140,30 +168,53 @@ def login(username: str = Form(...), password: str = Form(...), response: Respon
             pw_try = hashlib.sha256(password.encode('utf-8')).hexdigest()
         if not pwd_context.verify(pw_try, pwd_hash):
             return {"error": "invalid_credentials"}
-        # set a cookie so browser will send it on future requests
+        # create server-side session record
+        session_id = secrets.token_urlsafe(32)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        conn2 = get_conn()
+        cur2 = conn2.cursor()
+        cur2.execute("INSERT INTO sessions (session_id, username, created_at, expires_at) VALUES (%s, %s, %s, %s)",
+                     (session_id, username, datetime.datetime.utcnow(), expires))
+        conn2.commit()
+        cur2.close()
+        conn2.close()
         if response is not None:
-            response.set_cookie("loggedInUser", username, max_age=86400, path="/")
+            response.set_cookie("session_id", session_id, max_age=86400, path="/", httponly=True, secure=True, samesite="Lax")
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
 
 @app.get("/download/{filename}")
-def download_doc(filename: str, loggedInUser: str = Cookie(None)):
+def download_doc(filename: str, session_id: str = Cookie(None)):
     try:
-        # Check if user is authenticated via cookie
-        if not loggedInUser:
+        # lookup user by session id
+        user = get_username_from_session(session_id) if session_id else None
+        if not user:
             return {"error": "unauthorized"}
-        
         # Only allow specific filenames (whitelist)
         allowed_files = ["doc1.pdf", "doc2.pdf"]
         if filename not in allowed_files:
             return {"error": "not_found"}
-        
         file_path = os.path.join("download", filename)
         if not os.path.exists(file_path):
             return {"error": "file_not_found"}
-        
         return FileResponse(file_path, media_type="application/pdf", filename=filename)
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/logout")
+def logout(response: Response, session_id: str = Cookie(None)):
+    try:
+        if session_id:
+            conn = get_conn()
+            cur = conn.cursor()
+            cur.execute("DELETE FROM sessions WHERE session_id = %s", (session_id,))
+            conn.commit()
+            cur.close()
+            conn.close()
+        # clear cookie
+        response.delete_cookie("session_id", path="/")
+        return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
 

@@ -1112,10 +1112,15 @@
       } catch (e) { console.error(e); alert('Login failed'); }
     }
 
-    function logout() {
+    async function logout() {
+      try {
+        await fetch('/logout', { method: 'POST' });
+      } catch (e) {
+        console.error('logout request failed', e);
+      }
       localStorage.removeItem('loggedInUser');
-      // Clear auth cookie
-      document.cookie = 'loggedInUser=; path=/; max-age=0';
+      // cookie cleared server side when response returned, but clear any leftover
+      document.cookie = 'session_id=; path=/; max-age=0';
       updateAuthUI();
     }
 
