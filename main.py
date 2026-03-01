@@ -272,7 +272,7 @@ def download_doc(filename: str, session_id: str = Cookie(None)):
         # check user permission for this file
         if not user_has_permission(user, filename):
             return {"error": "forbidden"}
-        file_path = os.path.join("docs", filename)
+        file_path = os.path.join("download", filename)
         if not os.path.exists(file_path):
             return {"error": "file_not_found"}
         return FileResponse(file_path, media_type="application/pdf", filename=filename)
