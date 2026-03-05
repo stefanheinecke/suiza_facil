@@ -3,16 +3,30 @@ import os
 import datetime
 import uuid
 import secrets
+from typing import Optional
+from urllib.parse import urlencode
+
 from fastapi import FastAPI, Form, Cookie, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 import psycopg2
 from passlib.context import CryptContext
 import hashlib
+import requests
 
 # helper to get connection using DATABASE_URL env variable
 DATABASE_URL = os.getenv("DATABASE_URL")
 print("DATABASE_URL=", DATABASE_URL)
+
+# Google OAuth2 / OpenID Connect configuration (set these in your env)
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+# This must exactly match the redirect URI configured in Google Cloud console
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 
 def get_conn():
     # Expect DATABASE_URL to be set in production; raise otherwise
@@ -133,6 +147,35 @@ def get_username_from_session(session_id: str):
         print("session lookup error", e)
     return None
 
+
+def create_session_record(username: str) -> str:
+    """Create a new session row for the given user and return session_id."""
+    session_id = secrets.token_urlsafe(32)
+    expires = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+    conn2 = get_conn()
+    cur2 = conn2.cursor()
+    cur2.execute(
+        "INSERT INTO sessions (session_id, username, created_at, expires_at) VALUES (%s, %s, %s, %s)",
+        (session_id, username, datetime.datetime.utcnow(), expires),
+    )
+    conn2.commit()
+    cur2.close()
+    conn2.close()
+    return session_id
+
+
+def set_session_cookie(response: Response, session_id: str) -> None:
+    # SameSite=None so the cookie also works when frontend is served from another domain
+    response.set_cookie(
+        "session_id",
+        session_id,
+        max_age=86400,
+        path="/",
+        httponly=True,
+        secure=True,
+        samesite="none",
+    )
+
 # password hashing context: use bcrypt_sha256 to avoid bcrypt's 72-byte password limit
 pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
 print(pwd_context.schemes())
@@ -243,17 +286,9 @@ def login(username: str = Form(...), password: str = Form(...), response: Respon
         if not pwd_context.verify(pw_try, pwd_hash):
             return {"error": "invalid_credentials"}
         # create server-side session record
-        session_id = secrets.token_urlsafe(32)
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=1)
-        conn2 = get_conn()
-        cur2 = conn2.cursor()
-        cur2.execute("INSERT INTO sessions (session_id, username, created_at, expires_at) VALUES (%s, %s, %s, %s)",
-                     (session_id, username, datetime.datetime.utcnow(), expires))
-        conn2.commit()
-        cur2.close()
-        conn2.close()
+        session_id = create_session_record(username)
         if response is not None:
-            response.set_cookie("session_id", session_id, max_age=86400, path="/", httponly=True, secure=True, samesite="Lax")
+            set_session_cookie(response, session_id)
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
@@ -294,6 +329,127 @@ def logout(response: Response, session_id: str = Cookie(None)):
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.get("/auth/google/login")
+def google_login(next: str = "/"):
+    """Start Google OAuth2 login flow by redirecting to Google's consent screen."""
+    if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
+        return {"error": "google_oauth_not_configured"}
+
+    state = secrets.token_urlsafe(16)
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "response_type": "code",
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "include_granted_scopes": "true",
+        "state": state,
+    }
+    # store state and next target in short-lived cookies for CSRF protection and post-login redirect
+    response = RedirectResponse(url=f"{GOOGLE_AUTH_URL}?{urlencode(params)}")
+    response.set_cookie(
+        "oauth_state",
+        state,
+        max_age=600,
+        path="/",
+        httponly=True,
+        secure=True,
+        samesite="lax",
+    )
+    response.set_cookie(
+        "oauth_next",
+        next,
+        max_age=600,
+        path="/",
+        httponly=False,
+        secure=True,
+        samesite="lax",
+    )
+    return response
+
+
+@app.get("/auth/google/callback")
+def google_callback(
+    code: Optional[str] = None,
+    state: Optional[str] = None,
+    oauth_state: Optional[str] = Cookie(None),
+    oauth_next: Optional[str] = Cookie("/"),
+):
+    """Handle Google's callback, create a local user+session, and redirect back."""
+    if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
+        return {"error": "google_oauth_not_configured"}
+
+    if not code or not state or not oauth_state or state != oauth_state:
+        return {"error": "invalid_oauth_state"}
+
+    # Exchange authorization code for tokens
+    try:
+        token_data = {
+            "code": code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        }
+        token_resp = requests.post(GOOGLE_TOKEN_URL, data=token_data, timeout=10)
+        token_resp.raise_for_status()
+        token_json = token_resp.json()
+    except Exception as e:
+        return {"error": f"token_exchange_failed: {e}"}
+
+    access_token = token_json.get("access_token")
+    if not access_token:
+        return {"error": "no_access_token"}
+
+    # Fetch user info (email, etc.)
+    try:
+        userinfo_resp = requests.get(
+            GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10,
+        )
+        userinfo_resp.raise_for_status()
+        info = userinfo_resp.json()
+    except Exception as e:
+        return {"error": f"userinfo_failed: {e}"}
+
+    email = info.get("email")
+    if not email:
+        return {"error": "email_not_provided"}
+
+    username = email  # map Google account to local username by email
+
+    # Ensure local user exists (create one if missing, with a random password hash)
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT username FROM users WHERE username = %s", (username,))
+        row = cur.fetchone()
+        if not row:
+            # create a user that can only log in via Google (random unknown password)
+            random_pw = secrets.token_urlsafe(16)
+            pwd_hash = pwd_context.hash(random_pw)
+            cur.execute(
+                "INSERT INTO users (username, password_hash, created_at) VALUES (%s, %s, %s)",
+                (username, pwd_hash, datetime.datetime.utcnow()),
+            )
+            conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return {"error": f"user_upsert_failed: {e}"}
+
+    # Create a normal server-side session and set cookie
+    session_id = create_session_record(username)
+    redirect_target = oauth_next or "/"
+    response = RedirectResponse(url=redirect_target)
+    set_session_cookie(response, session_id)
+    # clear temporary oauth cookies
+    response.delete_cookie("oauth_state", path="/")
+    response.delete_cookie("oauth_next", path="/")
+    return response
 
 
 
