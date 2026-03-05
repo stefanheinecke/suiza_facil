@@ -165,7 +165,7 @@ def get_root():
     return FileResponse("index.html")
 
 
-@app.get("/admin.html")
+@app.get("/admin")
 def get_admin_html(session_id: str = Cookie(None)):
     # optionally restrict the admin UI itself to admin users
     if not is_admin_user(session_id):
