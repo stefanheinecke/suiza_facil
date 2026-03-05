@@ -1055,24 +1055,24 @@
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-modal" onclick="event.stopPropagation()">
       <div class="auth-header">
-        <h4 class="auth-title">Accede a tu cuenta</h4>
+        <h4 class="auth-title">Enter with your login</h4>
         <button class="auth-close" onclick="closeAuth()" aria-label="Close">×</button>
       </div>
-      <p class="auth-subtitle">Inicia sesión con Google o con usuario y contraseña.</p>
+      <p class="auth-subtitle">Start session with Google or email and password.</p>
 
       <button class="auth-google-btn" onclick="loginWithGoogle()">
         <span>🔐</span>
-        <span>Continuar con Google</span>
+        <span>Continue with Google</span>
       </button>
 
-      <div class="auth-divider">o con email</div>
+      <div class="auth-divider">or with email</div>
 
-      <input id="authUsername" class="auth-input" placeholder="Email o usuario" />
-      <input id="authPassword" class="auth-input" placeholder="Contraseña" type="password" />
+      <input id="authUsername" class="auth-input" placeholder="Email" />
+      <input id="authPassword" class="auth-input" placeholder="Password" type="password" />
 
       <div class="auth-actions">
-        <button onclick="submitRegister()" class="btn btn-secondary">Registrarse</button>
-        <button onclick="submitLogin()" class="btn btn-primary">Entrar</button>
+        <button onclick="submitRegister()" class="btn btn-secondary">Register</button>
+        <button onclick="submitLogin()" class="btn btn-primary">Enter</button>
       </div>
     </div>
   </div>
