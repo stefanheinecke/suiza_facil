@@ -608,6 +608,115 @@
         padding: 16px 12px 40px;
       }
     }
+
+    /* Auth modal */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .auth-modal {
+      width: 100%;
+      max-width: 380px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+      padding: 20px 20px 18px;
+      font-size: 14px;
+    }
+
+    .auth-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .auth-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .auth-subtitle {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .auth-close {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--muted);
+      padding: 2px 4px;
+    }
+
+    .auth-google-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .auth-google-btn:hover {
+      background: #f9fafb;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(148, 163, 184, 0.4);
+    }
+
+    .auth-input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .auth-input + .auth-input {
+      margin-top: 6px;
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -942,17 +1051,28 @@
     </footer>
   </div>
 
-  <!-- Simple auth modal -->
-  <div id="authModal" style="display:none;position:fixed;right:20px;bottom:20px;padding:16px;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.08);z-index:1000;">
-    <a href="/auth/google">Login with Google</a>
-    <h4 style="margin:0 0 8px 0;">Login / Register</h4>
-    <div style="display:flex;flex-direction:column;gap:8px;min-width:220px;">
-      <input id="authUsername" placeholder="Username" />
-      <input id="authPassword" placeholder="Password" type="password" />
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button onclick="submitRegister()" class="btn btn-secondary">Register</button>
-        <button onclick="submitLogin()" class="btn btn-primary">Login</button>
-        <button onclick="closeAuth()" class="btn" style="background:transparent;border:1px solid #eee;">Close</button>
+  <!-- Modern auth modal -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <div class="auth-header">
+        <h4 class="auth-title">Accede a tu cuenta</h4>
+        <button class="auth-close" onclick="closeAuth()" aria-label="Close">×</button>
+      </div>
+      <p class="auth-subtitle">Inicia sesión con Google o con usuario y contraseña.</p>
+
+      <button class="auth-google-btn" onclick="loginWithGoogle()">
+        <span>🔐</span>
+        <span>Continuar con Google</span>
+      </button>
+
+      <div class="auth-divider">o con email</div>
+
+      <input id="authUsername" class="auth-input" placeholder="Email o usuario" />
+      <input id="authPassword" class="auth-input" placeholder="Contraseña" type="password" />
+
+      <div class="auth-actions">
+        <button onclick="submitRegister()" class="btn btn-secondary">Registrarse</button>
+        <button onclick="submitLogin()" class="btn btn-primary">Entrar</button>
       </div>
     </div>
   </div>
@@ -1078,10 +1198,21 @@
 
     // Auth modal controls
     function openAuth() {
-      document.getElementById('authModal').style.display = 'block';
+      const overlay = document.getElementById('authOverlay');
+      if (overlay) overlay.style.display = 'flex';
     }
     function closeAuth() {
-      document.getElementById('authModal').style.display = 'none';
+      const overlay = document.getElementById('authOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    function loginWithGoogle() {
+      try {
+        const next = window.location.href;
+        window.location.href = '/auth/google?next=' + encodeURIComponent(next);
+      } catch (e) {
+        console.error('Google login redirect failed', e);
+      }
     }
 
     async function submitRegister() {
