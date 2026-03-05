@@ -444,7 +444,13 @@ def google_callback(
     # Create a normal server-side session and set cookie
     session_id = create_session_record(username)
     redirect_target = oauth_next or "/"
-    response = RedirectResponse(url=redirect_target)
+    # pass username back once so frontend can store it (for display only)
+    if "?" in redirect_target:
+        sep = "&"
+    else:
+        sep = "?"
+    redirect_url = f"{redirect_target}{sep}user={username}"
+    response = RedirectResponse(url=redirect_url)
     set_session_cookie(response, session_id)
     # clear temporary oauth cookies
     response.delete_cookie("oauth_state", path="/")
