@@ -1150,6 +1150,21 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // If we just came back from Google OAuth, the backend
+      // adds ?user=<email> once to the URL; store it so UI can show it.
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const fromOauthUser = params.get('user');
+        if (fromOauthUser) {
+          localStorage.setItem('loggedInUser', fromOauthUser);
+          // clean the URL (remove the user query param)
+          const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      } catch (e) {
+        console.error('Error processing OAuth user param', e);
+      }
+
       fetchTranslations();
       updateAuthUI();
     });
