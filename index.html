@@ -394,7 +394,7 @@
 
     .checklist-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 18px;
       align-items: flex-start;
     }
@@ -467,41 +467,43 @@
       align-items: flex-start;
     }
 
-    .check-toggle {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      background: #ffffff;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      color: transparent;
-    }
-
-    .check-toggle:hover {
-      border-color: var(--red);
-    }
-
-    .check-toggle.checked {
-      background: var(--red);
-      border-color: var(--red);
-      color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
-    }
-
     .checklist-item-main-title {
       font-weight: 600;
       color: var(--blue);
       margin-bottom: 2px;
+      cursor: pointer;
+      position: relative;
+      padding-right: 20px;
+    }
+
+    .checklist-item-main-title::after {
+      content: "+";
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-weight: 700;
+      color: var(--red);
     }
 
     .checklist-item-text {
       font-size: 13px;
       color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* collapse details by default */
+    .checklist-item .checklist-item-text,
+    .checklist-item .checklist-sublist {
+      display: none;
+    }
+
+    .checklist-item.open .checklist-item-text,
+    .checklist-item.open .checklist-sublist {
+      display: block;
+    }
+
+    .checklist-item.open .checklist-item-main-title::after {
+      content: "–";
     }
 
     .checklist-sublist {
@@ -880,9 +882,9 @@
           <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
           <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
           <div id="authContainer" style="display:flex;gap:8px;align-items:center;">
-            <button class="lang-btn" id="authBtn" onclick="openAuth()">Login</button>
+            <button class="lang-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
             <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
-            <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+            <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
           </div>
         </div>
       </nav>
@@ -1142,9 +1144,9 @@
       <!-- IMMIGRATION CHECKLIST -->
       <section id="arrival-checklist" class="section checklist-section">
         <div class="section-header">
-          <div class="section-kicker">Checkliste</div>
-          <h2 class="section-title">Dein Einwanderungs-Leitfaden nach Suiza.</h2>
-          <p class="section-subtitle">
+          <div class="section-kicker" data-i18n="checklist_kicker">Checkliste</div>
+          <h2 class="section-title" data-i18n="checklist_title">Dein Einwanderungs-Leitfaden nach Suiza.</h2>
+          <p class="section-subtitle" data-i18n="checklist_subtitle">
             Arbeite diese Punkte Schritt für Schritt wie eine Checkliste durch. Alles bleibt lokal im Browser gespeichert, damit du jederzeit weitermachen kannst.
           </p>
         </div>
@@ -1156,57 +1158,53 @@
               <div class="checklist-step-label">
                 <div class="checklist-step-number">1</div>
                 <div>
-                  <div class="checklist-card-title">Ankommen & anmelden</div>
-                  <div class="checklist-card-subtitle">Die wichtigsten ersten Wochen nach der Einreise.</div>
+                  <div class="checklist-card-title" data-i18n="checklist_card1_title">Ankommen & anmelden</div>
+                  <div class="checklist-card-subtitle" data-i18n="checklist_card1_subtitle">Die wichtigsten ersten Wochen nach der Einreise.</div>
                 </div>
               </div>
-              <div class="checklist-progress" id="arrivalProgress"></div>
             </div>
 
             <ul class="checklist-items">
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="anmeldung-gemeinde">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">1) Anmeldung bei der Wohngemeinde</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item1_title">1) Anmeldung bei der Wohngemeinde</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item1_text">
                     Innerhalb von 14 Tagen nach der Einreise persönlich bei der Gemeinde anmelden, in der du wohnst. Dort erhältst du in der Regel die Aufenthaltsbewilligung (z. B. B-Bewilligung für EU/EFTA-Bürger).
                   </div>
                   <ul class="checklist-sublist">
-                    <li>Reisepass oder Personalausweis</li>
-                    <li>Mietvertrag oder Wohnsitzbestätigung</li>
-                    <li>Arbeitsvertrag oder Nachweis ausreichender finanzieller Mittel</li>
-                    <li>Krankenversicherungsnachweis (Schweizer Versicherung, Abschluss spätestens 3 Monate nach Einreise)</li>
-                    <li>Passfoto (je nach Kanton)</li>
+                    <li data-i18n="checklist_item1_li1">Reisepass oder Personalausweis</li>
+                    <li data-i18n="checklist_item1_li2">Mietvertrag oder Wohnsitzbestätigung</li>
+                    <li data-i18n="checklist_item1_li3">Arbeitsvertrag oder Nachweis ausreichender finanzieller Mittel</li>
+                    <li data-i18n="checklist_item1_li4">Krankenversicherungsnachweis (Schweizer Versicherung, Abschluss spätestens 3 Monate nach Einreise)</li>
+                    <li data-i18n="checklist_item1_li5">Passfoto (je nach Kanton)</li>
                   </ul>
                 </div>
               </li>
 
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="krankenversicherung">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">2) Krankenversicherung abschliessen</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item2_title">2) Krankenversicherung abschliessen</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item2_text">
                     Innerhalb von 3 Monaten nach Einreise musst du eine Schweizer Grundversicherung (KVG) abschliessen. Der Versicherungsschutz gilt rückwirkend ab Einreisedatum.
                   </div>
                 </div>
               </li>
 
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="spanische-abmeldung">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">3) Spanische Abmeldung (optional, aber sinnvoll)</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item3_title">3) Spanische Abmeldung (optional, aber sinnvoll)</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item3_text">
                     Spanien verlangt keine formelle Abmeldung, trotzdem kann es sinnvoll sein:
                   </div>
                   <ul class="checklist-sublist">
-                    <li>Abmeldung im Padrón Municipal</li>
-                    <li>Information der Steuerbehörde (Hacienda), um Doppelbesteuerung zu vermeiden</li>
+                    <li data-i18n="checklist_item3_li1">Abmeldung im Padrón Municipal</li>
+                    <li data-i18n="checklist_item3_li2">Information der Steuerbehörde (Hacienda), um Doppelbesteuerung zu vermeiden</li>
                   </ul>
                 </div>
               </li>
             </ul>
 
-            <div class="checklist-note">
+            <div class="checklist-note" data-i18n="checklist_note1">
               Tipp: Plane für Termine bei der Gemeinde und für Versicherungen frühzeitig Zeit ein – viele Stellen arbeiten nur mit Termin oder haben eingeschränkte Öffnungszeiten.
             </div>
           </article>
@@ -1217,99 +1215,93 @@
               <div class="checklist-step-label">
                 <div class="checklist-step-number">2</div>
                 <div>
-                  <div class="checklist-card-title">Umzugsgut & praktische Tipps</div>
-                  <div class="checklist-card-subtitle">Was du in die Schweiz mitbringen darfst – und wie.</div>
+                  <div class="checklist-card-title" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</div>
+                  <div class="checklist-card-subtitle" data-i18n="checklist_card2_subtitle">Was du in die Schweiz mitbringen darfst – und wie.</div>
                 </div>
               </div>
-              <div class="checklist-progress" id="movingProgress"></div>
             </div>
 
             <ul class="checklist-items">
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="hausrat">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">🚚 Hausrat & persönliche Gegenstände</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item4_title">🚚 Hausrat & persönliche Gegenstände</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item4_text">
                     Als Umzugsgut können deine persönlichen Sachen in der Regel zollfrei eingeführt werden, wenn:
                   </div>
                   <ul class="checklist-sublist">
-                    <li>die Gegenstände seit mindestens 6 Monaten in deinem Besitz sind</li>
-                    <li>sie weiterhin in der Schweiz genutzt werden</li>
-                    <li>du das Formular 18.44 (Übersiedlungsgut) ausfüllst</li>
+                    <li data-i18n="checklist_item4_li1">die Gegenstände seit mindestens 6 Monaten in deinem Besitz sind</li>
+                    <li data-i18n="checklist_item4_li2">sie weiterhin in der Schweiz genutzt werden</li>
+                    <li data-i18n="checklist_item4_li3">du das Formular 18.44 (Übersiedlungsgut) ausfüllst</li>
                   </ul>
                 </div>
               </li>
 
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="auto">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">🚗 Auto mitbringen</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item5_title">🚗 Auto mitbringen</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item5_text">
                     Ein Auto kann zollfrei eingeführt werden, wenn es:
                   </div>
                   <ul class="checklist-sublist">
-                    <li>seit mindestens 6 Monaten auf dich zugelassen ist</li>
-                    <li>als persönliches Umzugsgut deklariert wird</li>
-                    <li>innerhalb von 12 Monaten in der Schweiz geprüft und eingelöst wird (MFK)</li>
+                    <li data-i18n="checklist_item5_li1">seit mindestens 6 Monaten auf dich zugelassen ist</li>
+                    <li data-i18n="checklist_item5_li2">als persönliches Umzugsgut deklariert wird</li>
+                    <li data-i18n="checklist_item5_li3">innerhalb von 12 Monaten in der Schweiz geprüft und eingelöst wird (MFK)</li>
                   </ul>
                 </div>
               </li>
 
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="lebensmittel">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">🍽 Lebensmittel</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item6_title">🍽 Lebensmittel</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item6_text">
                     Für den Eigenbedarf ist vieles erlaubt, aber beachte:
                   </div>
                   <ul class="checklist-sublist">
-                    <li>für Fleisch, Alkohol und Tabak gelten Mengen- und Wertgrenzen</li>
-                    <li>Pflanzen und tierische Produkte haben teilweise zusätzliche Einschränkungen</li>
+                    <li data-i18n="checklist_item6_li1">für Fleisch, Alkohol und Tabak gelten Mengen- und Wertgrenzen</li>
+                    <li data-i18n="checklist_item6_li2">Pflanzen und tierische Produkte haben teilweise zusätzliche Einschränkungen</li>
                   </ul>
                 </div>
               </li>
 
               <li class="checklist-item">
-                <button class="check-toggle" type="button" data-check-id="haustiere">✓</button>
                 <div>
-                  <div class="checklist-item-main-title">🐾 Haustiere</div>
-                  <div class="checklist-item-text">
+                  <div class="checklist-item-main-title" data-i18n="checklist_item7_title">🐾 Haustiere</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item7_text">
                     Hunde und Katzen benötigen für die Einreise:
                   </div>
                   <ul class="checklist-sublist">
-                    <li>Mikrochip</li>
-                    <li>EU-Heimtierpass</li>
-                    <li>gültige Tollwutimpfung</li>
-                    <li>Anmeldung beim Schweizer Zoll und später bei der Gemeinde</li>
+                    <li data-i18n="checklist_item7_li1">Mikrochip</li>
+                    <li data-i18n="checklist_item7_li2">EU-Heimtierpass</li>
+                    <li data-i18n="checklist_item7_li3">gültige Tollwutimpfung</li>
+                    <li data-i18n="checklist_item7_li4">Anmeldung beim Schweizer Zoll und später bei der Gemeinde</li>
                   </ul>
                 </div>
               </li>
             </ul>
 
             <div class="checklist-note">
-              Praktische Hinweise:
+              <span data-i18n="checklist_note2_intro">Praktische Hinweise:</span>
               <ul class="checklist-sublist">
-                <li>Eine detaillierte Inventarliste erleichtert die Zollabfertigung.</li>
-                <li>Bei professionellen Umzugsfirmen wird die Zollabwicklung oft übernommen.</li>
-                <li>Bei Selbstumzug über Frankreich: Ausweis und Fahrzeugpapiere bereithalten.</li>
-                <li>In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.</li>
+                <li data-i18n="checklist_note2_li1">Eine detaillierte Inventarliste erleichtert die Zollabfertigung.</li>
+                <li data-i18n="checklist_note2_li2">Bei professionellen Umzugsfirmen wird die Zollabwicklung oft übernommen.</li>
+                <li data-i18n="checklist_note2_li3">Bei Selbstumzug über Frankreich: Ausweis und Fahrzeugpapiere bereithalten.</li>
+                <li data-i18n="checklist_note2_li4">In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.</li>
               </ul>
             </div>
           </article>
         </div>
 
-        <div class="checklist-overall" id="overallChecklist"></div>
       </section>
 
       <!-- DOCUMENTS (restricted) -->
       <section id="documents" class="section" style="display:none;">
         <div class="section-header">
-          <h2 class="section-title">Documents</h2>
+          <h2 class="section-title" data-i18n="docs_title">Documents</h2>
         </div>
-        <p>Here you can download documents.</p>
+        <p data-i18n="docs_intro">Here you can download documents.</p>
         <div class="docs-grid">
-          <div class="doc-card"><a href="/download/doc1.pdf" download>Document 1</a></div>
-          <div class="doc-card"><a href="/download/doc2.pdf" download>Document 2</a></div>
+          <div class="doc-card"><a href="/download/doc1.pdf" download data-i18n="docs_doc1">Document 1</a></div>
+          <div class="doc-card"><a href="/download/doc2.pdf" download data-i18n="docs_doc2">Document 2</a></div>
         </div>
       </section>
 
@@ -1357,24 +1349,24 @@
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-modal" onclick="event.stopPropagation()">
       <div class="auth-header">
-        <h4 class="auth-title">Enter with your login</h4>
+        <h4 class="auth-title" data-i18n="auth_title">Enter with your login</h4>
         <button class="auth-close" onclick="closeAuth()" aria-label="Close">×</button>
       </div>
-      <p class="auth-subtitle">Start session with Google or email and password.</p>
+      <p class="auth-subtitle" data-i18n="auth_subtitle">Start session with Google or email and password.</p>
 
       <button class="auth-google-btn" onclick="loginWithGoogle()">
         <span>🔐</span>
-        <span>Continue with Google</span>
+        <span data-i18n="auth_google_btn">Continue with Google</span>
       </button>
 
-      <div class="auth-divider">or with email</div>
+      <div class="auth-divider" data-i18n="auth_divider">or with email</div>
 
-      <input id="authUsername" class="auth-input" placeholder="Email" />
-      <input id="authPassword" class="auth-input" placeholder="Password" type="password" />
+      <input id="authUsername" class="auth-input" placeholder="Email" data-i18n-placeholder="auth_email_placeholder" />
+      <input id="authPassword" class="auth-input" placeholder="Password" type="password" data-i18n-placeholder="auth_password_placeholder" />
 
       <div class="auth-actions">
-        <button onclick="submitRegister()" class="btn btn-secondary">Register</button>
-        <button onclick="submitLogin()" class="btn btn-primary">Enter</button>
+        <button onclick="submitRegister()" class="btn btn-secondary" data-i18n="auth_register_btn">Register</button>
+        <button onclick="submitLogin()" class="btn btn-primary" data-i18n="auth_enter_btn">Enter</button>
       </div>
     </div>
   </div>
@@ -1490,11 +1482,11 @@
           alert(translations[currentLanguage]['newsletter_thank_you'] || '¡Gracias por suscribirse!');
         } else {
           console.error('Failed to subscribe:', response.status);
-          alert('Hubo un error al suscribirse. Intenta de nuevo.');
+          alert(translations[currentLanguage]['newsletter_error_subscribe'] || 'Hubo un error al suscribirse. Intenta de nuevo.');
         }
       } catch (error) {
         console.error('Error subscribing:', error);
-        alert('Error al procesar tu suscripción.');
+        alert(translations[currentLanguage]['newsletter_error_processing'] || 'Error al procesar tu suscripción.');
       }
     }
 
@@ -1520,27 +1512,27 @@
     async function submitRegister() {
       const username = document.getElementById('authUsername').value.trim();
       const password = document.getElementById('authPassword').value;
-      if (!username || !password) { alert('Please provide email and password'); return; }
+      if (!username || !password) { alert((translations[currentLanguage] && translations[currentLanguage]['auth_error_missing_credentials']) || 'Please provide email and password'); return; }
       // basic email format check on client side for better UX
       const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
       if (!emailPattern.test(username)) {
-        alert('Please use a valid email address as username');
+        alert((translations[currentLanguage] && translations[currentLanguage]['auth_error_invalid_email']) || 'Please use a valid email address as username');
         return;
       }
       try {
         const res = await fetch('/register', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) });
         const data = await res.json();
-        if (data.status === 'ok') { alert('Registered'); closeAuth(); }
-        else if (data.error === 'invalid_email') { alert('Email must be a valid email address'); }
-        else if (data.error === 'user_exists') { alert('Email already exists'); }
-        else { alert('Error: ' + (data.error || 'unknown')) }
-      } catch (e) { console.error(e); alert('Register failed'); }
+        if (data.status === 'ok') { alert((translations[currentLanguage] && translations[currentLanguage]['auth_register_success']) || 'Registered'); closeAuth(); }
+        else if (data.error === 'invalid_email') { alert((translations[currentLanguage] && translations[currentLanguage]['auth_register_invalid_email']) || 'Email must be a valid email address'); }
+        else if (data.error === 'user_exists') { alert((translations[currentLanguage] && translations[currentLanguage]['auth_register_user_exists']) || 'Email already exists'); }
+        else { alert(((translations[currentLanguage] && translations[currentLanguage]['auth_register_error_prefix']) || 'Error: ') + (data.error || 'unknown')); }
+      } catch (e) { console.error(e); alert((translations[currentLanguage] && translations[currentLanguage]['auth_register_failed']) || 'Register failed'); }
     }
 
     async function submitLogin() {
       const username = document.getElementById('authUsername').value.trim();
       const password = document.getElementById('authPassword').value;
-      if (!username || !password) { alert('Please provide email and password'); return; }
+      if (!username || !password) { alert((translations[currentLanguage] && translations[currentLanguage]['auth_error_missing_credentials']) || 'Please provide email and password'); return; }
       try {
         const res = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) });
         const data = await res.json();
@@ -1549,8 +1541,8 @@
           // cookie will now be set by server response
           updateAuthUI();
           closeAuth();
-        } else { alert('Invalid credentials'); }
-      } catch (e) { console.error(e); alert('Login failed'); }
+        } else { alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_invalid']) || 'Invalid credentials'); }
+      } catch (e) { console.error(e); alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_failed']) || 'Login failed'); }
     }
 
     async function logout() {
@@ -1616,72 +1608,16 @@
       fetchTranslations();
     }
 
-    // Immigration checklist: local progress tracking
-    const CHECKLIST_STORAGE_KEY = 'vivasuiza_immigration_checklist';
-
-    function loadChecklistState() {
-      try {
-        const raw = localStorage.getItem(CHECKLIST_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : {};
-      } catch (e) {
-        console.error('Could not load checklist state', e);
-        return {};
-      }
-    }
-
-    function saveChecklistState(state) {
-      try {
-        localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        console.error('Could not save checklist state', e);
-      }
-    }
-
-    function updateChecklistProgress() {
-      const toggles = Array.from(document.querySelectorAll('.check-toggle'));
-      const total = toggles.length;
-      const done = toggles.filter(t => t.classList.contains('checked')).length;
-
-      const overall = document.getElementById('overallChecklist');
-      if (overall && total > 0) {
-        overall.textContent = `${done} von ${total} Punkten erledigt.`;
-      }
-
-      // arrival group (left card)
-      const arrivalIds = ['anmeldung-gemeinde', 'krankenversicherung', 'spanische-abmeldung'];
-      const arrivalDone = arrivalIds.filter(id => document.querySelector(`.check-toggle[data-check-id="${id}"]`)?.classList.contains('checked')).length;
-      const arrivalProgress = document.getElementById('arrivalProgress');
-      if (arrivalProgress) {
-        arrivalProgress.textContent = `${arrivalDone}/3 erledigt`;
-      }
-
-      // moving group (right card)
-      const movingIds = ['hausrat', 'auto', 'lebensmittel', 'haustiere'];
-      const movingDone = movingIds.filter(id => document.querySelector(`.check-toggle[data-check-id="${id}"]`)?.classList.contains('checked')).length;
-      const movingProgress = document.getElementById('movingProgress');
-      if (movingProgress) {
-        movingProgress.textContent = `${movingDone}/4 erledigt`;
-      }
-    }
-
+    // Immigration checklist: collapsible items
     function initChecklist() {
-      const state = loadChecklistState();
-      const toggles = document.querySelectorAll('.check-toggle');
-      toggles.forEach(btn => {
-        const id = btn.getAttribute('data-check-id');
-        if (!id) return;
-        if (state[id]) {
-          btn.classList.add('checked');
-        }
-        btn.addEventListener('click', () => {
-          btn.classList.toggle('checked');
-          const current = loadChecklistState();
-          current[id] = btn.classList.contains('checked');
-          saveChecklistState(current);
-          updateChecklistProgress();
+      const items = document.querySelectorAll('.checklist-item');
+      items.forEach(item => {
+        const title = item.querySelector('.checklist-item-main-title');
+        if (!title) return;
+        title.addEventListener('click', () => {
+          item.classList.toggle('open');
         });
       });
-      updateChecklistProgress();
     }
 
     document.addEventListener('DOMContentLoaded', initChecklist);
