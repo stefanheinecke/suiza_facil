@@ -6,6 +6,8 @@ import secrets
 import re
 from typing import Optional
 from urllib.parse import urlencode
+import smtplib
+from email.message import EmailMessage
 
 from fastapi import FastAPI, Form, Cookie, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -97,6 +99,61 @@ def is_valid_email(value: str) -> bool:
     if not value:
         return False
     return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", value))
+
+
+def send_help_request_email(step: str, message: str, from_email: Optional[str]) -> None:
+  """Send a help request email to the site owner.
+
+  Uses basic SMTP settings from environment variables if available,
+  otherwise falls back to printing the email contents to the log so
+  the request is never silently lost.
+  """
+  to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
+  subject = f"VivaSuiza help request: {step[:80] if step else 'Checklist'}"
+
+  lines = [
+      f"Step/Section: {step}",
+      f"From: {from_email or 'unknown'}",
+      "",
+      message,
+      "",
+      f"Received at: {datetime.datetime.utcnow().isoformat()} UTC",
+  ]
+  body = "\n".join(lines)
+
+  smtp_host = os.getenv("SMTP_HOST")
+  smtp_port = int(os.getenv("SMTP_PORT", "587"))
+  smtp_user = os.getenv("SMTP_USER")
+  smtp_password = os.getenv("SMTP_PASSWORD")
+  use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+
+  # If no SMTP is configured, log instead of failing hard
+  if not smtp_host or not smtp_user or not smtp_password:
+      print("[HELP-REQUEST] To:", to_address)
+      print("[HELP-REQUEST] Subject:", subject)
+      print("[HELP-REQUEST] Body:\n" + body)
+      return
+
+  msg = EmailMessage()
+  msg["Subject"] = subject
+  msg["From"] = smtp_user
+  msg["To"] = to_address
+  if from_email:
+      msg["Reply-To"] = from_email
+  msg.set_content(body)
+
+  try:
+      if use_tls:
+          with smtplib.SMTP(smtp_host, smtp_port) as server:
+              server.starttls()
+              server.login(smtp_user, smtp_password)
+              server.send_message(msg)
+      else:
+          with smtplib.SMTP(smtp_host, smtp_port) as server:
+              server.login(smtp_user, smtp_password)
+              server.send_message(msg)
+  except Exception as e:
+      print("Error sending help request email:", e)
 
 
 # List all users and their permissions (for admin UI)
@@ -341,6 +398,35 @@ def logout(response: Response, session_id: str = Cookie(None)):
             conn.close()
         # clear cookie
         response.delete_cookie("session_id", path="/")
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/help-request")
+def help_request(
+    step: str = Form(...),
+    message: str = Form(...),
+    from_email: Optional[str] = Form(None),
+    session_id: Optional[str] = Cookie(None),
+):
+    """Receive a help request from the checklist and forward it via email."""
+    try:
+        # derive email from session if not explicitly provided
+        user_email: Optional[str] = None
+        if from_email and is_valid_email(from_email):
+            user_email = from_email
+        elif session_id:
+            username = get_username_from_session(session_id)
+            if username and is_valid_email(username):
+                user_email = username
+
+        clean_step = (step or "").strip() or "checklist"
+        clean_message = (message or "").strip()
+        if not clean_message:
+            return {"error": "empty_message"}
+
+        send_help_request_email(clean_step, clean_message, user_email)
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}

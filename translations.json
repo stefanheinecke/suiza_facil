@@ -113,6 +113,11 @@
     "newsletter_error_subscribe": "Hubo un error al suscribirse. Intenta de nuevo.",
     "newsletter_error_processing": "Error al procesar tu suscripción.",
 
+    "checklist_help_btn": "¿Necesitas ayuda con este bloque?",
+    "help_sent": "Tu solicitud de ayuda ha sido enviada.",
+    "help_error_generic": "Ha ocurrido un error al enviar tu solicitud.",
+    "help_error_not_logged_in": "Inicia sesión para solicitar ayuda.",
+
     "auth_nav_login": "Entrar",
     "auth_nav_logout": "Salir",
     "auth_title": "Accede con tu cuenta",
@@ -302,6 +307,11 @@
     "newsletter_error_subscribe": "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "newsletter_error_processing": "Fehler bei der Verarbeitung deiner Anmeldung.",
 
+    "checklist_help_btn": "Brauchst du Hilfe bei diesem Block?",
+    "help_sent": "Deine Hilfeanfrage wurde gesendet.",
+    "help_error_generic": "Beim Senden deiner Anfrage ist ein Fehler aufgetreten.",
+    "help_error_not_logged_in": "Bitte logge dich ein, um Hilfe anzufordern.",
+
     "auth_nav_login": "Login",
     "auth_nav_logout": "Logout",
     "auth_title": "Melde dich mit deinem Konto an",
@@ -490,6 +500,11 @@
     "newsletter_thank_you": "Thank you for subscribing!",
     "newsletter_error_subscribe": "There was an error subscribing. Please try again.",
     "newsletter_error_processing": "Error processing your subscription.",
+
+    "checklist_help_btn": "Need help with this section?",
+    "help_sent": "Your help request has been sent.",
+    "help_error_generic": "There was an error sending your request.",
+    "help_error_not_logged_in": "Please log in to request help.",
 
     "auth_nav_login": "Login",
     "auth_nav_logout": "Logout",

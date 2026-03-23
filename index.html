@@ -702,6 +702,12 @@
       gap: 6px;
     }
 
+    .help-btn {
+      margin-top: 10px;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
     footer {
       margin-top: 40px;
       padding-top: 16px;
@@ -1232,6 +1238,8 @@
                 <li data-i18n="checklist_note2_li4">In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.</li>
               </ul>
             </div>
+
+            <button type="button" class="btn btn-secondary help-btn" data-help-context="moving" data-i18n="checklist_help_btn">Need help with this section?</button>
           </article>
 
           <!-- Linke Spalte: Verwaltung & Formalitäten -->
@@ -1291,6 +1299,8 @@
             <div class="checklist-note" data-i18n="checklist_note1">
               Tipp: Plane für Termine bei der Gemeinde und für Versicherungen frühzeitig Zeit ein – viele Stellen arbeiten nur mit Termin oder haben eingeschränkte Öffnungszeiten.
             </div>
+
+            <button type="button" class="btn btn-secondary help-btn" data-help-context="arrival" data-i18n="checklist_help_btn">Need help with this section?</button>
           </article>
 
         </div>
@@ -1560,6 +1570,38 @@
       document.cookie = 'session_id=; path=/; max-age=0';
       updateAuthUI();
     }
+    // Direct help request from checklist buttons (only for logged-in users)
+    async function sendHelpRequest(stepText, contextKey) {
+      const storedUser = localStorage.getItem('loggedInUser');
+      if (!storedUser) {
+        alert((translations[currentLanguage] && translations[currentLanguage]['help_error_not_logged_in']) || 'Please log in to request help.');
+        return;
+      }
+
+      const safeStep = (stepText || contextKey || 'checklist').trim();
+      const autoMessage = `User ${storedUser} requested help for section "${safeStep}" from the immigration checklist.`;
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append('step', safeStep);
+        formData.append('message', autoMessage);
+        const res = await fetch('/help-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          alert((translations[currentLanguage] && translations[currentLanguage]['help_sent']) || 'Your help request has been sent.');
+        } else {
+          console.error('Help request failed', data);
+          alert((translations[currentLanguage] && translations[currentLanguage]['help_error_generic']) || 'There was an error sending your request.');
+        }
+      } catch (e) {
+        console.error('Help request error', e);
+        alert((translations[currentLanguage] && translations[currentLanguage]['help_error_generic']) || 'There was an error sending your request.');
+      }
+    }
 
     function updateAuthUI() {
       const user = localStorage.getItem('loggedInUser');
@@ -1567,17 +1609,20 @@
       const usernameDisplay = document.getElementById('usernameDisplay');
       const logoutBtn = document.getElementById('logoutBtn');
       const docsSection = document.getElementById('documents');
+      const helpButtons = document.querySelectorAll('.help-btn');
       if (user) {
         authBtn.style.display = 'none';
         usernameDisplay.textContent = user;
         usernameDisplay.style.display = 'inline';
         logoutBtn.style.display = 'block';
         if (docsSection) docsSection.style.display = '';
+        helpButtons.forEach(btn => { btn.style.display = ''; });
       } else {
         authBtn.style.display = 'block';
         usernameDisplay.style.display = 'none';
         logoutBtn.style.display = 'none';
         if (docsSection) docsSection.style.display = 'none';
+        helpButtons.forEach(btn => { btn.style.display = 'none'; });
       }
     }
 
@@ -1624,7 +1669,21 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', initChecklist);
+    document.addEventListener('DOMContentLoaded', () => {
+      initChecklist();
+
+      // wire help buttons to send direct help requests
+      const helpButtons = document.querySelectorAll('.help-btn');
+      helpButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.checklist-card');
+          const titleEl = card ? card.querySelector('.checklist-card-title') : null;
+          const stepText = titleEl ? titleEl.textContent.trim() : '';
+          const ctx = btn.getAttribute('data-help-context') || '';
+          sendHelpRequest(stepText, ctx);
+        });
+      });
+    });
 
   </script>
 </body>
