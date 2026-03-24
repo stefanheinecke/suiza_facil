@@ -192,7 +192,17 @@
     "checklist_note2_li1": "Una lista de inventario detallada facilita el despacho de aduanas.",
     "checklist_note2_li2": "Si utilizas una empresa de mudanzas profesional, a menudo se encargan del trámite aduanero.",
     "checklist_note2_li3": "En mudanzas por cuenta propia vía Francia: ten a mano documento de identidad y papeles del vehículo.",
-    "checklist_note2_li4": "En Suiza, organiza con antelación citas con el municipio, aseguradoras y, en su caso, escuela/trabajo."
+    "checklist_note2_li4": "En Suiza, organiza con antelación citas con el municipio, aseguradoras y, en su caso, escuela/trabajo.",
+
+    "faq_kicker": "FAQ",
+    "faq_title": "Preguntas frecuentes sobre tu mudanza a Suiza.",
+    "faq_subtitle": "Algunas de las dudas más habituales cuando preparas tu llegada a Suiza.",
+    "faq_q1": "¿Cuánto tiempo antes debo empezar a preparar mi mudanza?",
+    "faq_a1": "Idealmente entre 3 y 6 meses antes: así puedes comparar seguros, buscar vivienda con calma y preparar la documentación para la inscripción en la comuna.",
+    "faq_q2": "¿Necesito un trabajo firmado antes de mudarme?",
+    "faq_a2": "No es obligatorio en todos los casos, pero tener una oferta de trabajo facilita el permiso de residencia, la búsqueda de vivienda y la apertura de cuentas bancarias.",
+    "faq_q3": "¿Puedo usar todavía la sanidad española después de llegar?",
+    "faq_a3": "Tras mudarte de forma permanente deberás afiliarte al sistema suizo. En algunos casos puedes usar la Tarjeta Sanitaria Europea de forma temporal, pero no sustituye al seguro suizo."
   },
   "de": {
     "pageTitle": "VivaSuiza – Dein neues Leben in der Schweiz, Schritt für Schritt",
@@ -387,7 +397,17 @@
     "checklist_note2_li1": "Eine detaillierte Inventarliste erleichtert die Zollabfertigung.",
     "checklist_note2_li2": "Bei professionellen Umzugsfirmen wird die Zollabwicklung oft übernommen.",
     "checklist_note2_li3": "Bei Selbstumzug über Frankreich: Ausweis und Fahrzeugpapiere bereithalten.",
-    "checklist_note2_li4": "In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren."
+    "checklist_note2_li4": "In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.",
+
+    "faq_kicker": "FAQ",
+    "faq_title": "Häufige Fragen zu deinem Umzug in die Schweiz.",
+    "faq_subtitle": "Einige der häufigsten Fragen, wenn du deine Ankunft in der Schweiz planst.",
+    "faq_q1": "Wie lange im Voraus sollte ich meinen Umzug planen?",
+    "faq_a1": "Ideal sind 3 bis 6 Monate: so kannst du Versicherungen vergleichen, in Ruhe nach einer Wohnung suchen und die Unterlagen für die Anmeldung bei der Gemeinde vorbereiten.",
+    "faq_q2": "Brauche ich einen unterschriebenen Arbeitsvertrag vor dem Umzug?",
+    "faq_a2": "Nicht in allen Fällen zwingend, aber ein Jobangebot erleichtert die Aufenthaltsbewilligung, die Wohnungssuche und die Eröffnung von Bankkonten.",
+    "faq_q3": "Kann ich nach der Ankunft noch das spanische Gesundheitssystem nutzen?",
+    "faq_a3": "Nach einem dauerhaften Umzug musst du dich im Schweizer System versichern. In manchen Fällen kannst du die Europäische Krankenversicherungskarte vorübergehend nutzen, sie ersetzt die Schweizer Versicherung aber nicht."
   },
   "en": {
     "pageTitle": "VivaSuiza – Your new life in Switzerland, step by step",
@@ -582,6 +602,16 @@
     "checklist_note2_li1": "A detailed inventory list makes customs clearance easier.",
     "checklist_note2_li2": "If you use a professional moving company, they often handle customs formalities.",
     "checklist_note2_li3": "If you move yourself via France: keep your ID and vehicle documents ready.",
-    "checklist_note2_li4": "In Switzerland, arrange appointments early with the municipality, insurers and, if applicable, school/work."
+    "checklist_note2_li4": "In Switzerland, arrange appointments early with the municipality, insurers and, if applicable, school/work.",
+
+    "faq_kicker": "FAQ",
+    "faq_title": "Frequently asked questions about moving to Switzerland.",
+    "faq_subtitle": "Some of the most common questions when you prepare your arrival in Switzerland.",
+    "faq_q1": "How long before should I start planning my move?",
+    "faq_a1": "Ideally 3 to 6 months in advance: this gives you time to compare insurance, look for housing calmly and prepare the documents for registration at the local commune.",
+    "faq_q2": "Do I need a signed job before moving?",
+    "faq_a2": "It's not mandatory in every case, but having a job offer makes the residence permit, housing search and opening bank accounts much easier.",
+    "faq_q3": "Can I still use Spanish healthcare after I arrive?",
+    "faq_a3": "After a permanent move you must join the Swiss system. In some cases you can use the European Health Insurance Card temporarily, but it does not replace Swiss health insurance."
   }
 }
