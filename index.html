@@ -379,6 +379,8 @@
 
     .section {
       padding: 40px 0 20px;
+      /* ensure anchored sections (e.g. FAQ) are fully visible below sticky header */
+      scroll-margin-top: 90px;
     }
 
     .section-header {
@@ -1004,7 +1006,7 @@
           </p>
           <p class="hero-slogan">“Tu nueva vida en Suiza, paso a paso.”</p>
           <div class="hero-cta">
-            <button class="btn btn-primary" onclick="scrollToSection('pricing')">
+            <button class="btn btn-primary" onclick="scrollToSection('arrival-checklist')">
               <span data-i18n="hero_btn_start">Empieza ahora</span>
               <span>→</span>
             </button>
