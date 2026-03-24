@@ -101,59 +101,64 @@ def is_valid_email(value: str) -> bool:
     return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", value))
 
 
-def send_help_request_email(step: str, message: str, from_email: Optional[str]) -> None:
-  """Send a help request email to the site owner.
+def send_help_request_email(step: str, message: str, from_email: Optional[str]) -> bool:
+    """Send a help request email to the site owner.
 
-  Uses basic SMTP settings from environment variables if available,
-  otherwise falls back to printing the email contents to the log so
-  the request is never silently lost.
-  """
-  to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
-  subject = f"VivaSuiza help request: {step[:80] if step else 'Checklist'}"
+    Returns True if the email was sent via SMTP, False otherwise.
+    If SMTP is not configured or the network is unreachable, logs
+    the email contents and returns False so callers can surface an
+    error to the user instead of pretending success.
+    """
+    to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
+    subject = f"VivaSuiza help request: {step[:80] if step else 'Checklist'}"
 
-  lines = [
-      f"Step/Section: {step}",
-      f"From: {from_email or 'unknown'}",
-      "",
-      message,
-      "",
-      f"Received at: {datetime.datetime.utcnow().isoformat()} UTC",
-  ]
-  body = "\n".join(lines)
+    lines = [
+        f"Step/Section: {step}",
+        f"From: {from_email or 'unknown'}",
+        "",
+        message,
+        "",
+        f"Received at: {datetime.datetime.utcnow().isoformat()} UTC",
+    ]
+    body = "\n".join(lines)
 
-  smtp_host = os.getenv("SMTP_HOST")
-  smtp_port = int(os.getenv("SMTP_PORT", "587"))
-  smtp_user = os.getenv("SMTP_USER")
-  smtp_password = os.getenv("SMTP_PASSWORD")
-  use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    smtp_host = os.getenv("SMTP_HOST")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_password = os.getenv("SMTP_PASSWORD")
+    use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
 
-  # If no SMTP is configured, log instead of failing hard
-  if not smtp_host or not smtp_user or not smtp_password:
-      print("[HELP-REQUEST] To:", to_address)
-      print("[HELP-REQUEST] Subject:", subject)
-      print("[HELP-REQUEST] Body:\n" + body)
-      return
+    # If no SMTP is configured, log instead of failing hard, but report failure
+    if not smtp_host or not smtp_user or not smtp_password:
+        print("[HELP-REQUEST] SMTP not configured; logging only.")
+        print("[HELP-REQUEST] To:", to_address)
+        print("[HELP-REQUEST] Subject:", subject)
+        print("[HELP-REQUEST] Body:\n" + body)
+        return False
 
-  msg = EmailMessage()
-  msg["Subject"] = subject
-  msg["From"] = smtp_user
-  msg["To"] = to_address
-  if from_email:
-      msg["Reply-To"] = from_email
-  msg.set_content(body)
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = smtp_user
+    msg["To"] = to_address
+    if from_email:
+        msg["Reply-To"] = from_email
+    msg.set_content(body)
 
-  try:
-      if use_tls:
-          with smtplib.SMTP(smtp_host, smtp_port) as server:
-              server.starttls()
-              server.login(smtp_user, smtp_password)
-              server.send_message(msg)
-      else:
-          with smtplib.SMTP(smtp_host, smtp_port) as server:
-              server.login(smtp_user, smtp_password)
-              server.send_message(msg)
-  except Exception as e:
-      print("Error sending help request email:", e)
+    try:
+        # Use an explicit timeout so failures don't hang for minutes
+        if use_tls:
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                server.login(smtp_user, smtp_password)
+                server.send_message(msg)
+        return True
+    except Exception as e:
+        print("Error sending help request email:", e)
+        return False
 
 
 # List all users and their permissions (for admin UI)
@@ -426,7 +431,10 @@ def help_request(
         if not clean_message:
             return {"error": "empty_message"}
 
-        send_help_request_email(clean_step, clean_message, user_email)
+        sent = send_help_request_email(clean_step, clean_message, user_email)
+        if not sent:
+            # surface an explicit error so the frontend can show a proper message
+            return {"error": "email_send_failed"}
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
