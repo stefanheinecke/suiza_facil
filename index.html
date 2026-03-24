@@ -57,6 +57,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 0 24px;
+      gap: 10px;
     }
 
     .logo {
@@ -121,6 +122,16 @@
 
     nav a:hover::after {
       width: 100%;
+    }
+
+    .nav-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px 6px;
     }
 
     .language-switcher {
@@ -727,13 +738,30 @@
 
     @media (max-width: 800px) {
       header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: center;
+      }
+
+      .nav-toggle {
+        display: block;
+        margin-left: auto;
       }
 
       nav {
-        flex-wrap: wrap;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      nav.open {
+        display: flex;
+      }
+
+      .language-switcher {
+        margin-left: 0;
+        margin-top: 4px;
       }
 
       .hero {
@@ -877,10 +905,12 @@
           <div class="logo-text-sub" data-i18n="logo_text_sub">Tu nueva vida en Suiza, paso a paso.</div>
         </div>
       </div>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
         <a href="#problema" data-i18n="nav_problem">Problema</a>
         <a href="#solucion" data-i18n="nav_solution">Solución</a>
         <a href="#features" data-i18n="nav_platform">Plataforma</a>
+        <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a>
         <a href="#pricing" data-i18n="nav_pricing">Precios</a>
         <a href="#founder" data-i18n="nav_about">Quién soy</a>
         <div class="language-switcher">
@@ -1624,6 +1654,13 @@
         if (docsSection) docsSection.style.display = 'none';
         helpButtons.forEach(btn => { btn.style.display = 'none'; });
       }
+    }
+
+    // Mobile nav toggle (hamburger)
+    function toggleNav() {
+      const nav = document.querySelector('header nav');
+      if (!nav) return;
+      nav.classList.toggle('open');
     }
 
     // Set year in footer
