@@ -97,11 +97,15 @@
     }
 
     nav {
-      display: flex;
+      display: none;
       gap: 18px;
       font-size: 14px;
       color: var(--muted);
       align-items: center;
+    }
+
+    nav.open {
+      display: flex;
     }
 
     nav a {
@@ -125,7 +129,7 @@
     }
 
     .nav-toggle {
-      display: none;
+      display: block;
       background: transparent;
       border: none;
       font-size: 22px;
@@ -739,24 +743,19 @@
     @media (max-width: 800px) {
       header {
         align-items: center;
+        flex-wrap: wrap;
       }
 
       .nav-toggle {
-        display: block;
-        margin-left: auto;
+        margin-left: 8px;
       }
 
       nav {
-        display: none;
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
         width: 100%;
         margin-top: 8px;
-      }
-
-      nav.open {
-        display: flex;
       }
 
       .language-switcher {
@@ -905,6 +904,16 @@
           <div class="logo-text-sub" data-i18n="logo_text_sub">Tu nueva vida en Suiza, paso a paso.</div>
         </div>
       </div>
+      <div class="language-switcher">
+        <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
+        <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
+        <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+        <div id="authContainer" style="display:flex;gap:8px;align-items:center;">
+          <button class="lang-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
+          <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
+          <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
+        </div>
+      </div>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
         <a href="#problema" data-i18n="nav_problem">Problema</a>
@@ -913,16 +922,6 @@
         <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a>
         <a href="#pricing" data-i18n="nav_pricing">Precios</a>
         <a href="#founder" data-i18n="nav_about">Quién soy</a>
-        <div class="language-switcher">
-          <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
-          <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
-          <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
-          <div id="authContainer" style="display:flex;gap:8px;align-items:center;">
-            <button class="lang-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
-            <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
-            <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
-          </div>
-        </div>
       </nav>
     </header>
 
