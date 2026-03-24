@@ -102,12 +102,11 @@ def is_valid_email(value: str) -> bool:
 
 
 def send_help_request_email(step: str, message: str, from_email: Optional[str]) -> bool:
-    """Send a help request email to the site owner.
+    """Send a help request email to the site owner using an HTTP API.
 
-    Returns True if the email was sent via SMTP, False otherwise.
-    If SMTP is not configured or the network is unreachable, logs
-    the email contents and returns False so callers can surface an
-    error to the user instead of pretending success.
+    This implementation is designed for providers like Resend that expose
+    a simple JSON HTTP endpoint. Returns True if the provider accepted
+    the email, False otherwise.
     """
     to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
     subject = f"VivaSuiza help request: {step[:80] if step else 'Checklist'}"
@@ -122,42 +121,37 @@ def send_help_request_email(step: str, message: str, from_email: Optional[str]) 
     ]
     body = "\n".join(lines)
 
-    smtp_host = os.getenv("SMTP_HOST")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_password = os.getenv("SMTP_PASSWORD")
-    use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    api_key = os.getenv("RESEND_API_KEY")
+    from_address = os.getenv("RESEND_FROM_EMAIL", to_address)
 
-    # If no SMTP is configured, log instead of failing hard, but report failure
-    if not smtp_host or not smtp_user or not smtp_password:
-        print("[HELP-REQUEST] SMTP not configured; logging only.")
+    if not api_key or not from_address:
+        print("[HELP-REQUEST] Email HTTP API not configured; logging only.")
         print("[HELP-REQUEST] To:", to_address)
         print("[HELP-REQUEST] Subject:", subject)
         print("[HELP-REQUEST] Body:\n" + body)
         return False
 
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = smtp_user
-    msg["To"] = to_address
-    if from_email:
-        msg["Reply-To"] = from_email
-    msg.set_content(body)
-
     try:
-        # Use an explicit timeout so failures don't hang for minutes
-        if use_tls:
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
-        else:
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
-        return True
+        resp = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": from_address,
+                "to": [to_address],
+                "subject": subject,
+                "text": body,
+            },
+            timeout=10,
+        )
+        if 200 <= resp.status_code < 300:
+            return True
+        print("Error sending help request via HTTP API:", resp.status_code, resp.text)
+        return False
     except Exception as e:
-        print("Error sending help request email:", e)
+        print("Error sending help request via HTTP API:", e)
         return False
 
 
