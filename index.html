@@ -217,6 +217,35 @@
       margin-bottom: 18px;
     }
 
+    .hero-questions {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 18px;
+    }
+
+    .hero-questions li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .hero-questions li span.q-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(230, 57, 70, 0.08);
+      color: var(--red);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
     .hero-slogan {
       font-style: italic;
       color: var(--red);
@@ -1004,6 +1033,20 @@
           <p class="hero-subtitle" data-i18n="hero_subtitle">
             Información clara, herramientas inteligentes y acompañamiento personal para que no te pierdas en el laberinto de trámites, seguros y vivienda.
           </p>
+          <ul class="hero-questions">
+            <li>
+              <span class="q-icon">?</span>
+              <span data-i18n="hero_q1">¿Te gustaría cobrar de forma justa por tu trabajo?</span>
+            </li>
+            <li>
+              <span class="q-icon">?</span>
+              <span data-i18n="hero_q2">¿Has pensado alguna vez en trabajar en Suiza?</span>
+            </li>
+            <li>
+              <span class="q-icon">?</span>
+              <span data-i18n="hero_q3">¿Te frenan la burocracia, el idioma o no saber por dónde empezar?</span>
+            </li>
+          </ul>
           <p class="hero-slogan">“Tu nueva vida en Suiza, paso a paso.”</p>
           <div class="hero-cta">
             <button class="btn btn-primary" onclick="scrollToSection('arrival-checklist')">
@@ -1181,9 +1224,6 @@
             <p class="founder-note" data-i18n="founder_text_3">
               Hablo español, alemán e inglés. Puedo ser tu puente entre lo que conoces y lo que te espera en Suiza.
             </p>
-          </div>
-          <div class="founder-photo">
-            <span>SF</span>
           </div>
         </div>
       </section>
