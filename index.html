@@ -184,10 +184,11 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 32px;
       align-items: center;
       padding: 24px 0 40px;
+      max-width: 720px;
     }
 
     .hero-badge {
@@ -212,45 +213,59 @@
     }
 
     .hero-subtitle {
-      font-size: 18px;
+      font-size: 16px;
       color: var(--muted);
-      margin-bottom: 18px;
+      margin-bottom: 24px;
     }
 
     .hero-questions {
       list-style: none;
       padding-left: 0;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
     }
 
     .hero-questions li {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      font-size: 14px;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 600;
       color: var(--blue);
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
 
     .hero-questions li span.q-icon {
-      width: 18px;
-      height: 18px;
+      width: 26px;
+      height: 26px;
       border-radius: 999px;
-      background: rgba(230, 57, 70, 0.08);
+      background: rgba(230, 57, 70, 0.1);
       color: var(--red);
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      margin-top: 2px;
+      font-size: 14px;
+      margin-top: 1px;
+      flex-shrink: 0;
     }
 
-    .hero-slogan {
-      font-style: italic;
-      color: var(--red);
-      font-weight: 600;
-      margin-bottom: 20px;
+    .hero-henley {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(29, 53, 87, 0.06);
+      border-left: 3px solid var(--blue);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--blue);
+      line-height: 1.5;
+    }
+
+    .hero-henley-badge {
+      font-size: 22px;
+      flex-shrink: 0;
     }
 
     .hero-cta {
@@ -863,10 +878,6 @@
         grid-template-columns: minmax(0, 1fr);
       }
 
-      .hero-visual {
-        order: -1;
-      }
-
       .grid-3,
       .pricing-grid,
       .grid-2,
@@ -1031,7 +1042,7 @@
           </div>
           <h1 class="hero-title" data-i18n="hero_title">La forma más fácil de empezar tu vida en Suiza.</h1>
           <p class="hero-subtitle" data-i18n="hero_subtitle">
-            Información clara, herramientas inteligentes y acompañamiento personal para que no te pierdas en el laberinto de trámites, seguros y vivienda.
+            Tu guía en español para trámites, seguros y vivienda.
           </p>
           <ul class="hero-questions">
             <li>
@@ -1047,7 +1058,13 @@
               <span data-i18n="hero_q3">¿Te frenan la burocracia, el idioma o no saber por dónde empezar?</span>
             </li>
           </ul>
-          <p class="hero-slogan">“Tu nueva vida en Suiza, paso a paso.”</p>
+          <div class="hero-henley">
+            <span class="hero-henley-badge">🏆</span>
+            <div>
+              <strong data-i18n="hero_henley_title">Suiza #1 en el Henley Opportunity Index 2026</strong>
+              <span data-i18n="hero_henley_desc"> — El mejor país del mundo en oportunidades de educación, inversión y calidad de vida.</span>
+            </div>
+          </div>
           <div class="hero-cta">
             <button class="btn btn-primary" onclick="scrollToSection('arrival-checklist')">
               <span data-i18n="hero_btn_start">Empieza ahora</span>
@@ -1060,47 +1077,6 @@
           <p class="hero-meta" data-i18n="hero_meta">
             Guías en español · Basado en 17 años de experiencia real en Suiza · Pensado para ti
           </p>
-        </div>
-        <div class="hero-visual">
-          <div class="hero-visual-flag-row">
-            <div class="flag-pill">
-              <div class="flag flag-es"></div>
-              <span data-i18n="hero_from_spain">Desde España</span>
-            </div>
-            <div class="flag-pill">
-              <div class="flag flag-ch"></div>
-              <span data-i18n="hero_to_switzerland">Hacia Suiza</span>
-            </div>
-          </div>
-          <div class="hero-card">
-            <div class="hero-card-title" data-i18n="hero_card_title">¿Listo para mudarte a Suiza?</div>
-            <ul class="hero-card-list">
-              <li>
-                <span>✓</span>
-                <div data-i18n="hero_card_1">Checklist completa de llegada: empadronamiento, seguro médico, cuenta bancaria y más.</div>
-              </li>
-              <li>
-                <span>✓</span>
-                <div data-i18n="hero_card_2">Calcula tu salario neto y entiende tus deducciones antes de aceptar una oferta.</div>
-              </li>
-              <li>
-                <span>✓</span>
-                <div data-i18n="hero_card_3">Plantillas de emails y documentos para buscar piso, trabajo y hacer trámites.</div>
-              </li>
-            </ul>
-            <div class="hero-tagline" data-i18n="hero_tagline">
-              Todo explicado en español, con ejemplos reales y sin tecnicismos innecesarios.
-            </div>
-          </div>
-          <div class="hero-card" style="background:#1d3557;color:#ffffff;">
-            <div class="hero-card-title" style="color:#ffffff;" data-i18n="hero_advisory_title">Asesoría 1:1</div>
-            <div style="font-size:13px;margin-bottom:6px;" data-i18n="hero_advisory_desc">
-              ¿Quieres que revisemos juntos tu situación? Reserva una sesión personalizada.
-            </div>
-            <div style="font-size:12px;opacity:0.9;" data-i18n="hero_advisory_topics">
-              Trámites · Trabajo · Vivienda · Seguros · Impuestos
-            </div>
-          </div>
         </div>
       </section>
 
@@ -1404,7 +1380,7 @@
                     Para que tomen en serio tu solicitud de alquiler, prepara de antemano tu documentación más importante.
                   </div>
                   <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item8_li1"></li>
+                    <li data-i18n="checklist_item8_li1">Pasaporte o DNI vigente.</li>
                     <li data-i18n="checklist_item8_li2">Contrato de trabajo u ofertas por escrito (si ya las tienes).</li>
                     <li data-i18n="checklist_item8_li3">Resumen de ingresos aproximados y referencias de antiguos propietarios si las tienes.</li>
                   </ul>
