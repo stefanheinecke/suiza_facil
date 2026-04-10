@@ -182,6 +182,108 @@
       border-color: var(--red);
     }
 
+    /* Search */
+    .search-wrapper {
+      position: relative;
+      margin-left: auto;
+    }
+
+    .search-input {
+      padding: 6px 10px 6px 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: var(--white);
+      font-size: 13px;
+      width: 180px;
+      transition: width 0.2s ease, border-color 0.2s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--red);
+      width: 240px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-results {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      min-width: 280px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+      max-height: 320px;
+      overflow-y: auto;
+      display: none;
+      z-index: 50;
+    }
+
+    .search-results.open {
+      display: block;
+    }
+
+    .search-result-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      transition: background 0.1s;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-item:hover {
+      background: rgba(230,57,70,0.06);
+    }
+
+    .search-result-section {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--red);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .search-result-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue);
+    }
+
+    .search-result-snippet {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .search-result-snippet mark {
+      background: rgba(244,211,94,0.5);
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    .search-no-results {
+      padding: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -488,7 +590,36 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      margin-bottom: 0;
+      cursor: pointer;
+      position: relative;
+      padding-right: 24px;
+    }
+
+    .checklist-card-header::after {
+      content: "+";
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--red);
+    }
+
+    .checklist-card.open .checklist-card-header {
       margin-bottom: 10px;
+    }
+
+    .checklist-card.open .checklist-card-header::after {
+      content: "\2013";
+    }
+
+    .checklist-card-body {
+      display: none;
+    }
+
+    .checklist-card.open .checklist-card-body {
+      display: block;
     }
 
     .checklist-step-label {
@@ -874,6 +1005,26 @@
         margin-top: 4px;
       }
 
+      .search-wrapper {
+        order: 10;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 4px;
+      }
+
+      .search-input {
+        width: 100%;
+      }
+
+      .search-input:focus {
+        width: 100%;
+      }
+
+      .search-results {
+        min-width: 0;
+        width: 100%;
+      }
+
       .hero {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -1022,13 +1173,15 @@
           <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
         </div>
       </div>
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="siteSearch" data-i18n-placeholder="search_placeholder" placeholder="Buscar..." autocomplete="off" />
+        <div class="search-results" id="searchResults"></div>
+      </div>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
-        <a href="#problema" data-i18n="nav_problem">Problema</a>
-        <a href="#solucion" data-i18n="nav_solution">Solución</a>
         <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a>
         <a href="#faq" data-i18n="nav_faq">FAQ</a>
-        <a href="#founder" data-i18n="nav_about">Quién soy</a>
       </nav>
     </header>
 
@@ -1080,71 +1233,6 @@
         </div>
       </section>
 
-      <!-- PROBLEM -->
-      <section id="problema" class="section">
-        <div class="section-header">
-          <div class="section-kicker" data-i18n="problem_kicker">El problema</div>
-          <h2 class="section-title" data-i18n="problem_title">Mudarse a Suiza es una oportunidad… pero también un laberinto.</h2>
-          <p class="section-subtitle" data-i18n="problem_subtitle">
-            Trámites en alemán, sistemas que no conoces, reglas distintas en cada cantón. La información existe, pero está dispersa, incompleta o solo en alemán/francés.
-          </p>
-        </div>
-        <div class="grid-3">
-          <div class="card">
-            <div class="card-title" data-i18n="problem_card_1_title">Burocracia compleja</div>
-            <p data-i18n="problem_card_1_text">
-              Formularios, plazos, permisos, registros… y casi todo en alemán o francés. Un error puede costarte tiempo y dinero.
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title" data-i18n="problem_card_2_title">Seguro médico e impuestos</div>
-            <p data-i18n="problem_card_2_text">
-              El sistema suizo es muy diferente al español. Es fácil pagar de más o elegir opciones que no te convienen.
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title" data-i18n="problem_card_3_title">Vivienda y trabajo</div>
-            <p data-i18n="problem_card_3_text">
-              Mercados competitivos, requisitos estrictos y expectativas culturales distintas. Sin guía, es fácil frustrarse.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- SOLUTION -->
-      <section id="solucion" class="section">
-        <div class="section-header">
-          <div class="section-kicker" data-i18n="solution_kicker">La solución</div>
-          <h2 class="section-title" data-i18n="solution_title">VivaSuiza: todo lo que necesitas, en un solo lugar.</h2>
-          <p class="section-subtitle" data-i18n="solution_subtitle">
-            Una plataforma pensada específicamente para españoles que quieren vivir y trabajar en Suiza: información clara, herramientas prácticas y acompañamiento real.
-          </p>
-        </div>
-        <div class="grid-3">
-          <div class="card">
-            <div class="card-tag" data-i18n="solution_card_1_tag">01</div>
-            <div class="card-title" data-i18n="solution_card_1_title">Guías paso a paso</div>
-            <p data-i18n="solution_card_1_text">
-              Desde el primer día hasta tu primera declaración de impuestos. Explicado en español, con ejemplos y checklists descargables.
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-tag" data-i18n="solution_card_2_tag">02</div>
-            <div class="card-title" data-i18n="solution_card_2_title">Herramientas inteligentes</div>
-            <p data-i18n="solution_card_2_text">
-              Calculadoras, comparadores y generadores de documentos para que tomes decisiones con datos, no con suposiciones.
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-tag" data-i18n="solution_card_3_tag">03</div>
-            <div class="card-title" data-i18n="solution_card_3_title">Acompañamiento personal</div>
-            <p data-i18n="solution_card_3_text">
-              Asesoría 1:1, revisión de documentos y ayuda con formularios. No estás solo: caminamos contigo.
-            </p>
-          </div>
-        </div>
-      </section>
-
 
       <!-- FAQ -->
       <section id="faq" class="section">
@@ -1180,30 +1268,6 @@
         </div>
       </section>
 
-      <!-- FOUNDER -->
-      <section id="founder" class="section">
-        <div class="section-header">
-          <div class="section-kicker" data-i18n="founder_kicker">Quién está detrás</div>
-          <h2 class="section-title" data-i18n="founder_title">Hola, soy Stefan.</h2>
-          <p class="section-subtitle" data-i18n="founder_subtitle">
-            Economista, desarrollador de software y viviendo en Suiza desde hace 17 años. Conozco este país desde dentro: como extranjero, como profesional y como padre de familia.
-          </p>
-        </div>
-        <div class="founder">
-          <div>
-            <p data-i18n="founder_text_1">
-              He visto a muchos españoles llegar con ilusión… y perder tiempo, dinero y energía por falta de información clara y acompañamiento.
-            </p>
-            <p style="margin-top:8px;" data-i18n="founder_text_2">
-              Por eso he creado VivaSuiza: para que tengas en un solo lugar lo que a mí me costó años aprender. Mi objetivo es que tomes decisiones informadas, sin miedo y sin sorpresas desagradables.
-            </p>
-            <p class="founder-note" data-i18n="founder_text_3">
-              Hablo español, alemán e inglés. Puedo ser tu puente entre lo que conoces y lo que te espera en Suiza.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <!-- IMMIGRATION CHECKLIST -->
       <section id="arrival-checklist" class="section checklist-section">
         <div class="section-header">
@@ -1228,6 +1292,7 @@
               </div>
             </div>
 
+            <div class="checklist-card-body">
             <ul class="checklist-items">
               <li class="checklist-item">
                 <div>
@@ -1297,6 +1362,7 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="moving" data-i18n="checklist_help_btn">Need help with this section?</button>
+            </div>
           </article>
 
           <!-- Linke Spalte: Verwaltung & Formalitäten -->
@@ -1311,6 +1377,7 @@
               </div>
             </div>
 
+            <div class="checklist-card-body">
             <ul class="checklist-items">
               <li class="checklist-item">
                 <div>
@@ -1358,6 +1425,7 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="arrival" data-i18n="checklist_help_btn">Need help with this section?</button>
+            </div>
           </article>
 
           <!-- Wohnung & Jobs -->
@@ -1372,6 +1440,7 @@
               </div>
             </div>
 
+            <div class="checklist-card-body">
             <ul class="checklist-items">
               <li class="checklist-item">
                 <div>
@@ -1447,6 +1516,7 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="housing_jobs" data-i18n="checklist_help_btn">Need help with this section?</button>
+            </div>
           </article>
 
           <!-- Krankenversicherung & Steuern -->
@@ -1461,6 +1531,7 @@
               </div>
             </div>
 
+            <div class="checklist-card-body">
             <ul class="checklist-items">
               <li class="checklist-item">
                 <div>
@@ -1509,6 +1580,7 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="insurance_taxes" data-i18n="checklist_help_btn">Need help with this section?</button>
+            </div>
           </article>
 
         </div>
@@ -1560,8 +1632,8 @@
     <footer>
       <div>© <span id="year"></span> VivaSuiza. <span data-i18n="footer_copyright">Todos los derechos reservados.</span></div>
       <div>
-        <a href="#founder" data-i18n="footer_contact">Contacto</a> ·
-        <a href="#problema" data-i18n="footer_how">Cómo funciona</a>
+        <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a> ·
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
       </div>
     </footer>
   </div>
@@ -1873,6 +1945,16 @@
 
     // Immigration checklist: collapsible items
     function initChecklist() {
+      // card-level collapse
+      const cards = document.querySelectorAll('.checklist-card');
+      cards.forEach(card => {
+        const header = card.querySelector('.checklist-card-header');
+        if (!header) return;
+        header.addEventListener('click', () => {
+          card.classList.toggle('open');
+        });
+      });
+      // item-level collapse
       const items = document.querySelectorAll('.checklist-item');
       items.forEach(item => {
         const title = item.querySelector('.checklist-item-main-title');
@@ -1895,9 +1977,156 @@
       });
     }
 
+    // Site search
+    function initSearch() {
+      const input = document.getElementById('siteSearch');
+      const resultsBox = document.getElementById('searchResults');
+      if (!input || !resultsBox) return;
+
+      function buildIndex() {
+        const entries = [];
+        // Sections to index: each section with an id
+        const sections = document.querySelectorAll('section.section, section.hero');
+        sections.forEach(sec => {
+          const sectionId = sec.id || sec.className;
+          const kicker = sec.querySelector('.section-kicker');
+          const sectionLabel = kicker ? kicker.textContent.trim() : (sec.querySelector('.hero-title') ? 'Hero' : sectionId);
+
+          // Index cards, FAQ items, checklist items, and general content
+          const indexables = sec.querySelectorAll('.card, .faq-item, .checklist-item, .hero-questions li, .hero-henley, .section-header');
+          if (indexables.length === 0) {
+            // index the whole section text
+            const text = sec.textContent.replace(/\s+/g, ' ').trim();
+            if (text.length > 10) {
+              entries.push({ section: sectionLabel, sectionId: sec.id, title: sectionLabel, text: text, el: sec });
+            }
+            return;
+          }
+
+          indexables.forEach(block => {
+            const titleEl = block.querySelector('.card-title, .faq-question, .checklist-item-main-title, .checklist-card-title, .section-title');
+            const title = titleEl ? titleEl.textContent.trim() : '';
+            const text = block.textContent.replace(/\s+/g, ' ').trim();
+            const target = block.closest('.checklist-card') || block.closest('.faq-item') || block.closest('section');
+            entries.push({ section: sectionLabel, sectionId: sec.id, title: title || sectionLabel, text: text, el: target || sec });
+          });
+        });
+        return entries;
+      }
+
+      let searchIndex = [];
+      // Rebuild index after translations load (small delay)
+      setTimeout(() => { searchIndex = buildIndex(); }, 1500);
+      // Also rebuild on language change
+      const origChangeLang = window.changeLanguage;
+      window.changeLanguage = function(lang) {
+        origChangeLang(lang);
+        setTimeout(() => { searchIndex = buildIndex(); }, 300);
+      };
+
+      function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      function snippet(text, query, maxLen) {
+        maxLen = maxLen || 120;
+        const lower = text.toLowerCase();
+        const qi = lower.indexOf(query.toLowerCase());
+        let start = Math.max(0, qi - 40);
+        let end = Math.min(text.length, start + maxLen);
+        let s = text.slice(start, end);
+        if (start > 0) s = '…' + s;
+        if (end < text.length) s = s + '…';
+        // highlight match
+        const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        s = escapeHtml(s).replace(regex, '<mark>$1</mark>');
+        return s;
+      }
+
+      let debounceTimer;
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => doSearch(), 200);
+      });
+
+      function doSearch() {
+        const q = input.value.trim();
+        if (q.length < 2) {
+          resultsBox.classList.remove('open');
+          resultsBox.innerHTML = '';
+          return;
+        }
+        const lower = q.toLowerCase();
+        const seen = new Set();
+        const matches = [];
+        for (const entry of searchIndex) {
+          if (entry.text.toLowerCase().includes(lower)) {
+            // dedupe by element
+            const key = entry.title + '|' + entry.sectionId;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            matches.push(entry);
+            if (matches.length >= 8) break;
+          }
+        }
+
+        if (matches.length === 0) {
+          const noResText = (translations[currentLanguage] && translations[currentLanguage]['search_no_results']) || 'No se encontraron resultados.';
+          resultsBox.innerHTML = '<div class="search-no-results">' + escapeHtml(noResText) + '</div>';
+          resultsBox.classList.add('open');
+          return;
+        }
+
+        let html = '';
+        for (const m of matches) {
+          html += '<div class="search-result-item" data-search-idx="' + searchIndex.indexOf(m) + '">';
+          html += '<div class="search-result-section">' + escapeHtml(m.section) + '</div>';
+          html += '<div class="search-result-title">' + escapeHtml(m.title) + '</div>';
+          html += '<div class="search-result-snippet">' + snippet(m.text, q) + '</div>';
+          html += '</div>';
+        }
+        resultsBox.innerHTML = html;
+        resultsBox.classList.add('open');
+
+        // click handlers
+        resultsBox.querySelectorAll('.search-result-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const idx = parseInt(item.getAttribute('data-search-idx'), 10);
+            const entry = searchIndex[idx];
+            if (!entry) return;
+            // expand card/faq if collapsed
+            const card = entry.el.closest('.checklist-card');
+            if (card && !card.classList.contains('open')) card.classList.add('open');
+            const faqItem = entry.el.closest('.faq-item');
+            if (faqItem && !faqItem.classList.contains('open')) faqItem.classList.add('open');
+            const checkItem = entry.el.closest('.checklist-item');
+            if (checkItem && !checkItem.classList.contains('open')) checkItem.classList.add('open');
+            // scroll
+            entry.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // brief highlight
+            entry.el.style.outline = '2px solid var(--red)';
+            entry.el.style.outlineOffset = '4px';
+            entry.el.style.borderRadius = '8px';
+            setTimeout(() => { entry.el.style.outline = ''; entry.el.style.outlineOffset = ''; }, 2000);
+            // close search
+            resultsBox.classList.remove('open');
+            input.value = '';
+          });
+        });
+      }
+
+      // close on click outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrapper')) {
+          resultsBox.classList.remove('open');
+        }
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initChecklist();
       initFAQ();
+      initSearch();
 
       // wire help buttons to send direct help requests
       const helpButtons = document.querySelectorAll('.help-btn');
