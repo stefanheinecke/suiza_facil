@@ -1151,6 +1151,214 @@
       justify-content: flex-end;
       margin-top: 10px;
     }
+
+    /* Chat widget */
+    .chat-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(230,57,70,0.4);
+      z-index: 900;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chat-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 28px rgba(230,57,70,0.5);
+    }
+
+    .chat-fab.has-panel {
+      display: none;
+    }
+
+    .chat-panel {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 370px;
+      max-height: 520px;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(15,23,42,0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 901;
+      overflow: hidden;
+    }
+
+    .chat-panel.open {
+      display: flex;
+    }
+
+    .chat-panel-header {
+      background: var(--blue);
+      color: var(--white);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chat-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-panel-close {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 2px 6px;
+      opacity: 0.8;
+    }
+
+    .chat-panel-close:hover {
+      opacity: 1;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 200px;
+      max-height: 340px;
+    }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-msg.bot {
+      background: rgba(29,53,87,0.06);
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.user {
+      background: var(--red);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg a {
+      color: var(--blue);
+      text-decoration: underline;
+    }
+
+    .chat-msg.bot a {
+      font-weight: 600;
+    }
+
+    .chat-send-email-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--red);
+      background: transparent;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .chat-send-email-btn:hover {
+      background: rgba(230,57,70,0.08);
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px 14px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid rgba(148,163,184,0.5);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--red);
+    }
+
+    .chat-send-btn {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-send-btn:hover {
+      background: #c5303b;
+    }
+
+    .chat-typing {
+      display: inline-block;
+      animation: chatTyping 1.2s ease-in-out infinite;
+    }
+
+    @keyframes chatTyping {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 480px) {
+      .chat-panel {
+        width: calc(100vw - 24px);
+        right: 12px;
+        bottom: 12px;
+        max-height: 70vh;
+      }
+
+      .chat-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1663,6 +1871,23 @@
     </div>
   </div>
 
+  <!-- Chat widget -->
+  <button class="chat-fab" id="chatFab" aria-label="Open chat">💬</button>
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-panel-header">
+      <div class="chat-panel-title">
+        <span>💬</span>
+        <span>VivaSuiza Asistente</span>
+      </div>
+      <button class="chat-panel-close" id="chatClose" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" data-i18n-placeholder="chat_placeholder" placeholder="Escribe tu pregunta..." autocomplete="off" />
+      <button class="chat-send-btn" id="chatSend" aria-label="Send">→</button>
+    </div>
+  </div>
+
   <script>
     // hide content until translations load
     document.documentElement.style.visibility = 'hidden';
@@ -2122,10 +2347,257 @@
       });
     }
 
+    // Chat widget
+    function initChat() {
+      const fab = document.getElementById('chatFab');
+      const panel = document.getElementById('chatPanel');
+      const closeBtn = document.getElementById('chatClose');
+      const input = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('chatSend');
+      const messagesEl = document.getElementById('chatMessages');
+      if (!fab || !panel) return;
+
+      let chatIndex = [];
+      let lastQuestion = '';
+      let chatHistory = [];
+
+      function buildChatIndex() {
+        const entries = [];
+        const sections = document.querySelectorAll('section.section, section.hero');
+        sections.forEach(sec => {
+          const kicker = sec.querySelector('.section-kicker');
+          const sectionLabel = kicker ? kicker.textContent.trim() : (sec.querySelector('.hero-title') ? 'Hero' : (sec.id || ''));
+
+          // Index each meaningful block
+          const blocks = sec.querySelectorAll('.checklist-item, .faq-item, .card, .hero-questions li, .hero-henley, .newsletter');
+          blocks.forEach(block => {
+            const titleEl = block.querySelector('.checklist-item-main-title, .faq-question, .card-title, .checklist-card-title, .newsletter-title');
+            const title = titleEl ? titleEl.textContent.trim() : '';
+            const text = block.textContent.replace(/\s+/g, ' ').trim();
+            if (text.length < 15) return;
+            entries.push({ section: sectionLabel, title: title, text: text, el: block });
+          });
+
+          // Also index section headers
+          const header = sec.querySelector('.section-header');
+          if (header) {
+            const titleEl = header.querySelector('.section-title');
+            const text = header.textContent.replace(/\s+/g, ' ').trim();
+            if (text.length > 15) {
+              entries.push({ section: sectionLabel, title: titleEl ? titleEl.textContent.trim() : sectionLabel, text: text, el: sec });
+            }
+          }
+        });
+        return entries;
+      }
+
+      // Build index after translations settle
+      setTimeout(() => { chatIndex = buildChatIndex(); }, 2000);
+      const origCL = window.changeLanguage;
+      const origCLChat = window.changeLanguage;
+      // only patch once (search may have patched already)
+      if (!window._chatPatched) {
+        const prev = window.changeLanguage;
+        window.changeLanguage = function(lang) {
+          prev(lang);
+          setTimeout(() => { chatIndex = buildChatIndex(); }, 400);
+        };
+        window._chatPatched = true;
+      }
+
+      function t(key, fallback) {
+        return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
+      }
+
+      function addMsg(text, role) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + role;
+        div.innerHTML = text;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return div;
+      }
+
+      function escChat(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      // Show greeting
+      function showGreeting() {
+        if (messagesEl.children.length === 0) {
+          addMsg(t('chat_greeting', '¡Hola! Soy el asistente de VivaSuiza. Pregúntame sobre trámites, seguros, vivienda, checklist o cualquier tema de la página.'), 'bot');
+        }
+      }
+
+      // Search page content for answer
+      function findAnswer(query) {
+        const lower = query.toLowerCase();
+        const words = lower.split(/\s+/).filter(w => w.length > 2);
+        if (words.length === 0) return [];
+
+        const scored = [];
+        for (const entry of chatIndex) {
+          let score = 0;
+          const textLower = entry.text.toLowerCase();
+          const titleLower = entry.title.toLowerCase();
+          // exact phrase match in text
+          if (textLower.includes(lower)) score += 10;
+          // word matches
+          for (const w of words) {
+            if (titleLower.includes(w)) score += 5;
+            if (textLower.includes(w)) score += 2;
+          }
+          if (score > 0) scored.push({ entry, score });
+        }
+        scored.sort((a, b) => b.score - a.score);
+        return scored.slice(0, 3);
+      }
+
+      function formatSnippet(text, maxLen) {
+        maxLen = maxLen || 180;
+        if (text.length <= maxLen) return escChat(text);
+        return escChat(text.slice(0, maxLen)) + '…';
+      }
+
+      function formatAIResponse(text) {
+        let html = escChat(text);
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\n/g, '<br>');
+        return html;
+      }
+
+      function handleLocalSearch(q) {
+        const results = findAnswer(q);
+        if (results.length > 0) {
+          let html = '<strong>' + t('chat_found', 'Esto es lo que encontré:') + '</strong><br><br>';
+          results.forEach((r, i) => {
+            html += '<strong>' + escChat(r.entry.title || r.entry.section) + '</strong><br>';
+            html += formatSnippet(r.entry.text) + '<br><br>';
+          });
+          html += '<em style="font-size:11px;color:var(--muted);">' + t('chat_hint_scroll', 'Haz clic para ir a la sección.') + '</em>';
+          const msgEl = addMsg(html, 'bot');
+
+          msgEl.style.cursor = 'pointer';
+          msgEl.addEventListener('click', () => {
+            const target = results[0].entry.el;
+            const card = target.closest('.checklist-card');
+            if (card && !card.classList.contains('open')) card.classList.add('open');
+            const faq = target.closest('.faq-item');
+            if (faq && !faq.classList.contains('open')) faq.classList.add('open');
+            const ci = target.closest('.checklist-item');
+            if (ci && !ci.classList.contains('open')) ci.classList.add('open');
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.style.outline = '2px solid var(--red)';
+            target.style.outlineOffset = '4px';
+            setTimeout(() => { target.style.outline = ''; target.style.outlineOffset = ''; }, 2000);
+          });
+        } else {
+          let html = t('chat_no_answer', 'No encontré una respuesta en el contenido de VivaSuiza.');
+          html += '<br><br>' + t('chat_send_question', '¿Quieres enviar esta pregunta al equipo de VivaSuiza?');
+          html += '<br><button class="chat-send-email-btn" data-action="send-question">' + t('chat_send_btn_label', 'Sí, enviar mi pregunta') + '</button>';
+          addMsg(html, 'bot');
+        }
+      }
+
+      async function handleSend() {
+        const q = input.value.trim();
+        if (!q) return;
+        input.value = '';
+        lastQuestion = q;
+        addMsg(escChat(q), 'user');
+
+        const typingEl = addMsg('<span class="chat-typing">' + t('chat_thinking', 'Pensando…') + '</span>', 'bot');
+
+        try {
+          const res = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              question: q,
+              language: currentLanguage || 'es',
+              history: chatHistory
+            })
+          });
+          const data = await res.json();
+          typingEl.remove();
+
+          if (data.error === 'ai_not_configured' || data.error === 'ai_error') {
+            handleLocalSearch(q);
+            return;
+          }
+
+          if (data.answer) {
+            chatHistory.push({ role: 'user', content: q });
+            chatHistory.push({ role: 'assistant', content: data.answer });
+            if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+            addMsg(formatAIResponse(data.answer), 'bot');
+          } else if (data.no_answer) {
+            let html = t('chat_no_answer', 'No encontré una respuesta en el contenido de VivaSuiza.');
+            html += '<br><br>' + t('chat_send_question', '¿Quieres enviar esta pregunta al equipo de VivaSuiza?');
+            html += '<br><button class="chat-send-email-btn" data-action="send-question">' + t('chat_send_btn_label', 'Sí, enviar mi pregunta') + '</button>';
+            addMsg(html, 'bot');
+          } else {
+            handleLocalSearch(q);
+          }
+        } catch (err) {
+          typingEl.remove();
+          handleLocalSearch(q);
+        }
+      }
+
+      // Handle send-question button clicks
+      messagesEl.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-action="send-question"]');
+        if (!btn) return;
+        btn.disabled = true;
+        btn.textContent = '…';
+
+        try {
+          const formData = new URLSearchParams();
+          formData.append('step', 'chat-question');
+          formData.append('message', 'Chat question from visitor: ' + lastQuestion);
+          const res = await fetch('/help-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+          });
+          const data = await res.json();
+          if (data.status === 'ok') {
+            btn.textContent = '✓ ' + t('chat_sent', 'Enviado');
+            addMsg(t('chat_sent_confirm', '¡Tu pregunta ha sido enviada! Te responderemos lo antes posible.'), 'bot');
+          } else {
+            btn.textContent = t('chat_send_error', 'Error');
+          }
+        } catch (err) {
+          btn.textContent = t('chat_send_error', 'Error');
+        }
+      });
+
+      // Toggle panel
+      fab.addEventListener('click', () => {
+        panel.classList.add('open');
+        fab.classList.add('has-panel');
+        showGreeting();
+        setTimeout(() => input.focus(), 100);
+      });
+
+      closeBtn.addEventListener('click', () => {
+        panel.classList.remove('open');
+        fab.classList.remove('has-panel');
+      });
+
+      // Send on Enter or button click
+      sendBtn.addEventListener('click', handleSend);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleSend();
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initChecklist();
       initFAQ();
       initSearch();
+      initChat();
 
       // wire help buttons to send direct help requests
       const helpButtons = document.querySelectorAll('.help-btn');

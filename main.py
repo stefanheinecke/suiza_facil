@@ -9,7 +9,8 @@ from urllib.parse import urlencode
 import smtplib
 from email.message import EmailMessage
 
-from fastapi import FastAPI, Form, Cookie, Response
+from fastapi import FastAPI, Form, Cookie, Response, Request
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 import psycopg2
@@ -592,6 +593,102 @@ def admin_revoke_permission(username: str = Form(...), filename: str = Form(...)
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
+
+class ChatRequest(BaseModel):
+    question: str
+    language: str = "es"
+    history: list = []
+
+
+@app.post("/chat")
+def chat_endpoint(body: ChatRequest):
+    question = body.question.strip()
+    language = body.language
+    history = body.history
+
+    if not question:
+        return {"error": "empty_question"}
+
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not openai_key:
+        return {"error": "ai_not_configured"}
+
+    # Build page context from translations
+    try:
+        with open("translations.json", "r", encoding="utf-8") as f:
+            all_translations = json.load(f)
+    except Exception:
+        return {"error": "context_unavailable"}
+
+    lang_data = all_translations.get(language, all_translations.get("es", {}))
+
+    # Build context string from page content (skip UI-only keys)
+    skip_prefixes = ("chat_", "search_", "auth_", "nav_", "footer_", "logo_")
+    context_lines = []
+    for key, value in lang_data.items():
+        if any(key.startswith(p) for p in skip_prefixes):
+            continue
+        context_lines.append(f"- {value}")
+
+    page_content = "\n".join(context_lines)
+
+    lang_names = {"es": "Spanish", "de": "German", "en": "English"}
+    resp_lang = lang_names.get(language, "the user's language")
+
+    system_prompt = (
+        "You are VivaSuiza's friendly assistant. VivaSuiza helps people relocate from Spain to Switzerland.\n\n"
+        "Here is the complete content of the VivaSuiza website:\n---\n"
+        f"{page_content}\n"
+        "---\n\n"
+        "Rules:\n"
+        "1. ONLY answer based on the website content above. Do not invent information.\n"
+        "2. If the answer is NOT found in the content above, respond with exactly and only: NO_ANSWER\n"
+        "3. Be concise, helpful, and friendly. Use 2-4 sentences maximum.\n"
+        f"4. Respond in {resp_lang}.\n"
+        "5. You may use **bold** for emphasis on key terms."
+    )
+
+    messages = [{"role": "system", "content": system_prompt}]
+
+    # Add conversation history (limit to last 10 exchanges)
+    for msg in history[-10:]:
+        role = msg.get("role", "user") if isinstance(msg, dict) else "user"
+        content = msg.get("content", "") if isinstance(msg, dict) else str(msg)
+        if role in ("user", "assistant"):
+            messages.append({"role": role, "content": content[:500]})
+
+    messages.append({"role": "user", "content": question[:500]})
+
+    try:
+        resp = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {openai_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "gpt-4o-mini",
+                "messages": messages,
+                "max_tokens": 300,
+                "temperature": 0.3,
+            },
+            timeout=30,
+        )
+        if resp.status_code != 200:
+            print(f"[CHAT] OpenAI error: {resp.status_code} {resp.text}")
+            return {"error": "ai_error"}
+
+        data = resp.json()
+        answer = data["choices"][0]["message"]["content"].strip()
+
+        if answer == "NO_ANSWER" or answer.startswith("NO_ANSWER"):
+            return {"answer": None, "no_answer": True}
+
+        return {"answer": answer}
+    except Exception as e:
+        print(f"[CHAT] Error: {e}")
+        return {"error": "ai_error"}
+
 
 @app.get("/translations")
 def get_translations():
