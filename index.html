@@ -724,6 +724,36 @@
       margin-bottom: 2px;
     }
 
+    .checklist-section a {
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .tax-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 8px;
+      font-size: 13px;
+    }
+    .tax-table th, .tax-table td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .tax-table th {
+      background: var(--bg);
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .tax-table td {
+      color: var(--dark);
+    }
+    @media (max-width: 600px) {
+      .tax-table { font-size: 12px; }
+      .tax-table th, .tax-table td { padding: 4px 6px; }
+    }
+
     .checklist-note {
       margin-top: 10px;
       font-size: 12px;
@@ -1589,6 +1619,10 @@
             <button class="btn btn-secondary" onclick="scrollToSection('newsletter')">
               <span data-i18n="hero_btn_community">Únete a la comunidad</span>
             </button>
+            <button class="btn btn-secondary" onclick="scrollToSection('community-qa')" style="border-color:var(--red);color:var(--red);">
+              <span>💡</span>
+              <span data-i18n="feedback_banner_btn">Dejar feedback</span>
+            </button>
           </div>
           <p class="hero-meta" data-i18n="hero_meta">
             Guías en español · Basado en 17 años de experiencia real en Suiza · Pensado para ti
@@ -1848,14 +1882,14 @@
             </div>
           </article>
 
-          <!-- Krankenversicherung & Steuern -->
+          <!-- Krankenversicherung -->
           <article class="checklist-card">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">4</div>
                 <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card4_title">Seguro médico y sistema fiscal</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card4_subtitle">Lo básico para elegir Krankenkasse y entender los impuestos.</div>
+                  <div class="checklist-card-title" data-i18n="checklist_card4_title">Seguro médico (Krankenversicherung)</div>
+                  <div class="checklist-card-subtitle" data-i18n="checklist_card4_subtitle">Cómo elegir seguro, franquicia y modelo.</div>
                 </div>
               </div>
             </div>
@@ -1885,35 +1919,163 @@
 
               <li class="checklist-item">
                 <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item12_title">Cómo funcionan los impuestos en Suiza</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item12_text">
-                    El sistema fiscal es distinto al español y varía por cantón y municipio.
+                  <div class="checklist-item-main-title" data-i18n="checklist_item_franchise_title">🏥 El sistema de franquicia (Franchise)</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item_franchise_text">
+                    La franquicia es el importe anual que pagas de tu bolsillo antes de que el seguro cubra gastos. Puedes elegir entre 300 y 2’500 CHF al año.
                   </div>
                   <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item12_li1">Infórmate si al principio pagarás impuestos en la fuente (en la nómina) o mediante declaración anual.</li>
-                    <li data-i18n="checklist_item12_li2">Consulta siempre la web oficial de tu cantón para normas y plazos.</li>
-                    <li>
-                      <a href="https://www.ch.ch" target="_blank" rel="noopener noreferrer">ch.ch</a>
-                      <span data-i18n="checklist_item12_li3_desc"> – Portal oficial con explicaciones básicas sobre impuestos y vida en Suiza.</span>
-                    </li>
+                    <li data-i18n="checklist_item_franchise_li1">Franquicia baja (300 CHF): prima mensual más alta, pero pagas menos si vas mucho al médico.</li>
+                    <li data-i18n="checklist_item_franchise_li2">Franquicia alta (2’500 CHF): prima mensual más baja, ideal si rara vez necesitas atención médica.</li>
+                    <li data-i18n="checklist_item_franchise_li3">Además de la franquicia, pagas un 10 % de los costes restantes (participación, máx. 700 CHF/año).</li>
+                    <li data-i18n="checklist_item_franchise_li4">Para niños la franquicia va de 0 a 600 CHF y no hay participación hasta los 18 años.</li>
+                    <li data-i18n="checklist_item_franchise_li5">Consejo: si eres joven y sano, una franquicia alta ahorra mucho en primas. Si tienes gastos médicos frecuentes, elige franquicia baja.</li>
                   </ul>
                 </div>
               </li>
             </ul>
 
             <div class="checklist-note">
-              <span data-i18n="checklist_note4_intro">Nota sobre seguros e impuestos:</span>
+              <span data-i18n="checklist_note4a_intro">Nota sobre seguro médico:</span>
               <ul class="checklist-sublist">
-                <li data-i18n="checklist_note4_li1">La información de esta checklist es orientativa. Verifica siempre los detalles en las webs oficiales o con un asesor.</li>
+                <li data-i18n="checklist_note4a_li1">La información es orientativa. Verifica siempre los detalles en las webs oficiales o con un asesor.</li>
               </ul>
             </div>
 
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="insurance_taxes" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <button type="button" class="btn btn-secondary help-btn" data-help-context="insurance" data-i18n="checklist_help_btn">Need help with this section?</button>
+            </div>
+          </article>
+
+          <!-- Steuern -->
+          <article class="checklist-card">
+            <div class="checklist-card-header">
+              <div class="checklist-step-label">
+                <div class="checklist-step-number">5</div>
+                <div>
+                  <div class="checklist-card-title" data-i18n="checklist_card5_title">Sistema fiscal (Steuern)</div>
+                  <div class="checklist-card-subtitle" data-i18n="checklist_card5_subtitle">Cómo funcionan los impuestos y cuánto se paga.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="checklist-card-body">
+            <ul class="checklist-items">
+              <li class="checklist-item">
+                <div>
+                  <div class="checklist-item-main-title" data-i18n="checklist_item12_title">Cómo funcionan los impuestos en Suiza</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item12_text">
+                    El sistema fiscal suizo tiene tres niveles de imposición que se suman:
+                  </div>
+                  <ul class="checklist-sublist">
+                    <li data-i18n="checklist_item12_li1">Impuesto federal directo (Direkte Bundessteuer) – lo fija la Confederación y es igual en toda Suiza.</li>
+                    <li data-i18n="checklist_item12_li2">Impuesto cantonal y municipal (Staats- und Gemeindesteuer) – varía mucho según dónde vivas.</li>
+                    <li data-i18n="checklist_item12_li3">Impuesto sobre el patrimonio (Vermögenssteuer) – se aplica a nivel cantonal sobre los activos netos.</li>
+                    <li data-i18n="checklist_item12_li4">Al principio, muchos extranjeros pagan impuesto en la fuente (Quellensteuer), descontado directamente de la nómina.</li>
+                    <li>
+                      <a href="https://www.ch.ch" target="_blank" rel="noopener noreferrer">ch.ch</a>
+                      <span data-i18n="checklist_item12_li5_desc"> – Portal oficial con explicaciones sobre impuestos y vida en Suiza.</span>
+                    </li>
+                    <li>
+                      <a href="https://swisstaxcalculator.estv.admin.ch" target="_blank" rel="noopener noreferrer">swisstaxcalculator.estv.admin.ch</a>
+                      <span data-i18n="checklist_item12_li6_desc"> – Calculadora oficial de impuestos de la Confederación.</span>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="checklist-item">
+                <div>
+                  <div class="checklist-item-main-title" data-i18n="checklist_item_tax_examples_title">📊 Ejemplos orientativos de carga fiscal anual</div>
+                  <div class="checklist-item-text" data-i18n="checklist_item_tax_examples_text">
+                    Estos valores son aproximados y dependen de deducciones, confesionalidad, comuna exacta y otros factores. Solo sirven para hacerse una idea.
+                  </div>
+                  <table class="tax-table">
+                    <thead>
+                      <tr>
+                        <th data-i18n="tax_th_profile">Perfil</th>
+                        <th data-i18n="tax_th_income">Ingreso bruto/año</th>
+                        <th data-i18n="tax_th_canton">Cantón</th>
+                        <th data-i18n="tax_th_approx">Impuestos aprox./año</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td data-i18n="tax_row1_profile">Persona sola</td>
+                        <td>80’000 CHF</td>
+                        <td data-i18n="tax_row1_canton">Zúrich (ZH)</td>
+                        <td>≈12’000 CHF</td>
+                      </tr>
+                      <tr>
+                        <td data-i18n="tax_row2_profile">Persona sola</td>
+                        <td>80’000 CHF</td>
+                        <td data-i18n="tax_row2_canton">Zug (ZG)</td>
+                        <td>≈6’800 CHF</td>
+                      </tr>
+                      <tr>
+                        <td data-i18n="tax_row3_profile">Pareja sin hijos</td>
+                        <td>120’000 CHF</td>
+                        <td data-i18n="tax_row3_canton">Berna (BE)</td>
+                        <td>≈18’500 CHF</td>
+                      </tr>
+                      <tr>
+                        <td data-i18n="tax_row4_profile">Pareja con 2 hijos</td>
+                        <td>120’000 CHF</td>
+                        <td data-i18n="tax_row4_canton">Berna (BE)</td>
+                        <td>≈14’500 CHF</td>
+                      </tr>
+                      <tr>
+                        <td data-i18n="tax_row5_profile">Pareja con 2 hijos</td>
+                        <td>120’000 CHF</td>
+                        <td data-i18n="tax_row5_canton">Schwyz (SZ)</td>
+                        <td>≈8’200 CHF</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </li>
+            </ul>
+
+            <div class="checklist-note">
+              <span data-i18n="checklist_note4b_intro">Nota sobre impuestos:</span>
+              <ul class="checklist-sublist">
+                <li data-i18n="checklist_note4b_li1">Estos valores son aproximados. Usa la calculadora oficial o consulta a un asesor fiscal para tu caso concreto.</li>
+              </ul>
+            </div>
+
+            <button type="button" class="btn btn-secondary help-btn" data-help-context="taxes" data-i18n="checklist_help_btn">Need help with this section?</button>
             </div>
           </article>
 
         </div>
 
+      </section>
+
+      <!-- Q&A / COMMUNITY FEEDBACK -->
+      <section id="community-qa" class="section qa-section">
+        <div class="section-header">
+          <div class="section-kicker" data-i18n="qa_kicker">Community</div>
+          <h2 class="section-title" data-i18n="qa_title">Preguntas y comentarios</h2>
+          <p class="section-subtitle" data-i18n="qa_subtitle">
+            ¿Echas en falta algún tema? ¿Tienes una pregunta concreta? Escríbela aquí y la comunidad o el equipo de VivaSuiza te responderá.
+          </p>
+        </div>
+
+        <div class="feedback-banner">
+          <div>
+            <div class="feedback-banner-text" data-i18n="feedback_banner_title">💡 ¡Tu opinión importa!</div>
+            <div class="feedback-banner-sub" data-i18n="feedback_banner_sub">Ayúdanos a mejorar VivaSuiza sugiriendo temas nuevos para los tópicos de información.</div>
+          </div>
+          <button class="btn" id="feedbackScrollBtn" data-i18n="feedback_banner_btn">Dejar feedback</button>
+        </div>
+
+        <div class="qa-compose" id="qaCompose">
+          <textarea id="qaText" maxlength="2000" data-i18n-placeholder="qa_placeholder" placeholder="Escribe tu pregunta o sugerencia…"></textarea>
+          <div class="qa-compose-row">
+            <span class="qa-login-hint" id="qaLoginHint" style="display:none;" data-i18n="qa_login_hint">Inicia sesión para publicar.</span>
+            <button class="btn btn-primary" id="qaSubmitBtn" data-i18n="qa_submit">Publicar</button>
+          </div>
+        </div>
+
+        <div id="qaList"></div>
       </section>
 
       <!-- FAQ -->
@@ -1960,35 +2122,6 @@
           <div class="doc-card"><a href="/download/doc1.pdf" download data-i18n="docs_doc1">Document 1</a></div>
           <div class="doc-card"><a href="/download/doc2.pdf" download data-i18n="docs_doc2">Document 2</a></div>
         </div>
-      </section>
-
-      <!-- Q&A / COMMUNITY FEEDBACK -->
-      <section id="community-qa" class="section qa-section">
-        <div class="section-header">
-          <div class="section-kicker" data-i18n="qa_kicker">Community</div>
-          <h2 class="section-title" data-i18n="qa_title">Preguntas y comentarios</h2>
-          <p class="section-subtitle" data-i18n="qa_subtitle">
-            ¿Echas en falta algún tema? ¿Tienes una pregunta concreta? Escríbela aquí y la comunidad o el equipo de VivaSuiza te responderá.
-          </p>
-        </div>
-
-        <div class="feedback-banner">
-          <div>
-            <div class="feedback-banner-text" data-i18n="feedback_banner_title">💡 ¡Tu opinión importa!</div>
-            <div class="feedback-banner-sub" data-i18n="feedback_banner_sub">Ayúdanos a mejorar VivaSuiza sugiriendo temas nuevos para los tópicos de información.</div>
-          </div>
-          <button class="btn" id="feedbackScrollBtn" data-i18n="feedback_banner_btn">Dejar feedback</button>
-        </div>
-
-        <div class="qa-compose" id="qaCompose">
-          <textarea id="qaText" maxlength="2000" data-i18n-placeholder="qa_placeholder" placeholder="Escribe tu pregunta o sugerencia…"></textarea>
-          <div class="qa-compose-row">
-            <span class="qa-login-hint" id="qaLoginHint" style="display:none;" data-i18n="qa_login_hint">Inicia sesión para publicar.</span>
-            <button class="btn btn-primary" id="qaSubmitBtn" data-i18n="qa_submit">Publicar</button>
-          </div>
-        </div>
-
-        <div id="qaList"></div>
       </section>
 
       <!-- NEWSLETTER / COMMUNITY -->
