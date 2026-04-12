@@ -4,7 +4,7 @@ import datetime
 import uuid
 import secrets
 import re
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urlencode
 import smtplib
 from email.message import EmailMessage
@@ -77,6 +77,25 @@ def init_db():
                 username VARCHAR(150) REFERENCES users(username) ON DELETE CASCADE,
                 filename VARCHAR(255) NOT NULL,
                 PRIMARY KEY (username, filename)
+            )
+        """)
+        # Q&A questions table
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS questions (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(150) NOT NULL,
+                text TEXT NOT NULL,
+                created_at TIMESTAMP NOT NULL
+            )
+        """)
+        # Q&A replies table (threaded)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS replies (
+                id SERIAL PRIMARY KEY,
+                question_id INTEGER REFERENCES questions(id) ON DELETE CASCADE,
+                username VARCHAR(150) NOT NULL,
+                text TEXT NOT NULL,
+                created_at TIMESTAMP NOT NULL
             )
         """)
         conn.commit()
@@ -593,6 +612,131 @@ def admin_revoke_permission(username: str = Form(...), filename: str = Form(...)
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
+
+# ── Q&A Endpoints ──────────────────────────────────────────────
+
+@app.get("/questions")
+def list_questions():
+    """Return all questions with their replies."""
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT id, username, text, created_at FROM questions ORDER BY created_at DESC")
+        rows = cur.fetchall()
+        questions = []
+        for r in rows:
+            qid = r[0]
+            cur.execute(
+                "SELECT id, username, text, created_at FROM replies WHERE question_id = %s ORDER BY created_at ASC",
+                (qid,),
+            )
+            reps = cur.fetchall()
+            questions.append({
+                "id": qid,
+                "username": r[1],
+                "text": r[2],
+                "created_at": r[3].isoformat(),
+                "replies": [
+                    {"id": rep[0], "username": rep[1], "text": rep[2], "created_at": rep[3].isoformat()}
+                    for rep in reps
+                ],
+            })
+        cur.close()
+        conn.close()
+        return {"questions": questions}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/questions")
+def create_question(text: str = Form(...), session_id: str = Cookie(None)):
+    """Create a new question (must be logged in)."""
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "unauthorized"}
+    clean = (text or "").strip()
+    if not clean or len(clean) > 2000:
+        return {"error": "invalid_text"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO questions (username, text, created_at) VALUES (%s, %s, %s) RETURNING id",
+            (username, clean, datetime.datetime.utcnow()),
+        )
+        qid = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok", "id": qid}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/questions/{question_id}/reply")
+def create_reply(question_id: int, text: str = Form(...), session_id: str = Cookie(None)):
+    """Reply to an existing question (must be logged in)."""
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "unauthorized"}
+    clean = (text or "").strip()
+    if not clean or len(clean) > 2000:
+        return {"error": "invalid_text"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # verify question exists
+        cur.execute("SELECT id FROM questions WHERE id = %s", (question_id,))
+        if not cur.fetchone():
+            cur.close()
+            conn.close()
+            return {"error": "not_found"}
+        cur.execute(
+            "INSERT INTO replies (question_id, username, text, created_at) VALUES (%s, %s, %s, %s) RETURNING id",
+            (question_id, username, clean, datetime.datetime.utcnow()),
+        )
+        rid = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok", "id": rid}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.delete("/questions/{question_id}")
+def delete_question(question_id: int, session_id: str = Cookie(None)):
+    """Delete a question and all replies (admin only)."""
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM questions WHERE id = %s", (question_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.delete("/replies/{reply_id}")
+def delete_reply(reply_id: int, session_id: str = Cookie(None)):
+    """Delete a single reply (admin only)."""
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM replies WHERE id = %s", (reply_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 class ChatRequest(BaseModel):
     question: str

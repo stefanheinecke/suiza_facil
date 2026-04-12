@@ -1333,6 +1333,161 @@
       background: #c5303b;
     }
 
+    /* Q&A / Community Feedback */
+    .qa-section { background: var(--bg); }
+    .qa-compose {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .qa-compose textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      resize: vertical;
+      background: var(--bg);
+      color: var(--dark);
+    }
+    .qa-compose textarea:focus { outline: none; border-color: var(--red); }
+    .qa-compose-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+      gap: 12px;
+      align-items: center;
+    }
+    .qa-login-hint {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .qa-thread {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .qa-question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .qa-author {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .qa-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+    .qa-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .qa-reply-btn, .qa-delete-btn {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .qa-reply-btn:hover { border-color: var(--red); color: var(--red); }
+    .qa-delete-btn { color: #c53030; }
+    .qa-delete-btn:hover { background: #fed7d7; border-color: #c53030; }
+    .qa-replies {
+      margin-left: 20px;
+      padding-left: 16px;
+      border-left: 2px solid var(--border);
+    }
+    .qa-reply {
+      margin-bottom: 14px;
+    }
+    .qa-reply-form {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+    .qa-reply-form input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+    }
+    .qa-reply-form input:focus { outline: none; border-color: var(--red); }
+    .qa-reply-form button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: var(--red);
+      color: var(--white);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .qa-empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px 16px;
+      font-size: 15px;
+    }
+    .feedback-banner {
+      background: linear-gradient(135deg, var(--red) 0%, #ff6b6b 100%);
+      color: var(--white);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .feedback-banner-text {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .feedback-banner-sub {
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    .feedback-banner .btn {
+      background: var(--white);
+      color: var(--red);
+      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .feedback-banner .btn:hover { opacity: .92; }
+    @media (max-width: 600px) {
+      .feedback-banner { flex-direction: column; text-align: center; padding: 22px 18px; }
+      .qa-compose { padding: 16px; }
+      .qa-thread { padding: 16px; }
+      .qa-replies { margin-left: 10px; padding-left: 12px; }
+    }
+
     .chat-typing {
       display: inline-block;
       animation: chatTyping 1.2s ease-in-out infinite;
@@ -1387,8 +1542,9 @@
       </div>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
-        <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a>
+        <a href="#arrival-checklist" data-i18n="nav_checklist">Topics</a>
         <a href="#faq" data-i18n="nav_faq">FAQ</a>
+        <a href="#community-qa" data-i18n="nav_qa">Community</a>
       </nav>
     </header>
 
@@ -1444,10 +1600,10 @@
       <!-- IMMIGRATION CHECKLIST -->
       <section id="arrival-checklist" class="section checklist-section">
         <div class="section-header">
-          <div class="section-kicker" data-i18n="checklist_kicker">Checkliste</div>
-          <h2 class="section-title" data-i18n="checklist_title">Dein Einwanderungs-Leitfaden nach Suiza.</h2>
+          <div class="section-kicker" data-i18n="checklist_kicker">Topics</div>
+          <h2 class="section-title" data-i18n="checklist_title">Temas de información para tu mudanza a Suiza.</h2>
           <p class="section-subtitle" data-i18n="checklist_subtitle">
-            Arbeite diese Punkte Schritt für Schritt wie eine Checkliste durch. Alles bleibt lokal im Browser gespeichert, damit du jederzeit weitermachen kannst.
+            Trabaja estos temas paso a paso. Todo se guarda localmente en el navegador para que puedas continuar cuando quieras.
           </p>
         </div>
 
@@ -1806,6 +1962,35 @@
         </div>
       </section>
 
+      <!-- Q&A / COMMUNITY FEEDBACK -->
+      <section id="community-qa" class="section qa-section">
+        <div class="section-header">
+          <div class="section-kicker" data-i18n="qa_kicker">Community</div>
+          <h2 class="section-title" data-i18n="qa_title">Preguntas y comentarios</h2>
+          <p class="section-subtitle" data-i18n="qa_subtitle">
+            ¿Echas en falta algún tema? ¿Tienes una pregunta concreta? Escríbela aquí y la comunidad o el equipo de VivaSuiza te responderá.
+          </p>
+        </div>
+
+        <div class="feedback-banner">
+          <div>
+            <div class="feedback-banner-text" data-i18n="feedback_banner_title">💡 ¡Tu opinión importa!</div>
+            <div class="feedback-banner-sub" data-i18n="feedback_banner_sub">Ayúdanos a mejorar VivaSuiza sugiriendo temas nuevos para los tópicos de información.</div>
+          </div>
+          <button class="btn" id="feedbackScrollBtn" data-i18n="feedback_banner_btn">Dejar feedback</button>
+        </div>
+
+        <div class="qa-compose" id="qaCompose">
+          <textarea id="qaText" maxlength="2000" data-i18n-placeholder="qa_placeholder" placeholder="Escribe tu pregunta o sugerencia…"></textarea>
+          <div class="qa-compose-row">
+            <span class="qa-login-hint" id="qaLoginHint" style="display:none;" data-i18n="qa_login_hint">Inicia sesión para publicar.</span>
+            <button class="btn btn-primary" id="qaSubmitBtn" data-i18n="qa_submit">Publicar</button>
+          </div>
+        </div>
+
+        <div id="qaList"></div>
+      </section>
+
       <!-- NEWSLETTER / COMMUNITY -->
       <section id="newsletter" class="section">
         <div class="newsletter">
@@ -1839,8 +2024,9 @@
     <footer>
       <div>© <span id="year"></span> VivaSuiza. <span data-i18n="footer_copyright">Todos los derechos reservados.</span></div>
       <div>
-        <a href="#arrival-checklist" data-i18n="nav_checklist">Checklist</a> ·
-        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+        <a href="#arrival-checklist" data-i18n="nav_checklist">Topics</a> ·
+        <a href="#faq" data-i18n="nav_faq">FAQ</a> ·
+        <a href="#community-qa" data-i18n="nav_qa">Community</a>
       </div>
     </footer>
   </div>
@@ -2593,11 +2779,226 @@
       });
     }
 
+    // ── Q&A / Community Feedback ────────────────────────────────
+    function initQA() {
+      const list = document.getElementById('qaList');
+      const submitBtn = document.getElementById('qaSubmitBtn');
+      const textArea = document.getElementById('qaText');
+      const loginHint = document.getElementById('qaLoginHint');
+      const feedbackBtn = document.getElementById('feedbackScrollBtn');
+      if (!list || !submitBtn) return;
+
+      const currentUser = localStorage.getItem('username') || '';
+      const isAdmin = window.__isAdmin || false;
+
+      function t(key, fallback) {
+        return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
+      }
+
+      function esc(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function timeAgo(isoStr) {
+        const diff = Date.now() - new Date(isoStr).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return t('qa_just_now', 'ahora');
+        if (mins < 60) return mins + ' min';
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h';
+        const days = Math.floor(hrs / 24);
+        return days + 'd';
+      }
+
+      function maskEmail(email) {
+        if (!email || !email.includes('@')) return email || '?';
+        const [local, domain] = email.split('@');
+        if (local.length <= 2) return local[0] + '***@' + domain;
+        return local[0] + '***' + local[local.length - 1] + '@' + domain;
+      }
+
+      // Feedback banner scrolls to compose box
+      if (feedbackBtn) {
+        feedbackBtn.addEventListener('click', () => {
+          const compose = document.getElementById('qaCompose');
+          if (compose) {
+            compose.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => textArea.focus(), 400);
+          }
+        });
+      }
+
+      // Show login hint if not logged in
+      if (!currentUser && loginHint) {
+        loginHint.style.display = '';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+      }
+
+      async function loadQuestions() {
+        try {
+          const res = await fetch('/questions');
+          const data = await res.json();
+          if (data.error || !data.questions) { list.innerHTML = ''; return; }
+          if (data.questions.length === 0) {
+            list.innerHTML = '<div class="qa-empty">' + t('qa_empty', 'Aún no hay preguntas. ¡Sé el primero en preguntar!') + '</div>';
+            return;
+          }
+          list.innerHTML = data.questions.map(q => renderQuestion(q)).join('');
+        } catch (e) {
+          console.error('QA load error', e);
+        }
+      }
+
+      function renderQuestion(q) {
+        let html = '<div class="qa-thread" data-qid="' + q.id + '">';
+        html += '<div class="qa-question-header"><div>';
+        html += '<div class="qa-author">' + esc(maskEmail(q.username)) + ' · ' + timeAgo(q.created_at) + '</div>';
+        html += '<div class="qa-text">' + esc(q.text) + '</div>';
+        html += '</div>';
+        if (isAdmin) {
+          html += '<button class="qa-delete-btn" data-delete-q="' + q.id + '">✕</button>';
+        }
+        html += '</div>';
+
+        // Actions
+        html += '<div class="qa-actions">';
+        if (currentUser) {
+          html += '<button class="qa-reply-btn" data-toggle-reply="' + q.id + '">' + t('qa_reply_btn', 'Responder') + '</button>';
+        }
+        html += '</div>';
+
+        // Replies
+        if (q.replies && q.replies.length > 0) {
+          html += '<div class="qa-replies">';
+          q.replies.forEach(r => {
+            html += '<div class="qa-reply">';
+            html += '<div class="qa-author">' + esc(maskEmail(r.username)) + ' · ' + timeAgo(r.created_at);
+            if (isAdmin) {
+              html += ' <button class="qa-delete-btn" data-delete-r="' + r.id + '" style="margin-left:6px;font-size:11px;padding:2px 8px;">✕</button>';
+            }
+            html += '</div>';
+            html += '<div class="qa-text">' + esc(r.text) + '</div>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+
+        // Reply form (hidden by default)
+        html += '<div class="qa-reply-form" data-reply-form="' + q.id + '" style="display:none;">';
+        html += '<input type="text" maxlength="2000" data-i18n-placeholder="qa_reply_placeholder" placeholder="' + t('qa_reply_placeholder', 'Escribe tu respuesta…') + '" />';
+        html += '<button data-send-reply="' + q.id + '">→</button>';
+        html += '</div>';
+
+        html += '</div>';
+        return html;
+      }
+
+      // Submit new question
+      submitBtn.addEventListener('click', async () => {
+        const text = textArea.value.trim();
+        if (!text) return;
+        submitBtn.disabled = true;
+        try {
+          const fd = new URLSearchParams();
+          fd.append('text', text);
+          const res = await fetch('/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: fd.toString()
+          });
+          const data = await res.json();
+          if (data.status === 'ok') {
+            textArea.value = '';
+            loadQuestions();
+          } else if (data.error === 'unauthorized') {
+            alert(t('qa_login_hint', 'Inicia sesión para publicar.'));
+          }
+        } catch (e) { console.error(e); }
+        submitBtn.disabled = false;
+      });
+
+      // Delegate clicks for reply toggle, send reply, delete
+      list.addEventListener('click', async (e) => {
+        // Toggle reply form
+        const toggleBtn = e.target.closest('[data-toggle-reply]');
+        if (toggleBtn) {
+          const qid = toggleBtn.getAttribute('data-toggle-reply');
+          const form = list.querySelector('[data-reply-form="' + qid + '"]');
+          if (form) {
+            form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+            if (form.style.display === 'flex') form.querySelector('input').focus();
+          }
+          return;
+        }
+
+        // Send reply
+        const sendBtn = e.target.closest('[data-send-reply]');
+        if (sendBtn) {
+          const qid = sendBtn.getAttribute('data-send-reply');
+          const form = list.querySelector('[data-reply-form="' + qid + '"]');
+          const input = form ? form.querySelector('input') : null;
+          if (!input || !input.value.trim()) return;
+          sendBtn.disabled = true;
+          try {
+            const fd = new URLSearchParams();
+            fd.append('text', input.value.trim());
+            const res = await fetch('/questions/' + qid + '/reply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: fd.toString()
+            });
+            const data = await res.json();
+            if (data.status === 'ok') loadQuestions();
+          } catch (e) { console.error(e); }
+          sendBtn.disabled = false;
+          return;
+        }
+
+        // Delete question (admin)
+        const delQ = e.target.closest('[data-delete-q]');
+        if (delQ) {
+          if (!confirm(t('qa_confirm_delete', '¿Eliminar esta pregunta y todas sus respuestas?'))) return;
+          const qid = delQ.getAttribute('data-delete-q');
+          try {
+            await fetch('/questions/' + qid, { method: 'DELETE' });
+            loadQuestions();
+          } catch (e) { console.error(e); }
+          return;
+        }
+
+        // Delete reply (admin)
+        const delR = e.target.closest('[data-delete-r]');
+        if (delR) {
+          if (!confirm(t('qa_confirm_delete_reply', '¿Eliminar esta respuesta?'))) return;
+          const rid = delR.getAttribute('data-delete-r');
+          try {
+            await fetch('/replies/' + rid, { method: 'DELETE' });
+            loadQuestions();
+          } catch (e) { console.error(e); }
+          return;
+        }
+      });
+
+      // Allow Enter in reply input
+      list.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.matches('.qa-reply-form input')) {
+          const form = e.target.closest('.qa-reply-form');
+          const btn = form ? form.querySelector('[data-send-reply]') : null;
+          if (btn) btn.click();
+        }
+      });
+
+      // Load on init
+      loadQuestions();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initChecklist();
       initFAQ();
       initSearch();
       initChat();
+      initQA();
 
       // wire help buttons to send direct help requests
       const helpButtons = document.querySelectorAll('.help-btn');
