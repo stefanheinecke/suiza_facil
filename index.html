@@ -1773,6 +1773,11 @@
                   <div class="checklist-item-text" data-i18n="checklist_item2_text">
                     Innerhalb von 3 Monaten nach Einreise musst du eine Schweizer Grundversicherung (KVG) abschliessen. Der Versicherungsschutz gilt rückwirkend ab Einreisedatum.
                   </div>
+                  <ul class="checklist-sublist">
+                    <li>
+                      <a href="#topic-insurance" data-i18n="checklist_item2_link">➜ Más información sobre seguro médico, franquicia y consejos de ahorro</a>
+                    </li>
+                  </ul>
                 </div>
               </li>
 
@@ -1890,7 +1895,7 @@
           </article>
 
           <!-- Krankenversicherung -->
-          <article class="checklist-card">
+          <article class="checklist-card" id="topic-insurance">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">4</div>
@@ -2971,7 +2976,7 @@
       const feedbackBtn = document.getElementById('feedbackScrollBtn');
       if (!list || !submitBtn) return;
 
-      const currentUser = localStorage.getItem('username') || '';
+      const currentUser = localStorage.getItem('loggedInUser') || '';
       const isAdmin = window.__isAdmin || false;
 
       function t(key, fallback) {
