@@ -1445,6 +1445,17 @@
     .qa-reply-btn:hover { border-color: var(--red); color: var(--red); }
     .qa-delete-btn { color: #c53030; }
     .qa-delete-btn:hover { background: #fed7d7; border-color: #c53030; }
+    .qa-replies-toggle {
+      font-size: 13px;
+      color: var(--red);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      margin-bottom: 8px;
+    }
+    .qa-replies-toggle:hover { text-decoration: underline; }
     .qa-replies {
       margin-left: 20px;
       padding-left: 16px;
@@ -1536,6 +1547,29 @@
       font-size: 13px;
       color: var(--muted);
     }
+    .vote-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .vote-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .vote-btn:hover { border-color: var(--red); color: var(--red); }
+    .vote-btn.active-up { border-color: #38a169; color: #38a169; background: #f0fff4; }
+    .vote-btn.active-down { border-color: #c53030; color: #c53030; background: #fff5f5; }
     .feedback-banner {
       background: linear-gradient(135deg, var(--red) 0%, #ff6b6b 100%);
       color: var(--white);
@@ -1786,6 +1820,10 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="moving" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <div class="vote-bar" data-vote-target="card" data-vote-id="moving">
+              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
+              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
+            </div>
             </div>
           </article>
 
@@ -1854,6 +1892,10 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="arrival" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <div class="vote-bar" data-vote-target="card" data-vote-id="arrival">
+              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
+              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
+            </div>
             </div>
           </article>
 
@@ -1945,6 +1987,10 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="housing_jobs" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <div class="vote-bar" data-vote-target="card" data-vote-id="housing_jobs">
+              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
+              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
+            </div>
             </div>
           </article>
 
@@ -2051,6 +2097,10 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="insurance" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <div class="vote-bar" data-vote-target="card" data-vote-id="insurance">
+              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
+              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
+            </div>
             </div>
           </article>
 
@@ -2151,6 +2201,10 @@
             </div>
 
             <button type="button" class="btn btn-secondary help-btn" data-help-context="taxes" data-i18n="checklist_help_btn">Need help with this section?</button>
+            <div class="vote-bar" data-vote-target="card" data-vote-id="taxes">
+              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
+              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
+            </div>
             </div>
           </article>
 
@@ -3170,16 +3224,23 @@
         }
         html += '</div>';
 
-        // Actions
+        // Actions + voting
         html += '<div class="qa-actions">';
         if (currentUser) {
           html += '<button class="qa-reply-btn" data-toggle-reply="' + q.id + '">' + t('qa_reply_btn', 'Responder') + '</button>';
         }
+        html += '<div class="vote-bar" data-vote-target="question" data-vote-id="' + q.id + '" style="margin-top:0;">';
+        html += '<button class="vote-btn" data-vote="1">👍 <span class="vote-count">' + (q.votes_up || 0) + '</span></button>';
+        html += '<button class="vote-btn" data-vote="-1">👎 <span class="vote-count">' + (q.votes_down || 0) + '</span></button>';
+        html += '</div>';
         html += '</div>';
 
-        // Replies
+        // Replies (collapsed by default)
         if (q.replies && q.replies.length > 0) {
-          html += '<div class="qa-replies">';
+          const n = q.replies.length;
+          const replyWord = n === 1 ? t('qa_reply_count_one', '1 respuesta') : n + ' ' + t('qa_reply_count_many', 'respuestas');
+          html += '<button class="qa-replies-toggle" data-toggle-replies="' + q.id + '">' + replyWord + '</button>';
+          html += '<div class="qa-replies" data-replies-for="' + q.id + '" style="display:none;">';
           q.replies.forEach(r => {
             html += '<div class="qa-reply">';
             html += '<div class="qa-author">' + esc(maskEmail(r.username)) + ' · ' + timeAgo(r.created_at);
@@ -3229,6 +3290,18 @@
 
       // Delegate clicks for reply toggle, send reply, delete
       list.addEventListener('click', async (e) => {
+        // Toggle replies visibility
+        const toggleReplies = e.target.closest('[data-toggle-replies]');
+        if (toggleReplies) {
+          const qid = toggleReplies.getAttribute('data-toggle-replies');
+          const repliesDiv = list.querySelector('[data-replies-for="' + qid + '"]');
+          if (repliesDiv) {
+            const isHidden = repliesDiv.style.display === 'none';
+            repliesDiv.style.display = isHidden ? '' : 'none';
+          }
+          return;
+        }
+
         // Toggle reply form
         const toggleBtn = e.target.closest('[data-toggle-reply]');
         if (toggleBtn) {
@@ -3302,12 +3375,69 @@
       loadQuestions();
     }
 
+    // ── Voting (checklist cards + questions) ──────────────────
+    function initVoting() {
+      // Load counts for static checklist cards
+      document.querySelectorAll('.vote-bar[data-vote-target="card"]').forEach(bar => {
+        const id = bar.getAttribute('data-vote-id');
+        fetch('/votes/card/' + encodeURIComponent(id))
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) return;
+            const counts = bar.querySelectorAll('.vote-count');
+            if (counts[0]) counts[0].textContent = data.up;
+            if (counts[1]) counts[1].textContent = data.down;
+          })
+          .catch(() => {});
+      });
+
+      // Delegate click on all vote buttons (works for cards + dynamically rendered questions)
+      document.addEventListener('click', async (e) => {
+        const voteBtn = e.target.closest('.vote-btn');
+        if (!voteBtn) return;
+        const bar = voteBtn.closest('.vote-bar');
+        if (!bar) return;
+
+        const targetType = bar.getAttribute('data-vote-target');
+        const targetId = bar.getAttribute('data-vote-id');
+        const vote = parseInt(voteBtn.getAttribute('data-vote'), 10);
+
+        if (!localStorage.getItem('loggedInUser')) {
+          const t = (translations[currentLanguage] || {});
+          alert(t['vote_login_hint'] || 'Inicia sesión para votar.');
+          return;
+        }
+
+        try {
+          const res = await fetch('/votes/' + encodeURIComponent(targetType) + '/' + encodeURIComponent(targetId), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'vote=' + vote
+          });
+          const data = await res.json();
+          if (data.error === 'unauthorized') {
+            const t = (translations[currentLanguage] || {});
+            alert(t['vote_login_hint'] || 'Inicia sesión para votar.');
+            return;
+          }
+          if (data.status === 'ok') {
+            const counts = bar.querySelectorAll('.vote-count');
+            if (counts[0]) counts[0].textContent = data.up;
+            if (counts[1]) counts[1].textContent = data.down;
+          }
+        } catch (err) {
+          console.error('Vote error', err);
+        }
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initChecklist();
       initFAQ();
       initSearch();
       initChat();
       initQA();
+      initVoting();
 
       // wire help buttons to send direct help requests
       const helpButtons = document.querySelectorAll('.help-btn');

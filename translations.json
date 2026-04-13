@@ -328,6 +328,9 @@
     "qa_sort_oldest": "Más antiguas",
     "qa_prev": "← Anterior",
     "qa_next": "Siguiente →",
+    "qa_reply_count_one": "1 respuesta",
+    "qa_reply_count_many": "respuestas",
+    "vote_login_hint": "Inicia sesión para votar.",
     "feedback_banner_title": "💡 ¡Tu opinión importa!",
     "feedback_banner_sub": "Ayúdanos a mejorar VivaSuiza sugiriendo temas nuevos para los tópicos de información.",
     "feedback_banner_btn": "Dejar feedback"
@@ -661,6 +664,9 @@
     "qa_sort_oldest": "Älteste zuerst",
     "qa_prev": "← Zurück",
     "qa_next": "Weiter →",
+    "qa_reply_count_one": "1 Antwort",
+    "qa_reply_count_many": "Antworten",
+    "vote_login_hint": "Bitte melde dich an, um abzustimmen.",
     "feedback_banner_title": "💡 Deine Meinung zählt!",
     "feedback_banner_sub": "Hilf uns VivaSuiza zu verbessern, indem du neue Themen für die Informationsseiten vorschlägst.",
     "feedback_banner_btn": "Feedback geben"
@@ -994,6 +1000,9 @@
     "qa_sort_oldest": "Oldest first",
     "qa_prev": "← Previous",
     "qa_next": "Next →",
+    "qa_reply_count_one": "1 reply",
+    "qa_reply_count_many": "replies",
+    "vote_login_hint": "Log in to vote.",
     "feedback_banner_title": "💡 Your opinion matters!",
     "feedback_banner_sub": "Help us improve VivaSuiza by suggesting new information topics.",
     "feedback_banner_btn": "Give feedback"

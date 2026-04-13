@@ -114,6 +114,18 @@ def init_db():
                 created_at TIMESTAMP NOT NULL
             )
         """)
+        # Votes on checklist cards and questions
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS votes (
+                id SERIAL PRIMARY KEY,
+                target_type VARCHAR(20) NOT NULL,
+                target_id VARCHAR(100) NOT NULL,
+                username VARCHAR(150) NOT NULL,
+                vote SMALLINT NOT NULL,
+                created_at TIMESTAMP NOT NULL,
+                UNIQUE(target_type, target_id, username)
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -742,11 +754,21 @@ def list_questions(page: int = 1, per_page: int = 5, sort: str = "newest", searc
                 (qid,),
             )
             reps = cur.fetchall()
+            # Vote totals for this question
+            cur.execute(
+                "SELECT COALESCE(SUM(CASE WHEN vote=1 THEN 1 ELSE 0 END),0), "
+                "COALESCE(SUM(CASE WHEN vote=-1 THEN 1 ELSE 0 END),0) "
+                "FROM votes WHERE target_type='question' AND target_id=%s",
+                (str(qid),),
+            )
+            vrow = cur.fetchone()
             questions.append({
                 "id": qid,
                 "username": r[1],
                 "text": r[2],
                 "created_at": r[3].isoformat(),
+                "votes_up": vrow[0] if vrow else 0,
+                "votes_down": vrow[1] if vrow else 0,
                 "replies": [
                     {"id": rep[0], "username": rep[1], "text": rep[2], "created_at": rep[3].isoformat()}
                     for rep in reps
@@ -845,6 +867,77 @@ def delete_reply(reply_id: int, session_id: str = Cookie(None)):
         cur.close()
         conn.close()
         return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ── Voting endpoints ─────────────────────────────────────
+
+@app.get("/votes/{target_type}/{target_id}")
+def get_votes(target_type: str, target_id: str):
+    """Return vote totals for a target."""
+    if target_type not in ("card", "question"):
+        return {"error": "invalid_type"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT COALESCE(SUM(CASE WHEN vote=1 THEN 1 ELSE 0 END),0), "
+            "COALESCE(SUM(CASE WHEN vote=-1 THEN 1 ELSE 0 END),0) "
+            "FROM votes WHERE target_type=%s AND target_id=%s",
+            (target_type, target_id),
+        )
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        return {"up": row[0], "down": row[1]}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/votes/{target_type}/{target_id}")
+def cast_vote(target_type: str, target_id: str, vote: int = Form(...), session_id: str = Cookie(None)):
+    """Cast or change a vote (1=up, -1=down). Logged-in users only."""
+    if target_type not in ("card", "question"):
+        return {"error": "invalid_type"}
+    if vote not in (1, -1):
+        return {"error": "invalid_vote"}
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # Check existing vote
+        cur.execute(
+            "SELECT id, vote FROM votes WHERE target_type=%s AND target_id=%s AND username=%s",
+            (target_type, target_id, username),
+        )
+        existing = cur.fetchone()
+        if existing:
+            if existing[1] == vote:
+                # Same vote again = remove it
+                cur.execute("DELETE FROM votes WHERE id=%s", (existing[0],))
+            else:
+                # Change vote
+                cur.execute("UPDATE votes SET vote=%s WHERE id=%s", (vote, existing[0]))
+        else:
+            cur.execute(
+                "INSERT INTO votes (target_type, target_id, username, vote, created_at) VALUES (%s,%s,%s,%s,%s)",
+                (target_type, target_id, username, vote, datetime.datetime.utcnow()),
+            )
+        conn.commit()
+        # Return updated totals
+        cur.execute(
+            "SELECT COALESCE(SUM(CASE WHEN vote=1 THEN 1 ELSE 0 END),0), "
+            "COALESCE(SUM(CASE WHEN vote=-1 THEN 1 ELSE 0 END),0) "
+            "FROM votes WHERE target_type=%s AND target_id=%s",
+            (target_type, target_id),
+        )
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        return {"status": "ok", "up": row[0], "down": row[1]}
     except Exception as e:
         return {"error": str(e)}
 
