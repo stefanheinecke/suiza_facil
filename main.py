@@ -98,6 +98,14 @@ def init_db():
                 created_at TIMESTAMP NOT NULL
             )
         """)
+        # OAuth state tokens (replaces cookie-based state to avoid cross-domain issues)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS oauth_states (
+                state VARCHAR(100) PRIMARY KEY,
+                next_url TEXT NOT NULL DEFAULT '/',
+                created_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -470,42 +478,55 @@ def google_login(next: str = "/"):
         "include_granted_scopes": "true",
         "state": state,
     }
-    # store state and next target in short-lived cookies for CSRF protection and post-login redirect
-    response = RedirectResponse(url=f"{GOOGLE_AUTH_URL}?{urlencode(params)}")
-    response.set_cookie(
-        "oauth_state",
-        state,
-        max_age=600,
-        path="/",
-        httponly=True,
-        secure=True,
-        samesite="lax",
-    )
-    response.set_cookie(
-        "oauth_next",
-        next,
-        max_age=600,
-        path="/",
-        httponly=False,
-        secure=True,
-        samesite="lax",
-    )
-    return response
+    # Store state + next URL in DB (avoids cross-domain cookie issues)
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        # clean up expired states older than 10 minutes
+        cur.execute("DELETE FROM oauth_states WHERE created_at < %s",
+                     (datetime.datetime.utcnow() - datetime.timedelta(minutes=10),))
+        cur.execute(
+            "INSERT INTO oauth_states (state, next_url, created_at) VALUES (%s, %s, %s)",
+            (state, next, datetime.datetime.utcnow()),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return {"error": f"state_store_failed: {e}"}
+
+    return RedirectResponse(url=f"{GOOGLE_AUTH_URL}?{urlencode(params)}")
 
 
 @app.get("/auth/google/callback")
 def google_callback(
     code: Optional[str] = None,
     state: Optional[str] = None,
-    oauth_state: Optional[str] = Cookie(None),
-    oauth_next: Optional[str] = Cookie("/"),
 ):
     """Handle Google's callback, create a local user+session, and redirect back."""
     if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
         return {"error": "google_oauth_not_configured"}
 
-    if not code or not state or not oauth_state or state != oauth_state:
+    if not code or not state:
         return {"error": "invalid_oauth_state"}
+
+    # Look up and consume state from DB
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT next_url FROM oauth_states WHERE state = %s", (state,))
+        row = cur.fetchone()
+        if not row:
+            cur.close()
+            conn.close()
+            return {"error": "invalid_oauth_state"}
+        oauth_next = row[0] or "/"
+        cur.execute("DELETE FROM oauth_states WHERE state = %s", (state,))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return {"error": f"state_lookup_failed: {e}"}
 
     # Exchange authorization code for tokens
     try:
@@ -575,9 +596,6 @@ def google_callback(
     redirect_url = f"{redirect_target}{sep}user={username}"
     response = RedirectResponse(url=redirect_url)
     set_session_cookie(response, session_id)
-    # clear temporary oauth cookies
-    response.delete_cookie("oauth_state", path="/")
-    response.delete_cookie("oauth_next", path="/")
     return response
 
 
