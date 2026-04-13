@@ -703,12 +703,36 @@ def admin_revoke_permission(username: str = Form(...), filename: str = Form(...)
 # ── Q&A Endpoints ──────────────────────────────────────────────
 
 @app.get("/questions")
-def list_questions():
-    """Return all questions with their replies."""
+def list_questions(page: int = 1, per_page: int = 5, sort: str = "newest", search: str = ""):
+    """Return paginated questions with their replies."""
     try:
         conn = get_conn()
         cur = conn.cursor()
-        cur.execute("SELECT id, username, text, created_at FROM questions ORDER BY created_at DESC")
+
+        order = "ASC" if sort == "oldest" else "DESC"
+        search_clean = (search or "").strip()
+
+        # Count total
+        if search_clean:
+            cur.execute("SELECT COUNT(*) FROM questions WHERE text ILIKE %s", ("%" + search_clean + "%",))
+        else:
+            cur.execute("SELECT COUNT(*) FROM questions")
+        total = cur.fetchone()[0]
+
+        total_pages = max(1, -(-total // per_page))  # ceil division
+        page = max(1, min(page, total_pages))
+        offset = (page - 1) * per_page
+
+        if search_clean:
+            cur.execute(
+                f"SELECT id, username, text, created_at FROM questions WHERE text ILIKE %s ORDER BY created_at {order} LIMIT %s OFFSET %s",
+                ("%" + search_clean + "%", per_page, offset),
+            )
+        else:
+            cur.execute(
+                f"SELECT id, username, text, created_at FROM questions ORDER BY created_at {order} LIMIT %s OFFSET %s",
+                (per_page, offset),
+            )
         rows = cur.fetchall()
         questions = []
         for r in rows:
@@ -730,7 +754,7 @@ def list_questions():
             })
         cur.close()
         conn.close()
-        return {"questions": questions}
+        return {"questions": questions, "page": page, "total_pages": total_pages, "total": total}
     except Exception as e:
         return {"error": str(e)}
 

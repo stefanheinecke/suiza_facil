@@ -1483,6 +1483,59 @@
       padding: 32px 16px;
       font-size: 15px;
     }
+    .qa-toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .qa-toolbar input[type="text"] {
+      flex: 1;
+      min-width: 160px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--dark);
+    }
+    .qa-toolbar input[type="text"]:focus { outline: none; border-color: var(--red); }
+    .qa-toolbar select {
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--dark);
+      cursor: pointer;
+    }
+    .qa-toolbar select:focus { outline: none; border-color: var(--red); }
+    .qa-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .qa-pagination button {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--dark);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .qa-pagination button:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
+    .qa-pagination button:disabled { opacity: 0.4; cursor: default; }
+    .qa-pagination .qa-page-info {
+      font-size: 13px;
+      color: var(--muted);
+    }
     .feedback-banner {
       background: linear-gradient(135deg, var(--red) 0%, #ff6b6b 100%);
       color: var(--white);
@@ -2131,7 +2184,16 @@
           </div>
         </div>
 
+        <div class="qa-toolbar" id="qaToolbar">
+          <input type="text" id="qaSearchInput" data-i18n-placeholder="qa_search_placeholder" placeholder="Buscar pregunta…" />
+          <select id="qaSortSelect">
+            <option value="newest" data-i18n="qa_sort_newest">Más recientes</option>
+            <option value="oldest" data-i18n="qa_sort_oldest">Más antiguas</option>
+          </select>
+        </div>
+
         <div id="qaList"></div>
+        <div class="qa-pagination" id="qaPagination"></div>
       </section>
 
       <!-- FAQ -->
@@ -3041,19 +3103,60 @@
         submitBtn.style.opacity = '0.5';
       }
 
+      let qaPage = 1;
+      let qaSort = 'newest';
+      let qaSearch = '';
+      const searchInput = document.getElementById('qaSearchInput');
+      const sortSelect = document.getElementById('qaSortSelect');
+      const paginationEl = document.getElementById('qaPagination');
+
+      let qaSearchTimer;
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          clearTimeout(qaSearchTimer);
+          qaSearchTimer = setTimeout(() => { qaSearch = searchInput.value.trim(); qaPage = 1; loadQuestions(); }, 300);
+        });
+      }
+      if (sortSelect) {
+        sortSelect.addEventListener('change', () => { qaSort = sortSelect.value; qaPage = 1; loadQuestions(); });
+      }
+
       async function loadQuestions() {
         try {
-          const res = await fetch('/questions');
+          const params = new URLSearchParams({ page: qaPage, per_page: 5, sort: qaSort });
+          if (qaSearch) params.set('search', qaSearch);
+          const res = await fetch('/questions?' + params.toString());
           const data = await res.json();
-          if (data.error || !data.questions) { list.innerHTML = ''; return; }
+          if (data.error || !data.questions) { list.innerHTML = ''; renderPagination(0, 0, 0); return; }
           if (data.questions.length === 0) {
             list.innerHTML = '<div class="qa-empty">' + t('qa_empty', 'Aún no hay preguntas. ¡Sé el primero en preguntar!') + '</div>';
+            renderPagination(0, 0, 0);
             return;
           }
           list.innerHTML = data.questions.map(q => renderQuestion(q)).join('');
+          renderPagination(data.page, data.total_pages, data.total);
         } catch (e) {
           console.error('QA load error', e);
         }
+      }
+
+      function renderPagination(page, totalPages, total) {
+        if (!paginationEl) return;
+        if (totalPages <= 1) { paginationEl.innerHTML = ''; return; }
+        let html = '<button ' + (page <= 1 ? 'disabled' : '') + ' data-qa-page="' + (page - 1) + '">' + t('qa_prev', '← Anterior') + '</button>';
+        html += '<span class="qa-page-info">' + page + ' / ' + totalPages + '</span>';
+        html += '<button ' + (page >= totalPages ? 'disabled' : '') + ' data-qa-page="' + (page + 1) + '">' + t('qa_next', 'Siguiente →') + '</button>';
+        paginationEl.innerHTML = html;
+      }
+
+      if (paginationEl) {
+        paginationEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-qa-page]');
+          if (btn && !btn.disabled) {
+            qaPage = parseInt(btn.getAttribute('data-qa-page'), 10);
+            loadQuestions();
+          }
+        });
       }
 
       function renderQuestion(q) {
