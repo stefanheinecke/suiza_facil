@@ -319,6 +319,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/me")
+def get_me(session_id: str = Cookie(None)):
+    """Return current user info including admin status."""
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"user": None, "is_admin": False}
+    admin = False
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT is_admin FROM users WHERE username = %s", (username,))
+        row = cur.fetchone()
+        admin = bool(row and row[0])
+        cur.close()
+        conn.close()
+    except Exception:
+        pass
+    return {"user": username, "is_admin": admin}
+
 @app.get("/")
 def get_root():
     return FileResponse("index.html")

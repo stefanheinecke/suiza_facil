@@ -2666,6 +2666,15 @@
 
       fetchTranslations();
       updateAuthUI();
+
+      // Check admin status and then init Q&A
+      fetch('/me').then(r => r.json()).then(data => {
+        if (data.is_admin) {
+          window.__isAdmin = true;
+          // Re-render Q&A so delete buttons appear
+          if (typeof initQA === 'function') initQA();
+        }
+      }).catch(() => {});
     });
     
     // Also try to fetch immediately in case DOM is ready
@@ -3111,7 +3120,8 @@
       if (!list || !submitBtn) return;
 
       const currentUser = localStorage.getItem('loggedInUser') || '';
-      const isAdmin = window.__isAdmin || false;
+
+      function isAdmin() { return window.__isAdmin || false; }
 
       function t(key, fallback) {
         return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
@@ -3219,7 +3229,7 @@
         html += '<div class="qa-author">' + esc(maskEmail(q.username)) + ' · ' + timeAgo(q.created_at) + '</div>';
         html += '<div class="qa-text">' + esc(q.text) + '</div>';
         html += '</div>';
-        if (isAdmin) {
+        if (isAdmin()) {
           html += '<button class="qa-delete-btn" data-delete-q="' + q.id + '">✕</button>';
         }
         html += '</div>';
@@ -3244,7 +3254,7 @@
           q.replies.forEach(r => {
             html += '<div class="qa-reply">';
             html += '<div class="qa-author">' + esc(maskEmail(r.username)) + ' · ' + timeAgo(r.created_at);
-            if (isAdmin) {
+            if (isAdmin()) {
               html += ' <button class="qa-delete-btn" data-delete-r="' + r.id + '" style="margin-left:6px;font-size:11px;padding:2px 8px;">✕</button>';
             }
             html += '</div>';
