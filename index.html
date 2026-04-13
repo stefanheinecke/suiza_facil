@@ -2667,14 +2667,14 @@
       fetchTranslations();
       updateAuthUI();
 
-      // Check admin status and then init Q&A
+      // Check admin status and then re-render Q&A so delete buttons appear
       fetch('/me').then(r => r.json()).then(data => {
         if (data.is_admin) {
           window.__isAdmin = true;
-          // Re-render Q&A so delete buttons appear
-          if (typeof initQA === 'function') initQA();
+          if (typeof window.__reloadQA === 'function') window.__reloadQA();
         }
       }).catch(() => {});
+    });
     });
     
     // Also try to fetch immediately in case DOM is ready
@@ -3383,6 +3383,7 @@
 
       // Load on init
       loadQuestions();
+      window.__reloadQA = loadQuestions;
     }
 
     // ── Voting (checklist cards + questions) ──────────────────
