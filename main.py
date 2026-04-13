@@ -106,6 +106,14 @@ def init_db():
                 created_at TIMESTAMP NOT NULL
             )
         """)
+        # One-time auth tokens for cross-domain session establishment
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS auth_tokens (
+                token VARCHAR(100) PRIMARY KEY,
+                username VARCHAR(150) NOT NULL,
+                created_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -588,16 +596,77 @@ def google_callback(
     # Create a normal server-side session and set cookie
     session_id = create_session_record(username)
     redirect_target = oauth_next or "/"
-    # pass username back once so frontend can store it (for display only)
+
+    # Generate a one-time auth token so the frontend can establish a session
+    # cookie on whatever domain it's served from (cross-domain fix)
+    auth_token = secrets.token_urlsafe(32)
+    try:
+        conn2 = get_conn()
+        cur2 = conn2.cursor()
+        # clean up expired tokens older than 5 minutes
+        cur2.execute("DELETE FROM auth_tokens WHERE created_at < %s",
+                     (datetime.datetime.utcnow() - datetime.timedelta(minutes=5),))
+        cur2.execute(
+            "INSERT INTO auth_tokens (token, username, created_at) VALUES (%s, %s, %s)",
+            (auth_token, username, datetime.datetime.utcnow()),
+        )
+        conn2.commit()
+        cur2.close()
+        conn2.close()
+    except Exception as e:
+        print("auth_token store error:", e)
+
+    # pass username and auth_token back so frontend can establish session on its domain
     if "?" in redirect_target:
         sep = "&"
     else:
         sep = "?"
-    redirect_url = f"{redirect_target}{sep}user={username}"
+    redirect_url = f"{redirect_target}{sep}user={username}&auth_token={auth_token}"
     response = RedirectResponse(url=redirect_url)
     set_session_cookie(response, session_id)
     return response
 
+
+@app.post("/auth/token-login")
+def token_login(token: str = Form(...)):
+    """Exchange a one-time auth token for a session cookie on the current domain."""
+    if not token:
+        return {"error": "missing_token"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT username, created_at FROM auth_tokens WHERE token = %s", (token,)
+        )
+        row = cur.fetchone()
+        if not row:
+            cur.close()
+            conn.close()
+            return {"error": "invalid_token"}
+        username, created_at = row
+        # Token must be less than 5 minutes old
+        if (datetime.datetime.utcnow() - created_at).total_seconds() > 300:
+            cur.execute("DELETE FROM auth_tokens WHERE token = %s", (token,))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return {"error": "expired_token"}
+        # Consume the token
+        cur.execute("DELETE FROM auth_tokens WHERE token = %s", (token,))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return {"error": f"token_login_failed: {e}"}
+
+    # Create a session and set the cookie on the response (current domain)
+    session_id = create_session_record(username)
+    response = Response(
+        content=json.dumps({"status": "ok", "user": username}),
+        media_type="application/json",
+    )
+    set_session_cookie(response, session_id)
+    return response
 
 
 # Admin endpoints: grant/revoke permission

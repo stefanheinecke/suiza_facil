@@ -2517,13 +2517,30 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // If we just came back from Google OAuth, the backend
-      // adds ?user=<email> once to the URL; store it so UI can show it.
+      // adds ?user=<email>&auth_token=<token> once to the URL.
+      // Exchange the token for a session cookie on THIS domain so Q&A etc. work.
       try {
         const params = new URLSearchParams(window.location.search);
         const fromOauthUser = params.get('user');
+        const authToken = params.get('auth_token');
         if (fromOauthUser) {
           localStorage.setItem('loggedInUser', fromOauthUser);
-          // clean the URL (remove the user query param)
+        }
+        if (authToken) {
+          // Exchange the one-time token for a session cookie on the current domain
+          fetch('/auth/token-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'token=' + encodeURIComponent(authToken)
+          }).then(r => r.json()).then(data => {
+            if (data.status === 'ok' && data.user) {
+              localStorage.setItem('loggedInUser', data.user);
+              updateAuthUI();
+            }
+          }).catch(e => console.error('Token login error', e));
+        }
+        if (fromOauthUser || authToken) {
+          // clean the URL (remove query params)
           const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
           window.history.replaceState({}, document.title, cleanUrl);
         }
