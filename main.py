@@ -126,6 +126,14 @@ def init_db():
                 UNIQUE(target_type, target_id, username)
             )
         """)
+        # Module permissions: which user can access which content module
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS module_permissions (
+                username VARCHAR(150) REFERENCES users(username) ON DELETE CASCADE,
+                module VARCHAR(50) NOT NULL,
+                PRIMARY KEY (username, module)
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -215,17 +223,22 @@ def admin_list_users(session_id: str = Cookie(None)):
         users = cur.fetchall()
         cur.execute("SELECT username, filename FROM permissions")
         perms = cur.fetchall()
+        cur.execute("SELECT username, module FROM module_permissions")
+        mod_perms = cur.fetchall()
         cur.close()
         conn.close()
         # Build user-permissions map
         user_map = [
-            {"username": u[0], "is_admin": u[1], "files": []}
+            {"username": u[0], "is_admin": u[1], "files": [], "modules": []}
             for u in users
         ]
         user_dict = {u["username"]: u for u in user_map}
         for username, filename in perms:
             if username in user_dict:
                 user_dict[username]["files"].append(filename)
+        for username, module in mod_perms:
+            if username in user_dict:
+                user_dict[username]["modules"].append(module)
         return {"users": user_map}
     except Exception as e:
         return {"error": str(e)}
@@ -296,6 +309,11 @@ def set_session_cookie(response: Response, session_id: str) -> None:
 pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
 print(pwd_context.schemes())
 
+# Valid module identifiers for the freemium gating system
+VALID_MODULES = {"basic", "housing", "pillars", "insurance_taxes"}
+# Modules that are free (no permission required)
+FREE_MODULES = {"basic"}
+
 # check whether a given username has permission for a filename
 def user_has_permission(username: str, filename: str) -> bool:
     try:
@@ -322,22 +340,29 @@ app.add_middleware(
 
 @app.get("/me")
 def get_me(session_id: str = Cookie(None)):
-    """Return current user info including admin status."""
+    """Return current user info including admin status and module permissions."""
     username = get_username_from_session(session_id) if session_id else None
     if not username:
-        return {"user": None, "is_admin": False}
+        return {"user": None, "is_admin": False, "modules": list(FREE_MODULES)}
     admin = False
+    modules = list(FREE_MODULES)
     try:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute("SELECT is_admin FROM users WHERE username = %s", (username,))
         row = cur.fetchone()
         admin = bool(row and row[0])
+        if admin:
+            modules = list(VALID_MODULES)
+        else:
+            cur.execute("SELECT module FROM module_permissions WHERE username = %s", (username,))
+            granted = {r[0] for r in cur.fetchall()}
+            modules = list(FREE_MODULES | granted)
         cur.close()
         conn.close()
     except Exception:
         pass
-    return {"user": username, "is_admin": admin}
+    return {"user": username, "is_admin": admin, "modules": modules}
 
 @app.get("/")
 def get_root():
@@ -731,6 +756,111 @@ def admin_revoke_permission(username: str = Form(...), filename: str = Form(...)
         return {"status": "ok"}
     except Exception as e:
         return {"error": str(e)}
+
+
+# ── Module permission endpoints ────────────────────────────────
+
+@app.post("/admin/grant_module")
+def admin_grant_module(username: str = Form(...), module: str = Form(...), session_id: str = Cookie(None)):
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    if module not in VALID_MODULES:
+        return {"error": "invalid_module"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO module_permissions (username, module) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+            (username, module),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/admin/revoke_module")
+def admin_revoke_module(username: str = Form(...), module: str = Form(...), session_id: str = Cookie(None)):
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    if module not in VALID_MODULES:
+        return {"error": "invalid_module"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM module_permissions WHERE username = %s AND module = %s", (username, module))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/request-module")
+def request_module_access(
+    module: str = Form(...),
+    session_id: str = Cookie(None),
+):
+    """User requests access to a premium module. Sends email to admin."""
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "not_logged_in"}
+    if module not in VALID_MODULES:
+        return {"error": "invalid_module"}
+    if module in FREE_MODULES:
+        return {"error": "already_free"}
+
+    module_labels = {
+        "housing": "Vivienda y trabajo (Housing & Jobs)",
+        "pillars": "3-Pillar System (Vorsorge)",
+        "insurance_taxes": "Insurance & Taxes (Versicherung & Steuern)",
+    }
+    label = module_labels.get(module, module)
+    subject = f"VivaSuiza module access request: {label}"
+    body = "\n".join([
+        f"User: {username}",
+        f"Requested module: {label} ({module})",
+        "",
+        f"Please grant access in the admin panel.",
+        "",
+        f"Received at: {datetime.datetime.utcnow().isoformat()} UTC",
+    ])
+
+    to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
+    api_key = os.getenv("RESEND_API_KEY")
+    from_address = os.getenv("RESEND_FROM_EMAIL", to_address)
+
+    if not api_key or not from_address:
+        print("[MODULE-REQUEST] Email not configured; logging only.")
+        print("[MODULE-REQUEST]", body)
+        return {"status": "ok"}
+
+    try:
+        resp = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": from_address,
+                "to": [to_address],
+                "subject": subject,
+                "text": body,
+            },
+            timeout=10,
+        )
+        if 200 <= resp.status_code < 300:
+            return {"status": "ok"}
+        print("Error sending module request:", resp.status_code, resp.text)
+        return {"error": "email_send_failed"}
+    except Exception as e:
+        print("Error sending module request:", e)
+        return {"error": "email_send_failed"}
+
 
 # ── Q&A Endpoints ──────────────────────────────────────────────
 

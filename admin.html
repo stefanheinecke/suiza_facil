@@ -13,7 +13,8 @@
         th { background: #f0f0f0; }
         .file-list { display: flex; flex-wrap: wrap; gap: 8px; }
         .file-tile { background: #e3eafc; padding: 4px 12px; border-radius: 6px; font-size: 0.95em; }
-        .btn { padding: 6px 14px; border: none; border-radius: 5px; background: #1976d2; color: #fff; cursor: pointer; font-size: 0.95em; margin-right: 6px; }
+        .module-tile { background: #e8f5e9; padding: 4px 12px; border-radius: 6px; font-size: 0.95em; }
+        .btn { padding: 6px 14px; border: none; border-radius: 5px; background: #1976d2; color: #fff; cursor: pointer; font-size: 0.95em; margin-right: 6px; margin-bottom: 4px; }
         .btn.revoke { background: #d32f2f; }
         .btn.grant { background: #388e3c; }
         .admin-badge { background: #ffd700; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 8px; }
@@ -30,12 +31,14 @@
                 <th>User</th>
                 <th>Admin</th>
                 <th>Files</th>
-                <th>Actions</th>
+                <th>File Actions</th>
+                <th>Modules</th>
+                <th>Module Actions</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
-    <h2>Grant Permission</h2>
+    <h2>Grant File Permission</h2>
     <form id="grant-form">
         <label>User: <input type="text" id="grant-username" required></label>
         <label>File: <select id="grant-file">
@@ -44,8 +47,23 @@
         </select></label>
         <button type="submit" class="btn grant">Grant</button>
     </form>
+    <h2>Grant Module Access</h2>
+    <form id="grant-module-form">
+        <label>User: <input type="text" id="grant-module-username" required></label>
+        <label>Module: <select id="grant-module-select">
+            <option value="housing">Housing &amp; Jobs</option>
+            <option value="pillars">3-Pillar System</option>
+            <option value="insurance_taxes">Insurance &amp; Taxes</option>
+        </select></label>
+        <button type="submit" class="btn grant">Grant Module</button>
+    </form>
 </div>
 <script>
+const ALL_MODULES = ['housing', 'pillars', 'insurance_taxes'];
+const MODULE_LABELS = { housing: 'Housing & Jobs', pillars: '3-Pillar System', insurance_taxes: 'Insurance & Taxes' };
+
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
 async function fetchUsers() {
     const res = await fetch('/admin/list_users');
     const data = await res.json();
@@ -56,16 +74,26 @@ async function fetchUsers() {
     const tbody = document.querySelector('#users-table tbody');
     tbody.innerHTML = '';
     data.users.forEach(user => {
+        const uname = escapeHtml(user.username);
+        const userMods = user.modules || [];
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${user.username}</td>
+            <td>${uname}</td>
             <td>${user.is_admin ? '<span class="admin-badge">Admin</span>' : ''}</td>
-            <td><div class="file-list">${user.files.map(f => `<span class="file-tile">${f}</span>`).join('')}</div></td>
+            <td><div class="file-list">${user.files.map(f => `<span class="file-tile">${escapeHtml(f)}</span>`).join('')}</div></td>
             <td>
                 ${['doc1.pdf','doc2.pdf'].map(f =>
                     user.files.includes(f) ?
-                    `<button class="btn revoke" onclick="revoke('${user.username}','${f}')">Revoke ${f}</button>` :
-                    `<button class="btn grant" onclick="grant('${user.username}','${f}')">Grant ${f}</button>`
+                    `<button class="btn revoke" onclick="revokeFile('${uname}','${f}')">Revoke ${f}</button>` :
+                    `<button class="btn grant" onclick="grantFile('${uname}','${f}')">Grant ${f}</button>`
+                ).join('')}
+            </td>
+            <td><div class="file-list">${userMods.map(m => `<span class="module-tile">${MODULE_LABELS[m] || m}</span>`).join('') || '—'}</div></td>
+            <td>
+                ${ALL_MODULES.map(m =>
+                    userMods.includes(m) ?
+                    `<button class="btn revoke" onclick="revokeModule('${uname}','${m}')">Revoke ${MODULE_LABELS[m]}</button>` :
+                    `<button class="btn grant" onclick="grantModule('${uname}','${m}')">Grant ${MODULE_LABELS[m]}</button>`
                 ).join('')}
             </td>
         `;
@@ -73,7 +101,7 @@ async function fetchUsers() {
     });
 }
 
-async function grant(username, filename) {
+async function grantFile(username, filename) {
     const form = new FormData();
     form.append('username', username);
     form.append('filename', filename);
@@ -83,7 +111,7 @@ async function grant(username, filename) {
     fetchUsers();
 }
 
-async function revoke(username, filename) {
+async function revokeFile(username, filename) {
     const form = new FormData();
     form.append('username', username);
     form.append('filename', filename);
@@ -93,12 +121,40 @@ async function revoke(username, filename) {
     fetchUsers();
 }
 
+async function grantModule(username, mod) {
+    const form = new FormData();
+    form.append('username', username);
+    form.append('module', mod);
+    const res = await fetch('/admin/grant_module', { method: 'POST', body: form });
+    const data = await res.json();
+    document.getElementById('status').textContent = data.status ? 'Module granted.' : 'Error: ' + (data.error || data.detail);
+    fetchUsers();
+}
+
+async function revokeModule(username, mod) {
+    const form = new FormData();
+    form.append('username', username);
+    form.append('module', mod);
+    const res = await fetch('/admin/revoke_module', { method: 'POST', body: form });
+    const data = await res.json();
+    document.getElementById('status').textContent = data.status ? 'Module revoked.' : 'Error: ' + (data.error || data.detail);
+    fetchUsers();
+}
+
 document.getElementById('grant-form').onsubmit = async (e) => {
     e.preventDefault();
     const username = document.getElementById('grant-username').value;
     const filename = document.getElementById('grant-file').value;
-    await grant(username, filename);
+    await grantFile(username, filename);
     document.getElementById('grant-username').value = '';
+};
+
+document.getElementById('grant-module-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('grant-module-username').value;
+    const mod = document.getElementById('grant-module-select').value;
+    await grantModule(username, mod);
+    document.getElementById('grant-module-username').value = '';
 };
 
 fetchUsers();

@@ -374,7 +374,13 @@
     "vote_login_hint": "Inicia sesión para votar.",
     "feedback_banner_title": "💡 ¡Tu opinión importa!",
     "feedback_banner_sub": "Ayúdanos a mejorar VivaSuiza sugiriendo temas nuevos para los tópicos de información.",
-    "feedback_banner_btn": "Dejar feedback"
+    "feedback_banner_btn": "Dejar feedback",
+    "module_locked_text": "Este contenido requiere acceso. Solicita permiso para desbloquearlo.",
+    "module_request_btn": "Solicitar acceso",
+    "module_requesting": "Enviando…",
+    "module_requested": "✓ Solicitud enviada",
+    "module_request_error": "Error – inténtalo de nuevo",
+    "module_login_required": "Inicia sesión para solicitar acceso."
   },
   "de": {
     "pageTitle": "VivaSuiza – Dein neues Leben in der Schweiz, Schritt für Schritt",
@@ -751,7 +757,13 @@
     "vote_login_hint": "Bitte melde dich an, um abzustimmen.",
     "feedback_banner_title": "💡 Deine Meinung zählt!",
     "feedback_banner_sub": "Hilf uns VivaSuiza zu verbessern, indem du neue Themen für die Informationsseiten vorschlägst.",
-    "feedback_banner_btn": "Feedback geben"
+    "feedback_banner_btn": "Feedback geben",
+    "module_locked_text": "Dieser Inhalt erfordert Zugang. Fordere eine Freischaltung an.",
+    "module_request_btn": "Zugang anfordern",
+    "module_requesting": "Wird gesendet…",
+    "module_requested": "✓ Anfrage gesendet",
+    "module_request_error": "Fehler – versuche es erneut",
+    "module_login_required": "Bitte melde dich an, um Zugang anzufordern."
   },
   "en": {
     "pageTitle": "VivaSuiza – Your new life in Switzerland, step by step",
@@ -1128,6 +1140,12 @@
     "vote_login_hint": "Log in to vote.",
     "feedback_banner_title": "💡 Your opinion matters!",
     "feedback_banner_sub": "Help us improve VivaSuiza by suggesting new information topics.",
-    "feedback_banner_btn": "Give feedback"
+    "feedback_banner_btn": "Give feedback",
+    "module_locked_text": "This content requires access. Request permission to unlock it.",
+    "module_request_btn": "Request access",
+    "module_requesting": "Sending…",
+    "module_requested": "✓ Request sent",
+    "module_request_error": "Error – try again",
+    "module_login_required": "Please log in to request access."
   }
 }

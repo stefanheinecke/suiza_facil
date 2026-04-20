@@ -1005,6 +1005,49 @@
       padding: 6px 12px;
     }
 
+    /* Module lock overlay */
+    .checklist-card.module-locked .checklist-card-body {
+      display: none !important;
+    }
+    .checklist-card.module-locked .checklist-card-header {
+      cursor: default;
+    }
+    .module-lock-overlay {
+      padding: 20px 16px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(29,53,87,0.03), rgba(230,57,70,0.04));
+      border-top: 1px solid rgba(0,0,0,0.04);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+    .module-lock-overlay .lock-icon {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+    .module-lock-overlay .lock-text {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .module-lock-overlay .btn-request-module {
+      display: inline-block;
+      padding: 8px 20px;
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .module-lock-overlay .btn-request-module:hover {
+      opacity: 0.85;
+    }
+    .module-lock-overlay .btn-request-module:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     footer {
       margin-top: 40px;
       padding-top: 16px;
@@ -1739,7 +1782,7 @@
         <div class="checklist-grid">
 
           <!-- Rechte Spalte: Umzugsgut & praktische Hinweise -->
-          <article class="checklist-card">
+          <article class="checklist-card" data-module="basic">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">1</div>
@@ -1828,7 +1871,7 @@
           </article>
 
           <!-- Linke Spalte: Verwaltung & Formalitäten -->
-          <article class="checklist-card">
+          <article class="checklist-card" data-module="basic">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">2</div>
@@ -1900,7 +1943,7 @@
           </article>
 
           <!-- Wohnung & Jobs -->
-          <article class="checklist-card">
+          <article class="checklist-card" data-module="housing">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">3</div>
@@ -1995,7 +2038,7 @@
           </article>
 
           <!-- 3-Säulen-System / Sistema de los 3 pilares -->
-          <article class="checklist-card" id="topic-pillars">
+          <article class="checklist-card" id="topic-pillars" data-module="pillars">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">4</div>
@@ -2087,7 +2130,7 @@
           </article>
 
           <!-- Krankenversicherung -->
-          <article class="checklist-card" id="topic-insurance">
+          <article class="checklist-card" id="topic-insurance" data-module="insurance_taxes">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">5</div>
@@ -2197,7 +2240,7 @@
           </article>
 
           <!-- Steuern -->
-          <article class="checklist-card">
+          <article class="checklist-card" data-module="insurance_taxes">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">6</div>
@@ -2291,15 +2334,15 @@
                     En Suiza existen varias maneras legales de reducir tu carga fiscal. Aquí las más importantes:
                   </div>
                   <ul class="checklist-sublist">
-                    <li data-i18n="checklist_tax_tip1"><strong>Pilar 3a:</strong> Cada franco que aportas al pilar 3a (máx. CHF 7 056/año con 2.° pilar) se descuenta íntegramente de tu renta imponible. Ejemplo: con un tipo marginal del 30 %, aportar el máximo te ahorra ~CHF 2 117 en impuestos cada año.</li>
-                    <li data-i18n="checklist_tax_tip2"><strong>Primas de seguros:</strong> Las primas del seguro médico obligatorio, seguro de accidentes y seguro de vida son deducibles hasta un importe máximo. En el impuesto federal directo: máx. CHF 1 800 (individual) / CHF 3 600 (matrimonio) si cotizas al 2.° pilar o 3a, o CHF 2 700 / CHF 5 400 si no. Los cantones aplican importes más altos (p. ej. Zúrich: CHF 2 900 / CHF 5 800). No son deducibles: seguro de auto, responsabilidad civil, hogar ni viaje.</li>
-                    <li data-i18n="checklist_tax_tip3"><strong>Gastos por enfermedad o accidente:</strong> Los gastos médicos no cubiertos por el seguro (franquicia, participación, dentista, gafas con receta, naturópatas autorizados) son deducibles si superan el 5 % de tu renta neta (en la mayoría de cantones y a nivel federal). Algunos cantones aplican umbrales más bajos: Glarus, St. Gallen y Valais el 2 %, Ginebra el 0,5 %, y Basel-Land no tiene umbral mínimo.</li>
-                    <li data-i18n="checklist_tax_tip4"><strong>Formación continua:</strong> Los gastos en formación profesional continua (no la formación inicial) son deducibles hasta CHF 13 000/año a nivel federal. Según el cantón varía: Aargau hasta CHF 18 000, Basel-Stadt hasta CHF 19 100, Ticino CHF 10 500. En Zúrich y Schaffhausen hay una deducción forfait de CHF 500 sin justificante.</li>
-                    <li data-i18n="checklist_tax_tip5"><strong>Transporte público y bicicleta:</strong> Puedes deducir el coste del abono de transporte público para ir al trabajo. La bicicleta tiene un forfait de CHF 700/año (CHF 824 en Basel-Stadt). El máximo deducible federal es CHF 3 300; varía por cantón (Zúrich: CHF 5 200, Berna: CHF 7 000). El coche solo es deducible en circunstancias especiales (sin ÖV disponible, ahorro de &gt;1 h, etc.).</li>
-                    <li data-i18n="checklist_tax_tip6"><strong>Compra en la caja de pensiones (2.° pilar):</strong> Los aportes voluntarios (Einkauf) a tu Pensionskasse son 100 % deducibles de la renta imponible. Al retirarlo se aplica un tipo impositivo reducido. Solo conviene si tu caja de pensiones está sólidamente financiada.</li>
-                    <li data-i18n="checklist_tax_tip7"><strong>Deducción por hijos:</strong> Cada hijo menor permite un descuento fijo sobre la renta imponible: CHF 6 800 (federal), CHF 9 300 (Zúrich). También se aplica a hijos mayores de edad en formación. Además, a nivel federal hay un crédito fiscal de CHF 263 por hijo. Si los padres viven separados con custodia compartida sin pensión alimenticia, cada uno deduce la mitad.</li>
-                    <li data-i18n="checklist_tax_tip8"><strong>Donaciones:</strong> Las donaciones a entidades benéficas reconocidas son deducibles hasta el 20 % de la renta neta (federal y mayoría de cantones). Mínimo: CHF 100/año en la mayoría de cantones. Basel-Land no tiene límite máximo. Jura permite solo el 10 %, Neuchâtel el 5 %. Consulta la lista de la fundación <a href="https://zewo.ch/de/spenden-von-der-steuer-abziehen/" target="_blank" rel="noopener noreferrer">Zewo</a> para verificar qué organizaciones son deducibles.</li>
-                    <li data-i18n="checklist_tax_tip9"><strong>Pagar impuestos por anticipado:</strong> Si pagas tus impuestos antes del plazo, muchos cantones te bonifican con un interés preferencial (Vergütungszins). El tipo varía por cantón, pero suele ser más alto que el interés de una cuenta de ahorro bancaria normal.</li>
+                    <li data-i18n="checklist_tax_tip1"><b>Pilar 3a:</b> Cada franco que aportas al pilar 3a (máx. CHF 7 056/año con 2.° pilar) se descuenta íntegramente de tu renta imponible. Ejemplo: con un tipo marginal del 30 %, aportar el máximo te ahorra ~CHF 2 117 en impuestos cada año.</li>
+                    <li data-i18n="checklist_tax_tip2"><b>Primas de seguros:</b> Las primas del seguro médico obligatorio, seguro de accidentes y seguro de vida son deducibles hasta un importe máximo. En el impuesto federal directo: máx. CHF 1 800 (individual) / CHF 3 600 (matrimonio) si cotizas al 2.° pilar o 3a, o CHF 2 700 / CHF 5 400 si no. Los cantones aplican importes más altos (p. ej. Zúrich: CHF 2 900 / CHF 5 800). No son deducibles: seguro de auto, responsabilidad civil, hogar ni viaje.</li>
+                    <li data-i18n="checklist_tax_tip3"><b>Gastos por enfermedad o accidente:</b> Los gastos médicos no cubiertos por el seguro (franquicia, participación, dentista, gafas con receta, naturópatas autorizados) son deducibles si superan el 5 % de tu renta neta (en la mayoría de cantones y a nivel federal). Algunos cantones aplican umbrales más bajos: Glarus, St. Gallen y Valais el 2 %, Ginebra el 0,5 %, y Basel-Land no tiene umbral mínimo.</li>
+                    <li data-i18n="checklist_tax_tip4"><b>Formación continua:</b> Los gastos en formación profesional continua (no la formación inicial) son deducibles hasta CHF 13 000/año a nivel federal. Según el cantón varía: Aargau hasta CHF 18 000, Basel-Stadt hasta CHF 19 100, Ticino CHF 10 500. En Zúrich y Schaffhausen hay una deducción forfait de CHF 500 sin justificante.</li>
+                    <li data-i18n="checklist_tax_tip5"><b>Transporte público y bicicleta:</b> Puedes deducir el coste del abono de transporte público para ir al trabajo. La bicicleta tiene un forfait de CHF 700/año (CHF 824 en Basel-Stadt). El máximo deducible federal es CHF 3 300; varía por cantón (Zúrich: CHF 5 200, Berna: CHF 7 000). El coche solo es deducible en circunstancias especiales (sin ÖV disponible, ahorro de &gt;1 h, etc.).</li>
+                    <li data-i18n="checklist_tax_tip6"><b>Compra en la caja de pensiones (2.° pilar):</b> Los aportes voluntarios (Einkauf) a tu Pensionskasse son 100 % deducibles de la renta imponible. Al retirarlo se aplica un tipo impositivo reducido. Solo conviene si tu caja de pensiones está sólidamente financiada.</li>
+                    <li data-i18n="checklist_tax_tip7"><b>Deducción por hijos:</b> Cada hijo menor permite un descuento fijo sobre la renta imponible: CHF 6 800 (federal), CHF 9 300 (Zúrich). También se aplica a hijos mayores de edad en formación. Además, a nivel federal hay un crédito fiscal de CHF 263 por hijo. Si los padres viven separados con custodia compartida sin pensión alimenticia, cada uno deduce la mitad.</li>
+                    <li data-i18n="checklist_tax_tip8"><b>Donaciones:</b> Las donaciones a entidades benéficas reconocidas son deducibles hasta el 20 % de la renta neta (federal y mayoría de cantones). Mínimo: CHF 100/año en la mayoría de cantones. Basel-Land no tiene límite máximo. Jura permite solo el 10 %, Neuchâtel el 5 %. Consulta la lista de la fundación <a href="https://zewo.ch/de/spenden-von-der-steuer-abziehen/" target="_blank" rel="noopener noreferrer">Zewo</a> para verificar qué organizaciones son deducibles.</li>
+                    <li data-i18n="checklist_tax_tip9"><b>Pagar impuestos por anticipado:</b> Si pagas tus impuestos antes del plazo, muchos cantones te bonifican con un interés preferencial (Vergütungszins). El tipo varía por cantón, pero suele ser más alto que el interés de una cuenta de ahorro bancaria normal.</li>
                   </ul>
                 </div>
               </li>
@@ -2661,11 +2704,8 @@
           // cookie will now be set by server response
           updateAuthUI();
           closeAuth();
-          // Check admin status and refresh Q&A
-          fetch('/me').then(r => r.json()).then(d => {
-            if (d.is_admin) window.__isAdmin = true;
-            if (typeof window.__reloadQA === 'function') window.__reloadQA();
-          }).catch(() => {});
+          // Reload admin status, modules and Q&A
+          fetchUserModulesAndApply();
         } else { alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_invalid']) || 'Invalid credentials'); }
       } catch (e) { console.error(e); alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_failed']) || 'Login failed'); }
     }
@@ -2680,7 +2720,9 @@
       // cookie cleared server side when response returned, but clear any leftover
       document.cookie = 'session_id=; path=/; max-age=0';
       window.__isAdmin = false;
+      window.__userModules = ['basic'];
       updateAuthUI();
+      applyModuleGating();
       if (typeof window.__reloadQA === 'function') window.__reloadQA();
     }
     // Direct help request from checklist buttons
@@ -2737,6 +2779,89 @@
       }
     }
 
+    // ── Module gating (freemium) ──────────────────────────────
+    window.__userModules = ['basic']; // default: free module only
+
+    function t_mod(key, fallback) {
+      return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
+    }
+
+    function applyModuleGating() {
+      const modules = new Set(window.__userModules || ['basic']);
+      document.querySelectorAll('.checklist-card[data-module]').forEach(card => {
+        const mod = card.getAttribute('data-module');
+        const existing = card.querySelector('.module-lock-overlay');
+        if (modules.has(mod)) {
+          // user has access
+          card.classList.remove('module-locked');
+          if (existing) existing.remove();
+        } else {
+          // lock the card
+          card.classList.add('module-locked');
+          card.classList.remove('open');
+          if (!existing) {
+            const overlay = document.createElement('div');
+            overlay.className = 'module-lock-overlay';
+            overlay.innerHTML =
+              '<div class="lock-icon">🔒</div>' +
+              '<div class="lock-text">' + t_mod('module_locked_text', 'This content requires access. Request permission to unlock it.') + '</div>' +
+              '<button class="btn-request-module" data-request-module="' + mod + '">' +
+                t_mod('module_request_btn', 'Request access') +
+              '</button>';
+            card.appendChild(overlay);
+          }
+        }
+      });
+    }
+
+    // Handle module access request clicks (delegated)
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-request-module');
+      if (!btn) return;
+      const mod = btn.getAttribute('data-request-module');
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert(t_mod('module_login_required', 'Please log in to request access.'));
+        openAuth();
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = t_mod('module_requesting', 'Sending…');
+      try {
+        const fd = new URLSearchParams();
+        fd.append('module', mod);
+        const res = await fetch('/request-module', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: fd.toString()
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          btn.textContent = t_mod('module_requested', '✓ Request sent');
+        } else {
+          btn.textContent = t_mod('module_request_error', 'Error – try again');
+          btn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Module request error', err);
+        btn.textContent = t_mod('module_request_error', 'Error – try again');
+        btn.disabled = false;
+      }
+    });
+
+    function fetchUserModulesAndApply() {
+      fetch('/me').then(r => r.json()).then(data => {
+        if (data.is_admin) window.__isAdmin = true;
+        else window.__isAdmin = false;
+        window.__userModules = data.modules || ['basic'];
+        applyModuleGating();
+        if (typeof window.__reloadQA === 'function') window.__reloadQA();
+      }).catch(() => {
+        window.__userModules = ['basic'];
+        applyModuleGating();
+      });
+    }
+
     // Mobile nav toggle (hamburger)
     function toggleNav() {
       const nav = document.querySelector('header nav');
@@ -2784,13 +2909,8 @@
       fetchTranslations();
       updateAuthUI();
 
-      // Check admin status and then re-render Q&A so delete buttons appear
-      fetch('/me').then(r => r.json()).then(data => {
-        if (data.is_admin) {
-          window.__isAdmin = true;
-          if (typeof window.__reloadQA === 'function') window.__reloadQA();
-        }
-      }).catch(() => {});
+      // Check admin status, load modules and re-render Q&A
+      fetchUserModulesAndApply();
     });
     
     // Also try to fetch immediately in case DOM is ready
@@ -2808,6 +2928,7 @@
         const header = card.querySelector('.checklist-card-header');
         if (!header) return;
         header.addEventListener('click', () => {
+          if (card.classList.contains('module-locked')) return;
           card.classList.toggle('open');
         });
       });
