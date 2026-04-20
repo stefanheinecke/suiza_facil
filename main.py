@@ -310,7 +310,7 @@ pwd_context = CryptContext(schemes=["bcrypt_sha256"], deprecated="auto")
 print(pwd_context.schemes())
 
 # Valid module identifiers for the freemium gating system
-VALID_MODULES = {"basic", "housing", "pillars", "insurance_taxes"}
+VALID_MODULES = {"basic", "housing", "pillars", "insurance", "taxes"}
 # Modules that are free (no permission required)
 FREE_MODULES = {"basic"}
 
@@ -391,6 +391,30 @@ def post_subscriber(email: str = Form(...)):
         count = cur.fetchone()[0]
         cur.close()
         conn.close()
+
+        # Notify admin about new subscriber
+        try:
+            to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
+            api_key = os.getenv("RESEND_API_KEY")
+            from_address = os.getenv("RESEND_FROM_EMAIL", to_address)
+            if api_key and from_address:
+                requests.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "from": from_address,
+                        "to": [to_address],
+                        "subject": f"VivaSuiza: New community subscriber",
+                        "text": f"New subscriber: {email}\nTotal subscribers: {count}\nTime: {datetime.datetime.utcnow().isoformat()} UTC",
+                    },
+                    timeout=10,
+                )
+        except Exception as mail_err:
+            print("Error notifying admin about new subscriber:", mail_err)
+
         return {"status": "ok", "count": count}
     except Exception as e:
         return {"error": str(e)}
@@ -816,7 +840,8 @@ def request_module_access(
     module_labels = {
         "housing": "Vivienda y trabajo (Housing & Jobs)",
         "pillars": "3-Pillar System (Vorsorge)",
-        "insurance_taxes": "Insurance & Taxes (Versicherung & Steuern)",
+        "insurance": "Insurance (Versicherung)",
+        "taxes": "Taxes (Steuern)",
     }
     label = module_labels.get(module, module)
     subject = f"VivaSuiza module access request: {label}"

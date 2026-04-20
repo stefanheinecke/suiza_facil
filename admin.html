@@ -53,14 +53,15 @@
         <label>Module: <select id="grant-module-select">
             <option value="housing">Housing &amp; Jobs</option>
             <option value="pillars">3-Pillar System</option>
-            <option value="insurance_taxes">Insurance &amp; Taxes</option>
+            <option value="insurance">Insurance</option>
+            <option value="taxes">Taxes</option>
         </select></label>
         <button type="submit" class="btn grant">Grant Module</button>
     </form>
 </div>
 <script>
-const ALL_MODULES = ['housing', 'pillars', 'insurance_taxes'];
-const MODULE_LABELS = { housing: 'Housing & Jobs', pillars: '3-Pillar System', insurance_taxes: 'Insurance & Taxes' };
+const ALL_MODULES = ['housing', 'pillars', 'insurance', 'taxes'];
+const MODULE_LABELS = { housing: 'Housing & Jobs', pillars: '3-Pillar System', insurance: 'Insurance', taxes: 'Taxes' };
 
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
