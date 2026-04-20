@@ -377,13 +377,17 @@ def get_admin_html(session_id: str = Cookie(None)):
     return FileResponse("admin.html")
 
 @app.post("/subscriber")
-def post_subscriber(email: str = Form(...)):
+def post_subscriber(request: Request):
+    session_id = request.cookies.get("session_id")
+    username = get_session_user(session_id) if session_id else None
+    if not username:
+        return {"error": "not_logged_in"}
     try:
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO subscriber (email, subscription_date) VALUES (%s, %s)",
-            (email, datetime.datetime.utcnow())
+            (username, datetime.datetime.utcnow())
         )
         conn.commit()
         # verify insertion
@@ -408,7 +412,7 @@ def post_subscriber(email: str = Form(...)):
                         "from": from_address,
                         "to": [to_address],
                         "subject": f"VivaSuiza: New community subscriber",
-                        "text": f"New subscriber: {email}\nTotal subscribers: {count}\nTime: {datetime.datetime.utcnow().isoformat()} UTC",
+                        "text": f"New subscriber: {username}\nTotal subscribers: {count}\nTime: {datetime.datetime.utcnow().isoformat()} UTC",
                     },
                     timeout=10,
                 )

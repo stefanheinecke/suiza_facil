@@ -2464,14 +2464,7 @@
             class="newsletter-form"
             onsubmit="subscribeNewsletter(event)"
           >
-            <input
-              type="email"
-              class="newsletter-input"
-              placeholder="Tu email"
-              data-i18n-placeholder="newsletter_email_placeholder"
-              required
-            />
-            <button type="submit" class="newsletter-btn">
+            <button type="submit" class="newsletter-btn" id="subscribeCommunityBtn">
               <span data-i18n="newsletter_btn">Quiero estar al tanto</span>
               <span>→</span>
             </button>
@@ -2632,31 +2625,32 @@
     // Subscribe to newsletter
     async function subscribeNewsletter(event) {
       event.preventDefault();
-      const emailInput = event.target.querySelector('.newsletter-input');
-      const email = emailInput.value.trim();
-
-      if (!email) {
-        console.error('Email is required');
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        alert((translations[currentLanguage] && translations[currentLanguage]['module_login_required']) || 'Please log in first.');
+        openAuth();
         return;
       }
+
+      const btn = document.getElementById('subscribeCommunityBtn');
+      if (btn) btn.disabled = true;
 
       try {
         const response = await fetch('/subscriber', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'email=' + encodeURIComponent(email)
+          body: ''
         });
 
         if (response.ok) {
-          console.log('Subscriber email stored successfully');
-          emailInput.value = '';
           alert(translations[currentLanguage]['newsletter_thank_you'] || '¡Gracias por suscribirse!');
         } else {
-          console.error('Failed to subscribe:', response.status);
+          if (btn) btn.disabled = false;
           alert(translations[currentLanguage]['newsletter_error_subscribe'] || 'Hubo un error al suscribirse. Intenta de nuevo.');
         }
       } catch (error) {
         console.error('Error subscribing:', error);
+        if (btn) btn.disabled = false;
         alert(translations[currentLanguage]['newsletter_error_processing'] || 'Error al procesar tu suscripción.');
       }
     }
