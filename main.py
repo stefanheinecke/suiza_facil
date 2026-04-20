@@ -379,7 +379,7 @@ def get_admin_html(session_id: str = Cookie(None)):
 @app.post("/subscriber")
 def post_subscriber(request: Request):
     session_id = request.cookies.get("session_id")
-    username = get_session_user(session_id) if session_id else None
+    username = get_username_from_session(session_id) if session_id else None
     if not username:
         return {"error": "not_logged_in"}
     try:
