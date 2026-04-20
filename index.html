@@ -2549,6 +2549,11 @@
           // cookie will now be set by server response
           updateAuthUI();
           closeAuth();
+          // Check admin status and refresh Q&A
+          fetch('/me').then(r => r.json()).then(d => {
+            if (d.is_admin) window.__isAdmin = true;
+            if (typeof window.__reloadQA === 'function') window.__reloadQA();
+          }).catch(() => {});
         } else { alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_invalid']) || 'Invalid credentials'); }
       } catch (e) { console.error(e); alert((translations[currentLanguage] && translations[currentLanguage]['auth_login_failed']) || 'Login failed'); }
     }
@@ -2562,13 +2567,16 @@
       localStorage.removeItem('loggedInUser');
       // cookie cleared server side when response returned, but clear any leftover
       document.cookie = 'session_id=; path=/; max-age=0';
+      window.__isAdmin = false;
       updateAuthUI();
+      if (typeof window.__reloadQA === 'function') window.__reloadQA();
     }
-    // Direct help request from checklist buttons (only for logged-in users)
+    // Direct help request from checklist buttons
     async function sendHelpRequest(stepText, contextKey) {
       const storedUser = localStorage.getItem('loggedInUser');
       if (!storedUser) {
         alert((translations[currentLanguage] && translations[currentLanguage]['help_error_not_logged_in']) || 'Please log in to request help.');
+        openAuth();
         return;
       }
 
@@ -2603,20 +2611,17 @@
       const usernameDisplay = document.getElementById('usernameDisplay');
       const logoutBtn = document.getElementById('logoutBtn');
       const docsSection = document.getElementById('documents');
-      const helpButtons = document.querySelectorAll('.help-btn');
       if (user) {
         authBtn.style.display = 'none';
         usernameDisplay.textContent = user;
         usernameDisplay.style.display = 'inline';
         logoutBtn.style.display = 'block';
         if (docsSection) docsSection.style.display = '';
-        helpButtons.forEach(btn => { btn.style.display = ''; });
       } else {
         authBtn.style.display = 'block';
         usernameDisplay.style.display = 'none';
         logoutBtn.style.display = 'none';
         if (docsSection) docsSection.style.display = 'none';
-        helpButtons.forEach(btn => { btn.style.display = 'none'; });
       }
     }
 
