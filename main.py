@@ -227,9 +227,9 @@ def admin_list_users(session_id: str = Cookie(None)):
         mod_perms = cur.fetchall()
         cur.close()
         conn.close()
-        # Build user-permissions map
+        # Build user-permissions map. Include default/free module access for all users.
         user_map = [
-            {"username": u[0], "is_admin": u[1], "files": [], "modules": []}
+            {"username": u[0], "is_admin": u[1], "files": [], "modules": list(FREE_MODULES)}
             for u in users
         ]
         user_dict = {u["username"]: u for u in user_map}
@@ -238,7 +238,8 @@ def admin_list_users(session_id: str = Cookie(None)):
                 user_dict[username]["files"].append(filename)
         for username, module in mod_perms:
             if username in user_dict:
-                user_dict[username]["modules"].append(module)
+                if module not in user_dict[username]["modules"]:
+                    user_dict[username]["modules"].append(module)
         return {"users": user_map}
     except Exception as e:
         return {"error": str(e)}
@@ -312,7 +313,7 @@ print(pwd_context.schemes())
 # Valid module identifiers for the freemium gating system
 VALID_MODULES = {"basic", "housing", "pillars", "insurance", "taxes"}
 # Modules that are free (no permission required)
-FREE_MODULES = {"basic"}
+FREE_MODULES = set(VALID_MODULES)
 
 # check whether a given username has permission for a filename
 def user_has_permission(username: str, filename: str) -> bool:
