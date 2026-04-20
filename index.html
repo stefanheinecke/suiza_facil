@@ -2781,6 +2781,123 @@
       }
     }
 
+    // ── Analytics tracking (clicks + section time) ──────────────────────────
+    const __analyticsQueue = [];
+
+    function analyticsSectionIdFromElement(el) {
+      if (!el) return 'unknown';
+      const section = el.closest('section[id]');
+      if (section && section.id) return section.id;
+      const card = el.closest('.checklist-card');
+      if (card) {
+        if (card.id) return card.id;
+        const title = card.querySelector('.checklist-card-title');
+        if (title && title.textContent) {
+          return ('card:' + title.textContent.trim()).slice(0, 120);
+        }
+      }
+      return 'unknown';
+    }
+
+    function queueAnalyticsEvent(evt) {
+      __analyticsQueue.push(evt);
+      if (__analyticsQueue.length >= 12) flushAnalyticsEvents(false);
+    }
+
+    function flushAnalyticsEvents(useBeacon) {
+      if (!__analyticsQueue.length) return;
+      const batch = __analyticsQueue.splice(0, 60);
+      const payload = JSON.stringify({ events: batch });
+
+      if (useBeacon && navigator.sendBeacon) {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon('/analytics/track', blob);
+        return;
+      }
+
+      fetch('/analytics/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    }
+
+    function initAnalyticsTracking() {
+      if (window.__analyticsInitialized) return;
+      window.__analyticsInitialized = true;
+
+      const pagePath = window.location.pathname || '/';
+
+      // Track meaningful clicks
+      document.addEventListener('click', (e) => {
+        const target = e.target.closest('a, button, .checklist-item-main-title, .faq-question, .lang-btn');
+        if (!target) return;
+        queueAnalyticsEvent({
+          type: 'click',
+          section_id: analyticsSectionIdFromElement(target),
+          element: (target.tagName || 'unknown').toLowerCase(),
+          page_path: pagePath
+        });
+      }, true);
+
+      // Track time spent in sections (>=50% visible)
+      const sectionStarts = new Map();
+      const trackedSections = Array.from(document.querySelectorAll('section[id]'));
+      const observer = new IntersectionObserver((entries) => {
+        const now = Date.now();
+        entries.forEach(entry => {
+          const id = entry.target.id || 'unknown';
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            if (!sectionStarts.has(id)) sectionStarts.set(id, now);
+          } else if (sectionStarts.has(id)) {
+            const seconds = Math.round((now - sectionStarts.get(id)) / 1000);
+            sectionStarts.delete(id);
+            if (seconds >= 1) {
+              queueAnalyticsEvent({
+                type: 'time',
+                section_id: id,
+                seconds,
+                page_path: pagePath
+              });
+            }
+          }
+        });
+      }, { threshold: [0.5] });
+
+      trackedSections.forEach(sec => observer.observe(sec));
+
+      const flushActiveSections = () => {
+        const now = Date.now();
+        sectionStarts.forEach((start, id) => {
+          const seconds = Math.round((now - start) / 1000);
+          if (seconds >= 1) {
+            queueAnalyticsEvent({
+              type: 'time',
+              section_id: id,
+              seconds,
+              page_path: pagePath
+            });
+          }
+        });
+        sectionStarts.clear();
+      };
+
+      setInterval(() => flushAnalyticsEvents(false), 10000);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          flushActiveSections();
+          flushAnalyticsEvents(true);
+        }
+      });
+
+      window.addEventListener('beforeunload', () => {
+        flushActiveSections();
+        flushAnalyticsEvents(true);
+      });
+    }
+
     // ── Module gating (freemium) ──────────────────────────────
     window.__userModules = ['basic']; // default: free module only
 
@@ -2910,6 +3027,7 @@
 
       fetchTranslations();
       updateAuthUI();
+      initAnalyticsTracking();
 
       // Check admin status, load modules and re-render Q&A
       fetchUserModulesAndApply();

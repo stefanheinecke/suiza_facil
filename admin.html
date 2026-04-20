@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Admin Panel - User Permissions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
         .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
@@ -19,6 +20,13 @@
         .btn.grant { background: #388e3c; }
         .admin-badge { background: #ffd700; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; margin-left: 8px; }
         .status { margin-top: 18px; color: #1976d2; }
+        .analytics { margin-top: 32px; border-top: 1px solid #e9e9e9; padding-top: 24px; }
+        .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .chart-card { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 12px; }
+        .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .drilldown-row { margin-top: 14px; display: flex; gap: 10px; align-items: center; }
+        .drilldown-row select { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; }
+        @media (max-width: 900px) { .analytics-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -58,12 +66,130 @@
         </select></label>
         <button type="submit" class="btn grant">Grant Module</button>
     </form>
+
+    <section class="analytics">
+        <h2>User Behavior Analytics</h2>
+        <div class="analytics-grid">
+            <div class="chart-card">
+                <div class="chart-title">Most Clicked Sections</div>
+                <canvas id="clicksBySectionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Most Time Spent by Section (seconds)</div>
+                <canvas id="timeBySectionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Most Active Users by Clicks</div>
+                <canvas id="clicksByUserChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Most Active Users by Time (seconds)</div>
+                <canvas id="timeByUserChart"></canvas>
+            </div>
+        </div>
+
+        <div class="drilldown-row">
+            <label for="analyticsUserSelect">Drill down by user:</label>
+            <select id="analyticsUserSelect"></select>
+            <button type="button" class="btn" id="analyticsRefreshBtn">Refresh</button>
+        </div>
+
+        <div class="analytics-grid" style="margin-top:12px;">
+            <div class="chart-card">
+                <div class="chart-title">User Clicks by Section</div>
+                <canvas id="userClicksBySectionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">User Time by Section (seconds)</div>
+                <canvas id="userTimeBySectionChart"></canvas>
+            </div>
+        </div>
+    </section>
 </div>
 <script>
 const ALL_MODULES = ['housing', 'pillars', 'insurance', 'taxes'];
 const MODULE_LABELS = { housing: 'Housing & Jobs', pillars: '3-Pillar System', insurance: 'Insurance', taxes: 'Taxes' };
+let charts = {};
 
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function toChartRows(rows, labelKey, valueKey) {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    return {
+        labels: safeRows.map(r => r[labelKey] || 'unknown'),
+        values: safeRows.map(r => Number(r[valueKey] || 0)),
+    };
+}
+
+function renderBarChart(canvasId, labels, values, title, color) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    if (charts[canvasId]) charts[canvasId].destroy();
+    charts[canvasId] = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{ label: title, data: values, backgroundColor: color }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+}
+
+async function loadAnalyticsOverview() {
+    const res = await fetch('/admin/analytics/overview');
+    const data = await res.json();
+    if (data.error) {
+        document.getElementById('status').textContent = 'Analytics error: ' + data.error;
+        return;
+    }
+
+    const bySectionClicks = toChartRows(data.clicks_by_section, 'section_id', 'clicks');
+    const bySectionTime = toChartRows(data.time_by_section, 'section_id', 'seconds');
+    const byUserClicks = toChartRows(data.clicks_by_user, 'username', 'clicks');
+    const byUserTime = toChartRows(data.time_by_user, 'username', 'seconds');
+
+    renderBarChart('clicksBySectionChart', bySectionClicks.labels, bySectionClicks.values, 'Clicks', 'rgba(25, 118, 210, 0.75)');
+    renderBarChart('timeBySectionChart', bySectionTime.labels, bySectionTime.values, 'Seconds', 'rgba(56, 142, 60, 0.75)');
+    renderBarChart('clicksByUserChart', byUserClicks.labels, byUserClicks.values, 'Clicks', 'rgba(245, 124, 0, 0.75)');
+    renderBarChart('timeByUserChart', byUserTime.labels, byUserTime.values, 'Seconds', 'rgba(123, 31, 162, 0.75)');
+
+    const select = document.getElementById('analyticsUserSelect');
+    const current = select.value;
+    select.innerHTML = '';
+    (data.users || []).forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u;
+        opt.textContent = u;
+        select.appendChild(opt);
+    });
+
+    if (current && Array.from(select.options).some(o => o.value === current)) {
+        select.value = current;
+    }
+
+    if (select.value) await loadAnalyticsUser(select.value);
+}
+
+async function loadAnalyticsUser(username) {
+    if (!username) return;
+    const res = await fetch('/admin/analytics/user?username=' + encodeURIComponent(username));
+    const data = await res.json();
+    if (data.error) {
+        document.getElementById('status').textContent = 'User analytics error: ' + data.error;
+        return;
+    }
+
+    const userClicks = toChartRows(data.clicks_by_section, 'section_id', 'clicks');
+    const userTime = toChartRows(data.time_by_section, 'section_id', 'seconds');
+
+    renderBarChart('userClicksBySectionChart', userClicks.labels, userClicks.values, 'Clicks', 'rgba(2, 136, 209, 0.75)');
+    renderBarChart('userTimeBySectionChart', userTime.labels, userTime.values, 'Seconds', 'rgba(46, 125, 50, 0.75)');
+}
 
 async function fetchUsers() {
     const res = await fetch('/admin/list_users');
@@ -158,7 +284,16 @@ document.getElementById('grant-module-form').onsubmit = async (e) => {
     document.getElementById('grant-module-username').value = '';
 };
 
+document.getElementById('analyticsUserSelect').addEventListener('change', async (e) => {
+    await loadAnalyticsUser(e.target.value);
+});
+
+document.getElementById('analyticsRefreshBtn').addEventListener('click', async () => {
+    await loadAnalyticsOverview();
+});
+
 fetchUsers();
+loadAnalyticsOverview();
 </script>
 </body>
 </html>

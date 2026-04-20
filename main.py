@@ -134,6 +134,19 @@ def init_db():
                 PRIMARY KEY (username, module)
             )
         """)
+        # Analytics events (clicks + section time tracking)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS analytics_events (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(150),
+                event_type VARCHAR(20) NOT NULL,
+                section_id VARCHAR(120) NOT NULL,
+                element VARCHAR(120),
+                page_path VARCHAR(255),
+                seconds INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
         cur.close()
         conn.close()
@@ -243,6 +256,219 @@ def admin_list_users(session_id: str = Cookie(None)):
         return {"users": user_map}
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.post("/analytics/track")
+async def analytics_track(request: Request, session_id: str = Cookie(None)):
+    """Collect click/time analytics events from the frontend."""
+    username = get_username_from_session(session_id) if session_id else None
+    try:
+        payload = await request.json()
+    except Exception:
+        return {"error": "invalid_payload"}
+
+    if isinstance(payload, list):
+        events = payload
+    elif isinstance(payload, dict):
+        events = payload.get("events", [])
+    else:
+        return {"error": "invalid_payload"}
+
+    if not isinstance(events, list):
+        return {"error": "invalid_payload"}
+
+    inserted = 0
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        now = datetime.datetime.utcnow()
+        for event in events[:200]:
+            if not isinstance(event, dict):
+                continue
+            event_type = str(event.get("type", "")).strip().lower()
+            if event_type not in {"click", "time"}:
+                continue
+
+            section_id = str(event.get("section_id", "unknown")).strip()[:120] or "unknown"
+            element = str(event.get("element", "")).strip()[:120] or None
+            page_path = str(event.get("page_path", "")).strip()[:255] or None
+
+            seconds = 0
+            if event_type == "time":
+                try:
+                    seconds = int(float(event.get("seconds", 0)))
+                except Exception:
+                    seconds = 0
+                if seconds < 1:
+                    continue
+                seconds = min(seconds, 3600)
+
+            cur.execute(
+                """
+                INSERT INTO analytics_events (username, event_type, section_id, element, page_path, seconds, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """,
+                (username, event_type, section_id, element, page_path, seconds, now),
+            )
+            inserted += 1
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok", "inserted": inserted}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/admin/analytics/overview")
+def admin_analytics_overview(session_id: str = Cookie(None)):
+    """Admin analytics dashboard data: top clicks/time by section and by user."""
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+
+        cur.execute(
+            """
+            SELECT section_id, COUNT(*) AS clicks
+            FROM analytics_events
+            WHERE event_type = 'click'
+            GROUP BY section_id
+            ORDER BY clicks DESC
+            LIMIT 20
+            """
+        )
+        clicks_by_section = [{"section_id": r[0], "clicks": int(r[1])} for r in cur.fetchall()]
+
+        cur.execute(
+            """
+            SELECT section_id, COALESCE(SUM(seconds), 0) AS total_seconds
+            FROM analytics_events
+            WHERE event_type = 'time'
+            GROUP BY section_id
+            ORDER BY total_seconds DESC
+            LIMIT 20
+            """
+        )
+        time_by_section = [{"section_id": r[0], "seconds": int(r[1])} for r in cur.fetchall()]
+
+        cur.execute(
+            """
+            SELECT COALESCE(username, 'anonymous') AS actor, COUNT(*) AS clicks
+            FROM analytics_events
+            WHERE event_type = 'click'
+            GROUP BY actor
+            ORDER BY clicks DESC
+            LIMIT 20
+            """
+        )
+        clicks_by_user = [{"username": r[0], "clicks": int(r[1])} for r in cur.fetchall()]
+
+        cur.execute(
+            """
+            SELECT COALESCE(username, 'anonymous') AS actor, COALESCE(SUM(seconds), 0) AS total_seconds
+            FROM analytics_events
+            WHERE event_type = 'time'
+            GROUP BY actor
+            ORDER BY total_seconds DESC
+            LIMIT 20
+            """
+        )
+        time_by_user = [{"username": r[0], "seconds": int(r[1])} for r in cur.fetchall()]
+
+        cur.execute(
+            """
+            SELECT DISTINCT COALESCE(username, 'anonymous') AS actor
+            FROM analytics_events
+            ORDER BY actor ASC
+            """
+        )
+        users = [r[0] for r in cur.fetchall()]
+
+        cur.close()
+        conn.close()
+        return {
+            "clicks_by_section": clicks_by_section,
+            "time_by_section": time_by_section,
+            "clicks_by_user": clicks_by_user,
+            "time_by_user": time_by_user,
+            "users": users,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/admin/analytics/user")
+def admin_analytics_user(username: str, session_id: str = Cookie(None)):
+    """Admin drill-down: selected user's clicks/time by section."""
+    if not is_admin_user(session_id):
+        return {"error": "unauthorized"}
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+
+        if username == "anonymous":
+            cur.execute(
+                """
+                SELECT section_id, COUNT(*) AS clicks
+                FROM analytics_events
+                WHERE event_type = 'click' AND username IS NULL
+                GROUP BY section_id
+                ORDER BY clicks DESC
+                LIMIT 20
+                """
+            )
+            clicks_by_section = [{"section_id": r[0], "clicks": int(r[1])} for r in cur.fetchall()]
+
+            cur.execute(
+                """
+                SELECT section_id, COALESCE(SUM(seconds), 0) AS total_seconds
+                FROM analytics_events
+                WHERE event_type = 'time' AND username IS NULL
+                GROUP BY section_id
+                ORDER BY total_seconds DESC
+                LIMIT 20
+                """
+            )
+            time_by_section = [{"section_id": r[0], "seconds": int(r[1])} for r in cur.fetchall()]
+        else:
+            cur.execute(
+                """
+                SELECT section_id, COUNT(*) AS clicks
+                FROM analytics_events
+                WHERE event_type = 'click' AND username = %s
+                GROUP BY section_id
+                ORDER BY clicks DESC
+                LIMIT 20
+                """,
+                (username,),
+            )
+            clicks_by_section = [{"section_id": r[0], "clicks": int(r[1])} for r in cur.fetchall()]
+
+            cur.execute(
+                """
+                SELECT section_id, COALESCE(SUM(seconds), 0) AS total_seconds
+                FROM analytics_events
+                WHERE event_type = 'time' AND username = %s
+                GROUP BY section_id
+                ORDER BY total_seconds DESC
+                LIMIT 20
+                """,
+                (username,),
+            )
+            time_by_section = [{"section_id": r[0], "seconds": int(r[1])} for r in cur.fetchall()]
+
+        cur.close()
+        conn.close()
+        return {
+            "username": username,
+            "clicks_by_section": clicks_by_section,
+            "time_by_section": time_by_section,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 # Helper to check if session user is admin
 def is_admin_user(session_id: str):
     user = get_username_from_session(session_id)
