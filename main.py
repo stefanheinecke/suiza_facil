@@ -385,6 +385,12 @@ def post_subscriber(request: Request):
     try:
         conn = get_conn()
         cur = conn.cursor()
+        # Check if already subscribed
+        cur.execute("SELECT 1 FROM subscriber WHERE email = %s", (username,))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return {"status": "ok", "already": True}
         cur.execute(
             "INSERT INTO subscriber (email, subscription_date) VALUES (%s, %s)",
             (username, datetime.datetime.utcnow())
@@ -401,8 +407,9 @@ def post_subscriber(request: Request):
             to_address = os.getenv("HELP_REQUEST_EMAIL", "stefan.heinecke1@gmail.com")
             api_key = os.getenv("RESEND_API_KEY")
             from_address = os.getenv("RESEND_FROM_EMAIL", to_address)
+            print(f"[SUBSCRIBER-NOTIFY] api_key set: {bool(api_key)}, from: {from_address}, to: {to_address}")
             if api_key and from_address:
-                requests.post(
+                resp = requests.post(
                     "https://api.resend.com/emails",
                     headers={
                         "Authorization": f"Bearer {api_key}",
@@ -411,11 +418,14 @@ def post_subscriber(request: Request):
                     json={
                         "from": from_address,
                         "to": [to_address],
-                        "subject": f"VivaSuiza: New community subscriber",
+                        "subject": "VivaSuiza: New community subscriber",
                         "text": f"New subscriber: {username}\nTotal subscribers: {count}\nTime: {datetime.datetime.utcnow().isoformat()} UTC",
                     },
                     timeout=10,
                 )
+                print(f"[SUBSCRIBER-NOTIFY] Resend response: {resp.status_code} {resp.text}")
+            else:
+                print("[SUBSCRIBER-NOTIFY] Email not configured, skipping notification")
         except Exception as mail_err:
             print("Error notifying admin about new subscriber:", mail_err)
 
