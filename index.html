@@ -739,6 +739,11 @@
     .checklist-card-subtitle {
       font-size: 12px;
       color: var(--muted);
+      display: none;
+    }
+
+    .checklist-card.open .checklist-card-subtitle {
+      display: block;
     }
 
     .checklist-progress {
@@ -1938,10 +1943,6 @@
       <!-- HERO -->
       <section class="hero">
         <div>
-          <div class="hero-badge">
-            <span data-i18n="hero_badge">🇪🇸 → 🇨🇭</span>
-            <span data-i18n="hero_badge_text">Guía para españoles en Suiza</span>
-          </div>
           <h1 class="hero-title" data-i18n="hero_title">La forma más fácil de empezar tu vida en Suiza.</h1>
           <p class="hero-subtitle" data-i18n="hero_subtitle">
             Tu guía en español para trámites, seguros y vivienda.
@@ -1962,9 +1963,6 @@
               <span data-i18n="feedback_banner_btn">Dejar feedback</span>
             </button>
           </div>
-          <p class="hero-meta" data-i18n="hero_meta">
-            Guías en español · Basado en 17 años de experiencia real en Suiza · Pensado para ti
-          </p>
         </div>
       </section>
 
@@ -2872,6 +2870,11 @@
     }
 
     function selectChecklistItem(topic) {
+      // Always collapse all top-level cards before changing sections.
+      document.querySelectorAll('.checklist-card.open').forEach(card => {
+        card.classList.remove('open');
+      });
+
       // Hide all content sections
       document.querySelectorAll('.checklist-section-content').forEach(section => {
         section.classList.remove('active');
@@ -3328,6 +3331,22 @@
     }
 
     // Immigration checklist: collapsible items
+    function toggleChecklistCardAccordion(card) {
+      if (!card) return;
+      const section = card.closest('.checklist-section-content');
+      const isOpen = card.classList.contains('open');
+
+      if (section) {
+        section.querySelectorAll('.checklist-card.open').forEach(openCard => {
+          openCard.classList.remove('open');
+        });
+      }
+
+      if (!isOpen) {
+        card.classList.add('open');
+      }
+    }
+
     function initChecklist() {
       // card-level collapse
       const cards = document.querySelectorAll('.checklist-card');
@@ -3336,7 +3355,7 @@
         if (!header) return;
         header.addEventListener('click', () => {
           if (card.classList.contains('module-locked')) return;
-          card.classList.toggle('open');
+          toggleChecklistCardAccordion(card);
         });
       });
       // item-level collapse
@@ -3481,7 +3500,7 @@
             if (!entry) return;
             // expand card/faq if collapsed
             const card = entry.el.closest('.checklist-card');
-            if (card && !card.classList.contains('open')) card.classList.add('open');
+            if (card) toggleChecklistCardAccordion(card);
             const faqItem = entry.el.closest('.faq-item');
             if (faqItem && !faqItem.classList.contains('open')) faqItem.classList.add('open');
             const checkItem = entry.el.closest('.checklist-item');
@@ -3642,7 +3661,7 @@
           msgEl.addEventListener('click', () => {
             const target = results[0].entry.el;
             const card = target.closest('.checklist-card');
-            if (card && !card.classList.contains('open')) card.classList.add('open');
+            if (card) toggleChecklistCardAccordion(card);
             const faq = target.closest('.faq-item');
             if (faq && !faq.classList.contains('open')) faq.classList.add('open');
             const ci = target.closest('.checklist-item');
@@ -4088,6 +4107,12 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       initChecklist();
+
+      // Keep top-level checklist cards collapsed by default.
+      document.querySelectorAll('.checklist-card.open').forEach(card => {
+        card.classList.remove('open');
+      });
+
       initFAQ();
       initSearch();
       initChat();
