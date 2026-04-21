@@ -2865,9 +2865,22 @@
       });
     }
 
+    function enforceChecklistCollapsedStartupState() {
+      const mobileTopicSelect = document.getElementById('mobileTopicSelect');
+      const activeMenuBtn = document.querySelector('.checklist-menu-btn.active');
+      const topic =
+        (mobileTopicSelect && mobileTopicSelect.value) ||
+        (activeMenuBtn && activeMenuBtn.getAttribute('data-topic')) ||
+        'moving';
+
+      // Re-select active topic to ensure one visible section with collapsed top-level card.
+      selectChecklistItem(topic);
+      collapseAllTopLevelChecklistCards();
+    }
+
     function selectChecklistItem(topic) {
       // Always collapse all top-level cards before changing sections.
-      //collapseAllTopLevelChecklistCards();
+      collapseAllTopLevelChecklistCards();
 
       // Hide all content sections
       document.querySelectorAll('.checklist-section-content').forEach(section => {
@@ -4103,8 +4116,10 @@
       initChecklist();
 
       // Keep top-level checklist cards collapsed by default.
-      collapseAllTopLevelChecklistCards();
-      requestAnimationFrame(collapseAllTopLevelChecklistCards);
+      enforceChecklistCollapsedStartupState();
+      requestAnimationFrame(enforceChecklistCollapsedStartupState);
+      setTimeout(enforceChecklistCollapsedStartupState, 150);
+      setTimeout(enforceChecklistCollapsedStartupState, 800);
 
       initFAQ();
       initSearch();
@@ -4134,6 +4149,8 @@
         });
       }
     });
+
+    window.addEventListener('load', enforceChecklistCollapsedStartupState);
 
   </script>
 </body>
