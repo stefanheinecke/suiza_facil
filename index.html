@@ -317,38 +317,18 @@
     .hero-subtitle {
       font-size: 16px;
       color: var(--muted);
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
-    .hero-questions {
-      list-style: none;
-      padding-left: 0;
-      margin-bottom: 24px;
-    }
-
-    .hero-questions li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--blue);
-      margin-bottom: 10px;
-    }
-
-    .hero-questions li span.q-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      background: rgba(230, 57, 70, 0.1);
-      color: var(--red);
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .hero-stage-prompt {
       font-size: 14px;
-      margin-top: 1px;
-      flex-shrink: 0;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .hero-stage-quick {
+      margin-bottom: 16px;
     }
 
     .hero-henley {
@@ -359,7 +339,7 @@
       border-left: 3px solid var(--blue);
       border-radius: 8px;
       padding: 12px 14px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       font-size: 14px;
       color: var(--blue);
       line-height: 1.5;
@@ -415,30 +395,6 @@
     .hero-meta {
       font-size: 12px;
       color: var(--muted);
-    }
-
-    .hero-path-preview {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .hero-path-chip {
-      background: var(--white);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 12px;
-      padding: 10px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.35;
-    }
-
-    .hero-path-chip strong {
-      display: block;
-      font-size: 13px;
-      color: var(--blue);
-      margin-bottom: 2px;
     }
 
     .start-here {
@@ -1249,8 +1205,7 @@
       .founder,
       .checklist-grid,
       .stage-grid,
-      .workflow-row,
-      .hero-path-preview {
+      .workflow-row {
         grid-template-columns: minmax(0, 1fr);
       }
 
@@ -1864,18 +1819,22 @@
           <p class="hero-subtitle" data-i18n="hero_subtitle">
             Tu guía en español para trámites, seguros y vivienda.
           </p>
-          <div class="hero-path-preview">
-            <div class="hero-path-chip"><strong data-i18n="onboarding_chip1_title">1. Decide</strong><span data-i18n="onboarding_chip1_text">Trabajo, permisos y coste real</span></div>
-            <div class="hero-path-chip"><strong data-i18n="onboarding_chip2_title">2. Plan</strong><span data-i18n="onboarding_chip2_text">Vivienda, seguro y documentos</span></div>
-            <div class="hero-path-chip"><strong data-i18n="onboarding_chip3_title">3. Arranca</strong><span data-i18n="onboarding_chip3_text">Registro, impuestos y vida diaria</span></div>
+          <div class="hero-stage-prompt" data-i18n="onboarding_stage_question">What is your current stage?</div>
+          <div class="stage-filter-row hero-stage-quick">
+            <button type="button" class="stage-filter-btn" data-stage-filter="explore" onclick="setStageFilter('explore'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_explore">Exploring</button>
+            <button type="button" class="stage-filter-btn" data-stage-filter="plan" onclick="setStageFilter('plan'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_plan">Planning</button>
+            <button type="button" class="stage-filter-btn" data-stage-filter="move" onclick="setStageFilter('move'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_move">Moving Soon</button>
+          </div>
+          <div class="hero-henley">
+            <span class="hero-henley-badge">🏆</span>
+            <div>
+              <a href="https://www.henleyglobal.com/publications/henley-education-report-2026" target="_blank" rel="noopener noreferrer" data-i18n="hero_henley_title" style="color:inherit;text-decoration:underline;font-weight:700;">Suiza #1 en el Henley Opportunity Index 2026</a>
+              <span data-i18n="hero_henley_desc"> — El mejor país del mundo en oportunidades de educación, inversión y calidad de vida.</span>
+            </div>
           </div>
           <div class="hero-cta">
             <button class="btn btn-primary" onclick="scrollToSection('start-here')">
               <span data-i18n="onboarding_start_btn">Start here</span>
-              <span>→</span>
-            </button>
-            <button class="btn btn-primary" onclick="scrollToSection('arrival-checklist')">
-              <span data-i18n="hero_btn_start">Empieza ahora</span>
               <span>→</span>
             </button>
             <button class="btn btn-secondary" onclick="scrollToSection('newsletter')">
