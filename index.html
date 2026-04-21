@@ -1772,6 +1772,134 @@
         font-size: 22px;
       }
     }
+
+    /* Menu Layout Styles */
+    .checklist-container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .checklist-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: sticky;
+      top: 100px;
+    }
+
+    .checklist-menu-btn {
+      text-align: left;
+      padding: 12px 14px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: var(--white);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .checklist-menu-btn:hover {
+      background: #f9f9fc;
+      border-color: rgba(230, 57, 70, 0.3);
+    }
+
+    .checklist-menu-btn.active {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red);
+      font-weight: 600;
+      box-shadow: 0 6px 14px rgba(230, 57, 70, 0.2);
+    }
+
+    .checklist-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .checklist-section-content {
+      display: none;
+      scroll-margin-top: 100px;
+    }
+
+    .checklist-section-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .checklist-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .checklist-menu {
+        position: static;
+        display: none;
+        gap: 6px;
+      }
+
+      .checklist-menu.open {
+        display: flex;
+      }
+
+      .checklist-menu-toggle {
+        display: block;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: var(--white);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--blue);
+        text-align: left;
+      }
+
+      .checklist-menu-toggle::after {
+        content: " ▼";
+        font-size: 10px;
+      }
+
+      .checklist-menu.open .checklist-menu-toggle::after {
+        content: " ▲";
+      }
+    }
+
+    @media (max-width: 480px) {
+      .checklist-container {
+        gap: 12px;
+      }
+
+      .checklist-menu-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .checklist-menu-toggle {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1800,7 +1928,6 @@
       </div>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
-        <a href="#start-here" data-i18n="nav_start_here">Start Here</a>
         <a href="#arrival-checklist" data-i18n="nav_checklist">Topics</a>
         <a href="#faq" data-i18n="nav_faq">FAQ</a>
         <a href="#community-qa" data-i18n="nav_qa">Community</a>
@@ -1819,12 +1946,6 @@
           <p class="hero-subtitle" data-i18n="hero_subtitle">
             Tu guía en español para trámites, seguros y vivienda.
           </p>
-          <div class="hero-stage-prompt" data-i18n="onboarding_stage_question">What is your current stage?</div>
-          <div class="stage-filter-row hero-stage-quick">
-            <button type="button" class="stage-filter-btn" data-stage-filter="explore" onclick="setStageFilter('explore'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_explore">Exploring</button>
-            <button type="button" class="stage-filter-btn" data-stage-filter="plan" onclick="setStageFilter('plan'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_plan">Planning</button>
-            <button type="button" class="stage-filter-btn" data-stage-filter="move" onclick="setStageFilter('move'); scrollToSection('arrival-checklist')" data-i18n="onboarding_filter_move">Moving Soon</button>
-          </div>
           <div class="hero-henley">
             <span class="hero-henley-badge">🏆</span>
             <div>
@@ -1833,10 +1954,6 @@
             </div>
           </div>
           <div class="hero-cta">
-            <button class="btn btn-primary" onclick="scrollToSection('start-here')">
-              <span data-i18n="onboarding_start_btn">Start here</span>
-              <span>→</span>
-            </button>
             <button class="btn btn-secondary" onclick="scrollToSection('newsletter')">
               <span data-i18n="hero_btn_community">Únete a la comunidad</span>
             </button>
@@ -1851,45 +1968,6 @@
         </div>
       </section>
 
-      <section id="start-here" class="section">
-        <div class="start-here">
-          <div class="start-here-title" data-i18n="onboarding_title">Start Here: your workflow</div>
-          <p class="start-here-sub" data-i18n="onboarding_sub">Choose your current stage and follow one clear path.</p>
-
-          <div class="stage-filter-row">
-            <button type="button" class="stage-filter-btn active" data-stage-filter="all" onclick="setStageFilter('all')" data-i18n="onboarding_filter_all">All</button>
-            <button type="button" class="stage-filter-btn" data-stage-filter="explore" onclick="setStageFilter('explore')" data-i18n="onboarding_filter_explore">Exploring</button>
-            <button type="button" class="stage-filter-btn" data-stage-filter="plan" onclick="setStageFilter('plan')" data-i18n="onboarding_filter_plan">Planning</button>
-            <button type="button" class="stage-filter-btn" data-stage-filter="move" onclick="setStageFilter('move')" data-i18n="onboarding_filter_move">Moving Soon</button>
-          </div>
-
-          <div class="stage-grid">
-            <article class="stage-card">
-              <h4 data-i18n="onboarding_stage1_title">Just exploring</h4>
-              <p data-i18n="onboarding_stage1_text">Get clarity on salaries, permits and canton differences first.</p>
-              <button class="btn btn-secondary" onclick="setStageFilter('explore'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage1_btn">See essentials</button>
-            </article>
-            <article class="stage-card">
-              <h4 data-i18n="onboarding_stage2_title">Move in 6-12 months</h4>
-              <p data-i18n="onboarding_stage2_text">Build your move plan: home search, health insurance and timeline.</p>
-              <button class="btn btn-secondary" onclick="setStageFilter('plan'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage2_btn">Open planning topics</button>
-            </article>
-            <article class="stage-card">
-              <h4 data-i18n="onboarding_stage3_title">Moving soon</h4>
-              <p data-i18n="onboarding_stage3_text">Focus on first-weeks execution and legal setup after arrival.</p>
-              <button class="btn btn-secondary" onclick="setStageFilter('move'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage3_btn">Go to execution steps</button>
-            </article>
-          </div>
-
-          <div class="workflow-row">
-            <div class="workflow-step"><strong data-i18n="onboarding_flow1_title">Step 1 - Understand</strong><span data-i18n="onboarding_flow1_text">Read essentials first: job market, permits, housing basics.</span></div>
-            <div class="workflow-step"><strong data-i18n="onboarding_flow2_title">Step 2 - Prepare</strong><span data-i18n="onboarding_flow2_text">Collect documents, compare insurance, shortlist cantons.</span></div>
-            <div class="workflow-step"><strong data-i18n="onboarding_flow3_title">Step 3 - Execute</strong><span data-i18n="onboarding_flow3_text">Register, optimize taxes/pension, ask targeted community questions.</span></div>
-          </div>
-        </div>
-      </section>
-
-
       <!-- IMMIGRATION CHECKLIST -->
       <section id="arrival-checklist" class="section checklist-section">
         <div class="section-header">
@@ -1900,9 +1978,25 @@
           </p>
         </div>
 
-        <div class="checklist-grid">
+        <div class="checklist-container">
+          <!-- LEFT MENU -->
+          <div>
+            <button class="checklist-menu-toggle" onclick="toggleChecklistMenu()">Temas ▼</button>
+            <div class="checklist-menu" id="checklistMenu">
+              <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving">Umzugsgut & praktische Tipps</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival">Ankommen & anmelden</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('housing')" data-topic="housing">Vivienda y trabajo en Suiza</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('pillars')" data-topic="pillars">Sistema de los 3 pilares</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('insurance')" data-topic="insurance">Seguro médico</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('taxes')" data-topic="taxes">Sistema fiscal</button>
+            </div>
+          </div>
+
+          <!-- RIGHT CONTENT -->
+          <div class="checklist-content">
 
           <!-- Rechte Spalte: Umzugsgut & praktische Hinweise -->
+          <div class="checklist-section-content active" data-checklist-id="moving">
           <article class="checklist-card" data-module="basic" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -1990,8 +2084,10 @@
             </div>
             </div>
           </article>
+          </div>
 
           <!-- Linke Spalte: Verwaltung & Formalitäten -->
+          <div class="checklist-section-content" data-checklist-id="arrival">
           <article class="checklist-card" data-module="basic" data-stage="move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -2062,8 +2158,10 @@
             </div>
             </div>
           </article>
+          </div>
 
           <!-- Wohnung & Jobs -->
+          <div class="checklist-section-content" data-checklist-id="housing">
           <article class="checklist-card" data-module="housing" data-stage="explore,plan">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -2157,8 +2255,10 @@
             </div>
             </div>
           </article>
+          </div>
 
           <!-- 3-Säulen-System / Sistema de los 3 pilares -->
+          <div class="checklist-section-content" data-checklist-id="pillars">
           <article class="checklist-card" id="topic-pillars" data-module="pillars" data-stage="explore,plan">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -2249,8 +2349,10 @@
             </div>
             </div>
           </article>
+          </div>
 
           <!-- Krankenversicherung -->
+          <div class="checklist-section-content" data-checklist-id="insurance">
           <article class="checklist-card" id="topic-insurance" data-module="insurance" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -2359,8 +2461,10 @@
             </div>
             </div>
           </article>
+          </div>
 
           <!-- Steuern -->
+          <div class="checklist-section-content" data-checklist-id="taxes">
           <article class="checklist-card" data-module="taxes" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
@@ -2483,7 +2587,7 @@
             </div>
             </div>
           </article>
-
+          </div>
         </div>
 
       </section>
@@ -2758,6 +2862,48 @@
         const show = selected === 'all' || stages.includes(selected);
         card.classList.toggle('stage-dim', !show);
       });
+    }
+
+    // Checklist menu functions
+    function toggleChecklistMenu() {
+      const menu = document.getElementById('checklistMenu');
+      if (menu) {
+        menu.classList.toggle('open');
+      }
+    }
+
+    function selectChecklistItem(topic) {
+      // Hide all content sections
+      document.querySelectorAll('.checklist-section-content').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // Remove active class from all menu buttons
+      document.querySelectorAll('.checklist-menu-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show the selected content section
+      document.querySelectorAll('.checklist-section-content').forEach(section => {
+        if (section.getAttribute('data-checklist-id') === topic) {
+          section.classList.add('active');
+        }
+      });
+
+      // Activate the clicked menu button
+      document.querySelectorAll('.checklist-menu-btn').forEach(btn => {
+        if (btn.getAttribute('data-topic') === topic) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Close the menu on mobile after selection
+      if (window.innerWidth < 768) {
+        const menu = document.getElementById('checklistMenu');
+        if (menu && menu.classList.contains('open')) {
+          menu.classList.remove('open');
+        }
+      }
     }
 
     // Subscribe to newsletter
