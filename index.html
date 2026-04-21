@@ -417,6 +417,138 @@
       color: var(--muted);
     }
 
+    .hero-path-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .hero-path-chip {
+      background: var(--white);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .hero-path-chip strong {
+      display: block;
+      font-size: 13px;
+      color: var(--blue);
+      margin-bottom: 2px;
+    }
+
+    .start-here {
+      background: linear-gradient(135deg, rgba(29, 53, 87, 0.04), rgba(230, 57, 70, 0.05));
+      border: 1px solid rgba(29, 53, 87, 0.08);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 4px;
+    }
+
+    .start-here-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .start-here-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stage-card {
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: var(--white);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .stage-card h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+      color: var(--blue);
+    }
+
+    .stage-card p {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+      min-height: 34px;
+    }
+
+    .stage-card .btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 12px;
+      padding: 8px 10px;
+    }
+
+    .stage-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stage-filter-btn {
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: var(--white);
+      color: var(--blue);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .stage-filter-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .checklist-card.stage-dim {
+      opacity: 0.35;
+      transform: scale(0.99);
+      transition: all 0.2s ease;
+    }
+
+    .workflow-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .workflow-step {
+      border-radius: 12px;
+      background: var(--white);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .workflow-step strong {
+      display: block;
+      font-size: 13px;
+      color: var(--blue);
+      margin-bottom: 2px;
+    }
+
     .hero-visual {
       background: radial-gradient(circle at top, #ffe8d6, #f7f7fb);
       border-radius: 24px;
@@ -1115,7 +1247,10 @@
       .grid-2,
       .faq-list,
       .founder,
-      .checklist-grid {
+      .checklist-grid,
+      .stage-grid,
+      .workflow-row,
+      .hero-path-preview {
         grid-template-columns: minmax(0, 1fr);
       }
 
@@ -1710,6 +1845,7 @@
       </div>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" onclick="toggleNav()">☰</button>
       <nav>
+        <a href="#start-here" data-i18n="nav_start_here">Start Here</a>
         <a href="#arrival-checklist" data-i18n="nav_checklist">Topics</a>
         <a href="#faq" data-i18n="nav_faq">FAQ</a>
         <a href="#community-qa" data-i18n="nav_qa">Community</a>
@@ -1728,28 +1864,16 @@
           <p class="hero-subtitle" data-i18n="hero_subtitle">
             Tu guía en español para trámites, seguros y vivienda.
           </p>
-          <ul class="hero-questions">
-            <li>
-              <span class="q-icon">?</span>
-              <span data-i18n="hero_q1">¿Te gustaría cobrar de forma justa por tu trabajo?</span>
-            </li>
-            <li>
-              <span class="q-icon">?</span>
-              <span data-i18n="hero_q2">¿Has pensado alguna vez en trabajar en Suiza?</span>
-            </li>
-            <li>
-              <span class="q-icon">?</span>
-              <span data-i18n="hero_q3">¿Te frenan la burocracia, el idioma o no saber por dónde empezar?</span>
-            </li>
-          </ul>
-          <div class="hero-henley">
-            <span class="hero-henley-badge">🏆</span>
-            <div>
-              <a href="https://www.henleyglobal.com/publications/henley-education-report-2026" target="_blank" rel="noopener noreferrer" data-i18n="hero_henley_title" style="color:inherit;text-decoration:underline;font-weight:700;">Suiza #1 en el Henley Opportunity Index 2026</a>
-              <span data-i18n="hero_henley_desc"> — El mejor país del mundo en oportunidades de educación, inversión y calidad de vida.</span>
-            </div>
+          <div class="hero-path-preview">
+            <div class="hero-path-chip"><strong data-i18n="onboarding_chip1_title">1. Decide</strong><span data-i18n="onboarding_chip1_text">Trabajo, permisos y coste real</span></div>
+            <div class="hero-path-chip"><strong data-i18n="onboarding_chip2_title">2. Plan</strong><span data-i18n="onboarding_chip2_text">Vivienda, seguro y documentos</span></div>
+            <div class="hero-path-chip"><strong data-i18n="onboarding_chip3_title">3. Arranca</strong><span data-i18n="onboarding_chip3_text">Registro, impuestos y vida diaria</span></div>
           </div>
           <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToSection('start-here')">
+              <span data-i18n="onboarding_start_btn">Start here</span>
+              <span>→</span>
+            </button>
             <button class="btn btn-primary" onclick="scrollToSection('arrival-checklist')">
               <span data-i18n="hero_btn_start">Empieza ahora</span>
               <span>→</span>
@@ -1768,6 +1892,44 @@
         </div>
       </section>
 
+      <section id="start-here" class="section">
+        <div class="start-here">
+          <div class="start-here-title" data-i18n="onboarding_title">Start Here: your workflow</div>
+          <p class="start-here-sub" data-i18n="onboarding_sub">Choose your current stage and follow one clear path.</p>
+
+          <div class="stage-filter-row">
+            <button type="button" class="stage-filter-btn active" data-stage-filter="all" onclick="setStageFilter('all')" data-i18n="onboarding_filter_all">All</button>
+            <button type="button" class="stage-filter-btn" data-stage-filter="explore" onclick="setStageFilter('explore')" data-i18n="onboarding_filter_explore">Exploring</button>
+            <button type="button" class="stage-filter-btn" data-stage-filter="plan" onclick="setStageFilter('plan')" data-i18n="onboarding_filter_plan">Planning</button>
+            <button type="button" class="stage-filter-btn" data-stage-filter="move" onclick="setStageFilter('move')" data-i18n="onboarding_filter_move">Moving Soon</button>
+          </div>
+
+          <div class="stage-grid">
+            <article class="stage-card">
+              <h4 data-i18n="onboarding_stage1_title">Just exploring</h4>
+              <p data-i18n="onboarding_stage1_text">Get clarity on salaries, permits and canton differences first.</p>
+              <button class="btn btn-secondary" onclick="setStageFilter('explore'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage1_btn">See essentials</button>
+            </article>
+            <article class="stage-card">
+              <h4 data-i18n="onboarding_stage2_title">Move in 6-12 months</h4>
+              <p data-i18n="onboarding_stage2_text">Build your move plan: home search, health insurance and timeline.</p>
+              <button class="btn btn-secondary" onclick="setStageFilter('plan'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage2_btn">Open planning topics</button>
+            </article>
+            <article class="stage-card">
+              <h4 data-i18n="onboarding_stage3_title">Moving soon</h4>
+              <p data-i18n="onboarding_stage3_text">Focus on first-weeks execution and legal setup after arrival.</p>
+              <button class="btn btn-secondary" onclick="setStageFilter('move'); scrollToSection('arrival-checklist')" data-i18n="onboarding_stage3_btn">Go to execution steps</button>
+            </article>
+          </div>
+
+          <div class="workflow-row">
+            <div class="workflow-step"><strong data-i18n="onboarding_flow1_title">Step 1 - Understand</strong><span data-i18n="onboarding_flow1_text">Read essentials first: job market, permits, housing basics.</span></div>
+            <div class="workflow-step"><strong data-i18n="onboarding_flow2_title">Step 2 - Prepare</strong><span data-i18n="onboarding_flow2_text">Collect documents, compare insurance, shortlist cantons.</span></div>
+            <div class="workflow-step"><strong data-i18n="onboarding_flow3_title">Step 3 - Execute</strong><span data-i18n="onboarding_flow3_text">Register, optimize taxes/pension, ask targeted community questions.</span></div>
+          </div>
+        </div>
+      </section>
+
 
       <!-- IMMIGRATION CHECKLIST -->
       <section id="arrival-checklist" class="section checklist-section">
@@ -1782,7 +1944,7 @@
         <div class="checklist-grid">
 
           <!-- Rechte Spalte: Umzugsgut & praktische Hinweise -->
-          <article class="checklist-card" data-module="basic">
+          <article class="checklist-card" data-module="basic" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">1</div>
@@ -1871,7 +2033,7 @@
           </article>
 
           <!-- Linke Spalte: Verwaltung & Formalitäten -->
-          <article class="checklist-card" data-module="basic">
+          <article class="checklist-card" data-module="basic" data-stage="move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">2</div>
@@ -1943,7 +2105,7 @@
           </article>
 
           <!-- Wohnung & Jobs -->
-          <article class="checklist-card" data-module="housing">
+          <article class="checklist-card" data-module="housing" data-stage="explore,plan">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">3</div>
@@ -2038,7 +2200,7 @@
           </article>
 
           <!-- 3-Säulen-System / Sistema de los 3 pilares -->
-          <article class="checklist-card" id="topic-pillars" data-module="pillars">
+          <article class="checklist-card" id="topic-pillars" data-module="pillars" data-stage="explore,plan">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">4</div>
@@ -2130,7 +2292,7 @@
           </article>
 
           <!-- Krankenversicherung -->
-          <article class="checklist-card" id="topic-insurance" data-module="insurance">
+          <article class="checklist-card" id="topic-insurance" data-module="insurance" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">5</div>
@@ -2240,7 +2402,7 @@
           </article>
 
           <!-- Steuern -->
-          <article class="checklist-card" data-module="taxes">
+          <article class="checklist-card" data-module="taxes" data-stage="plan,move">
             <div class="checklist-card-header">
               <div class="checklist-step-label">
                 <div class="checklist-step-number">6</div>
@@ -2620,6 +2782,23 @@
       const el = document.getElementById(id);
       if (!el) return;
       el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setStageFilter(stage) {
+      const selected = stage || 'all';
+      document.querySelectorAll('.stage-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-stage-filter') === selected);
+      });
+
+      const cards = document.querySelectorAll('#arrival-checklist .checklist-card[data-stage]');
+      cards.forEach(card => {
+        const stages = (card.getAttribute('data-stage') || '')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        const show = selected === 'all' || stages.includes(selected);
+        card.classList.toggle('stage-dim', !show);
+      });
     }
 
     // Subscribe to newsletter
