@@ -2869,11 +2869,15 @@
       }
     }
 
-    function selectChecklistItem(topic) {
-      // Always collapse all top-level cards before changing sections.
+    function collapseAllTopLevelChecklistCards() {
       document.querySelectorAll('.checklist-card.open').forEach(card => {
         card.classList.remove('open');
       });
+    }
+
+    function selectChecklistItem(topic) {
+      // Always collapse all top-level cards before changing sections.
+      collapseAllTopLevelChecklistCards();
 
       // Hide all content sections
       document.querySelectorAll('.checklist-section-content').forEach(section => {
@@ -2889,10 +2893,8 @@
       document.querySelectorAll('.checklist-section-content').forEach(section => {
         if (section.getAttribute('data-checklist-id') === topic) {
           section.classList.add('active');
-          // Close all cards in this section
-          section.querySelectorAll('.checklist-card.open').forEach(card => {
-            card.classList.remove('open');
-          });
+          // Keep selected section collapsed by default.
+          collapseAllTopLevelChecklistCards();
         }
       });
 
@@ -3221,6 +3223,9 @@
           }
         }
       });
+
+      // Async module updates must not reopen top-level topic cards.
+      collapseAllTopLevelChecklistCards();
     }
 
     // Handle module access request clicks (delegated)
@@ -4109,9 +4114,8 @@
       initChecklist();
 
       // Keep top-level checklist cards collapsed by default.
-      document.querySelectorAll('.checklist-card.open').forEach(card => {
-        card.classList.remove('open');
-      });
+      collapseAllTopLevelChecklistCards();
+      requestAnimationFrame(collapseAllTopLevelChecklistCards);
 
       initFAQ();
       initSearch();
