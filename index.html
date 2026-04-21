@@ -3344,7 +3344,7 @@
       const isOpen = card.classList.contains('open');
 
       if (section) {
-        section.querySelectorAll('.checklist-card.open').forEach(openCard => {
+        section.querySelectorAll('.checklist-card open').forEach(openCard => {
           openCard.classList.remove('open');
         });
       }
