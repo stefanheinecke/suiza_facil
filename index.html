@@ -1885,7 +1885,7 @@
         font-size: 10px;
       }
 
-      .checklist-menu.open .checklist-menu-toggle::after {
+      .checklist-menu-toggle.open::after {
         content: " ▲";
       }
     }
@@ -1979,7 +1979,13 @@
         <div class="checklist-container">
           <!-- LEFT MENU -->
           <div>
-            <div class="checklist-menu" id="checklistMenu">
+            <button
+              type="button"
+              class="checklist-menu-toggle open"
+              onclick="toggleChecklistMenu()"
+              data-i18n="nav_checklist"
+            >Topics</button>
+            <div class="checklist-menu open" id="checklistMenu">
               <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</button>
               <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</button>
               <button class="checklist-menu-btn" onclick="selectChecklistItem('housing')" data-topic="housing" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</button>
@@ -2864,8 +2870,12 @@
     // Checklist menu functions
     function toggleChecklistMenu() {
       const menu = document.getElementById('checklistMenu');
+      const toggleBtn = document.querySelector('.checklist-menu-toggle');
       if (menu) {
         menu.classList.toggle('open');
+        if (toggleBtn) {
+          toggleBtn.classList.toggle('open', menu.classList.contains('open'));
+        }
       }
     }
 
@@ -2908,8 +2918,10 @@
       // Close the menu on mobile after selection
       if (window.innerWidth < 768) {
         const menu = document.getElementById('checklistMenu');
+        const toggleBtn = document.querySelector('.checklist-menu-toggle');
         if (menu && menu.classList.contains('open')) {
           menu.classList.remove('open');
+          if (toggleBtn) toggleBtn.classList.remove('open');
         }
       }
     }
