@@ -1794,6 +1794,22 @@
       top: 100px;
     }
 
+    .checklist-mobile-select {
+      display: none;
+    }
+
+    .checklist-mobile-select select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: var(--white);
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+    }
+
     .checklist-menu-btn {
       text-align: left;
       padding: 12px 14px;
@@ -1857,34 +1873,13 @@
         gap: 16px;
       }
 
+      .checklist-mobile-select {
+        display: block;
+        margin-bottom: 10px;
+      }
+
       .checklist-menu {
-        position: sticky;
-        top: 74px;
-        z-index: 8;
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
-        -webkit-overflow-scrolling: touch;
-        padding: 4px 2px 10px;
-        background: var(--bg);
-      }
-
-      .checklist-menu::-webkit-scrollbar {
-        height: 4px;
-      }
-
-      .checklist-menu::-webkit-scrollbar-thumb {
-        background: rgba(29, 53, 87, 0.25);
-        border-radius: 999px;
-      }
-
-      .checklist-menu-btn {
-        flex: 0 0 auto;
-        border-radius: 999px;
-        padding: 9px 14px;
-        font-size: 13px;
+        display: none;
       }
     }
 
@@ -1972,6 +1967,16 @@
         <div class="checklist-container">
           <!-- LEFT MENU -->
           <div>
+            <div class="checklist-mobile-select">
+              <select id="mobileTopicSelect" onchange="selectChecklistItem(this.value)">
+                <option value="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</option>
+                <option value="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</option>
+                <option value="housing" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</option>
+                <option value="pillars" data-i18n="checklist_card6_title">Sistema de los 3 pilares</option>
+                <option value="insurance" data-i18n="checklist_card4_title">Seguro médico</option>
+                <option value="taxes" data-i18n="checklist_card5_title">Sistema fiscal</option>
+              </select>
+            </div>
             <div class="checklist-menu" id="checklistMenu">
               <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</button>
               <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</button>
@@ -2889,6 +2894,12 @@
           btn.classList.add('active');
         }
       });
+
+      // Keep mobile dropdown in sync with current topic.
+      const mobileTopicSelect = document.getElementById('mobileTopicSelect');
+      if (mobileTopicSelect && mobileTopicSelect.value !== topic) {
+        mobileTopicSelect.value = topic;
+      }
 
     }
 
