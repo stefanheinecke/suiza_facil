@@ -1981,14 +1981,13 @@
         <div class="checklist-container">
           <!-- LEFT MENU -->
           <div>
-            <button class="checklist-menu-toggle" onclick="toggleChecklistMenu()">Temas ▼</button>
             <div class="checklist-menu" id="checklistMenu">
-              <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving">Umzugsgut & praktische Tipps</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival">Ankommen & anmelden</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('housing')" data-topic="housing">Vivienda y trabajo en Suiza</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('pillars')" data-topic="pillars">Sistema de los 3 pilares</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('insurance')" data-topic="insurance">Seguro médico</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('taxes')" data-topic="taxes">Sistema fiscal</button>
+              <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('housing')" data-topic="housing" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('pillars')" data-topic="pillars" data-i18n="checklist_card6_title">Sistema de los 3 pilares</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('insurance')" data-topic="insurance" data-i18n="checklist_card4_title">Seguro médico</button>
+              <button class="checklist-menu-btn" onclick="selectChecklistItem('taxes')" data-topic="taxes" data-i18n="checklist_card5_title">Sistema fiscal</button>
             </div>
           </div>
 
@@ -2887,6 +2886,10 @@
       document.querySelectorAll('.checklist-section-content').forEach(section => {
         if (section.getAttribute('data-checklist-id') === topic) {
           section.classList.add('active');
+          // Close all cards in this section
+          section.querySelectorAll('.checklist-card.open').forEach(card => {
+            card.classList.remove('open');
+          });
         }
       });
 
