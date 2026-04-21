@@ -3344,7 +3344,7 @@
       const isOpen = card.classList.contains('open');
 
       if (section) {
-        section.querySelectorAll('.checklist-card open').forEach(openCard => {
+        section.querySelectorAll('.checklist-card.open').forEach(openCard => {
           openCard.classList.remove('open');
         });
       }
@@ -4131,7 +4131,7 @@
       const helpButtons = document.querySelectorAll('.help-btn');
       helpButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-          const card = btn.closest('.checklist-card');
+          const card = btn.closest('.checklist-card.open');
           const titleEl = card ? card.querySelector('.checklist-card-title') : null;
           const stepText = titleEl ? titleEl.textContent.trim() : '';
           const ctx = btn.getAttribute('data-help-context') || '';
