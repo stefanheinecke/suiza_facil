@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es" id="htmlElement">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title id="pageTitle">VivaSuiza - Topic</title>
+  <style>
+    :root {
+      --red: #e63946;
+      --blue: #0f2b46;
+      --ink: #1c1d21;
+      --muted: #6a6f79;
+      --paper: #f4f6f9;
+      --card: #ffffff;
+      --line: #dde3ec;
+      --radius: 14px;
+      --shadow: 0 18px 40px rgba(15, 43, 70, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", "Aptos", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(1400px 700px at 20% -10%, #e8eff8 0%, var(--paper) 40%, #f8fafc 100%);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 72px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0 18px;
+      background: rgba(244, 246, 249, 0.88);
+      backdrop-filter: blur(6px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--red), #f4d35e);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lang-btn,
+    .ghost-btn,
+    .solid-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+
+    .lang-btn { color: var(--muted); }
+    .lang-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .ghost-btn {
+      border-color: var(--line);
+      color: var(--blue);
+      background: #fff;
+    }
+
+    .ghost-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .topic-hero {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      min-height: 320px;
+      box-shadow: var(--shadow);
+    }
+
+    .topic-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.02);
+    }
+
+    .topic-hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, rgba(8, 23, 44, 0.86) 0%, rgba(8, 23, 44, 0.58) 50%, rgba(8, 23, 44, 0.25) 100%);
+    }
+
+    .topic-hero-content {
+      position: relative;
+      z-index: 1;
+      padding: 42px 40px;
+      max-width: 700px;
+      color: #fff;
+    }
+
+    .topic-chip {
+      display: inline-block;
+      background: rgba(230, 57, 70, 0.9);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .topic-title {
+      font-size: 38px;
+      line-height: 1.14;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .topic-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.86);
+      max-width: 620px;
+    }
+
+    .topic-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+    }
+
+    .topic-side {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      align-self: start;
+      position: sticky;
+      top: 82px;
+    }
+
+    .topic-side h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .topic-side ul { list-style: none; }
+
+    .topic-side li {
+      margin-bottom: 8px;
+    }
+
+    .topic-side a {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--blue);
+      background: #fff;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .topic-side a:hover { border-color: var(--red); color: var(--red); }
+
+    .topic-main {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: 0 8px 24px rgba(15, 43, 70, 0.06);
+    }
+
+    .detail-card h3 {
+      color: var(--blue);
+      font-size: 20px;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .detail-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .detail-list {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+
+    .detail-list li {
+      border-left: 2px solid rgba(230, 57, 70, 0.6);
+      padding-left: 10px;
+      color: #364152;
+      font-size: 13px;
+    }
+
+    .empty-topic {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .topic-layout { grid-template-columns: 1fr; }
+      .topic-side { position: static; }
+      .topic-title { font-size: 30px; }
+      .topic-hero-content { padding: 30px 24px; }
+    }
+
+    @media (max-width: 520px) {
+      .topic-title { font-size: 24px; }
+      .topic-subtitle { font-size: 14px; }
+      .detail-card h3 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a href="/" class="brand" aria-label="Back to home">
+        <span class="brand-mark">VS</span>
+        <span>VivaSuiza</span>
+      </a>
+      <div class="header-actions">
+        <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
+        <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
+        <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+        <a class="ghost-btn" href="/">Inicio</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="topic-hero">
+        <div class="topic-hero-bg" id="topicHeroBg"></div>
+        <div class="topic-hero-content">
+          <div class="topic-chip" id="topicChip">Topic</div>
+          <h1 class="topic-title" id="topicTitle">Topic</h1>
+          <p class="topic-subtitle" id="topicSubtitle"></p>
+        </div>
+      </section>
+
+      <section class="topic-layout">
+        <aside class="topic-side">
+          <h3>Temas</h3>
+          <ul>
+            <li><a href="/topics/moving" data-i18n="checklist_card2_title">Mudanza e importación</a></li>
+            <li><a href="/topics/arrival" data-i18n="checklist_card1_title">Llegada y trámites</a></li>
+            <li><a href="/topics/housing" data-i18n="checklist_card3_title">Vivienda y trabajo</a></li>
+            <li><a href="/topics/pillars" data-i18n="checklist_card6_title">Sistema de pensiones</a></li>
+            <li><a href="/topics/insurance" data-i18n="checklist_card4_title">Seguro médico</a></li>
+            <li><a href="/topics/taxes" data-i18n="checklist_card5_title">Sistema fiscal</a></li>
+          </ul>
+        </aside>
+
+        <div class="topic-main" id="topicMain"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let translations = {};
+    let currentLanguage = localStorage.getItem('language') || 'es';
+
+    const TOPICS = {
+      moving: {
+        chip: 'Paso 1',
+        image: 'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card2_title',
+        subtitleKey: 'checklist_card2_subtitle',
+        noteKey: 'checklist_note2_intro',
+        sections: [
+          { titleKey: 'checklist_item4_title', textKey: 'checklist_item4_text', bullets: ['checklist_item4_li1', 'checklist_item4_li2', 'checklist_item4_li3'] },
+          { titleKey: 'checklist_item5_title', textKey: 'checklist_item5_text', bullets: ['checklist_item5_li1', 'checklist_item5_li2', 'checklist_item5_li3'] },
+          { titleKey: 'checklist_item6_title', textKey: 'checklist_item6_text', bullets: ['checklist_item6_li1', 'checklist_item6_li2'] }
+        ]
+      },
+      arrival: {
+        chip: 'Paso 2',
+        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card1_title',
+        subtitleKey: 'checklist_card1_subtitle',
+        noteKey: 'checklist_note1',
+        sections: [
+          { titleKey: 'checklist_item1_title', textKey: 'checklist_item1_text', bullets: ['checklist_item1_li1', 'checklist_item1_li2', 'checklist_item1_li3'] },
+          { titleKey: 'checklist_item2_title', textKey: 'checklist_item2_text', bullets: [] },
+          { titleKey: 'checklist_item3_title', textKey: 'checklist_item3_text', bullets: ['checklist_item3_li1', 'checklist_item3_li2'] }
+        ]
+      },
+      housing: {
+        chip: 'Paso 3',
+        image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card3_title',
+        subtitleKey: 'checklist_card3_subtitle',
+        noteKey: 'checklist_note3_intro',
+        sections: [
+          { titleKey: 'checklist_item8_title', textKey: 'checklist_item8_text', bullets: ['checklist_item8_li1', 'checklist_item8_li2', 'checklist_item8_li3'] },
+          { titleKey: 'checklist_item9_title', textKey: 'checklist_item9_text', bullets: ['checklist_item9_li1_desc', 'checklist_item9_li2_desc', 'checklist_item9_li3_desc'] },
+          { titleKey: 'checklist_item10_title', textKey: 'checklist_item10_text', bullets: ['checklist_item10_li1_desc', 'checklist_item10_li2_desc', 'checklist_item10_li3_desc'] }
+        ]
+      },
+      pillars: {
+        chip: 'Paso 4',
+        image: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card6_title',
+        subtitleKey: 'checklist_card6_subtitle',
+        noteKey: 'checklist_note_pillars',
+        sections: [
+          { titleKey: 'checklist_pillar1_title', textKey: 'checklist_pillar1_text', bullets: ['checklist_pillar1_li1', 'checklist_pillar1_li2', 'checklist_pillar1_li3'] },
+          { titleKey: 'checklist_pillar2_title', textKey: 'checklist_pillar2_text', bullets: ['checklist_pillar2_li1', 'checklist_pillar2_li2', 'checklist_pillar2_li3'] },
+          { titleKey: 'checklist_pillar3_title', textKey: 'checklist_pillar3_text', bullets: ['checklist_pillar3_li1', 'checklist_pillar3_li2', 'checklist_pillar3_li3'] }
+        ]
+      },
+      insurance: {
+        chip: 'Paso 5',
+        image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card4_title',
+        subtitleKey: 'checklist_card4_subtitle',
+        noteKey: 'checklist_note4a_intro',
+        sections: [
+          { titleKey: 'checklist_item11_title', textKey: 'checklist_item11_text', bullets: ['checklist_item11_li1', 'checklist_item11_li2', 'checklist_item11_li3_desc'] },
+          { titleKey: 'checklist_item_franchise_title', textKey: 'checklist_item_franchise_text', bullets: ['checklist_item_franchise_li1', 'checklist_item_franchise_li2', 'checklist_item_franchise_li3'] },
+          { titleKey: 'checklist_item_saving_title', textKey: 'checklist_item_saving_text', bullets: ['checklist_item_saving_li1_desc', 'checklist_item_saving_li2_desc', 'checklist_item_saving_li3_desc'] }
+        ]
+      },
+      taxes: {
+        chip: 'Paso 6',
+        image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1800&auto=format&fit=crop',
+        titleKey: 'checklist_card5_title',
+        subtitleKey: 'checklist_card5_subtitle',
+        noteKey: 'checklist_note4b_intro',
+        sections: [
+          { titleKey: 'checklist_item12_title', textKey: 'checklist_item12_text', bullets: ['checklist_item12_li1', 'checklist_item12_li2', 'checklist_item12_li3'] },
+          { titleKey: 'checklist_item_tax_examples_title', textKey: 'checklist_item_tax_examples_text', bullets: ['tax_row1_profile', 'tax_row2_profile', 'tax_row3_profile'] },
+          { titleKey: 'checklist_item_tax_tips_title', textKey: 'checklist_item_tax_tips_text', bullets: ['checklist_tax_tip1', 'checklist_tax_tip2', 'checklist_tax_tip3'] }
+        ]
+      }
+    };
+
+    function t(key, fallback) {
+      const bundle = translations[currentLanguage] || {};
+      return bundle[key] || fallback || key;
+    }
+
+    function getCurrentTopicSlug() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const slug = parts[parts.length - 1] || 'moving';
+      return TOPICS[slug] ? slug : 'moving';
+    }
+
+    function changeLanguage(lang) {
+      currentLanguage = lang;
+      localStorage.setItem('language', lang);
+      document.getElementById('htmlElement').lang = lang;
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const active = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+      if (active) active.classList.add('active');
+      renderTopic();
+    }
+
+    function renderTopic() {
+      const slug = getCurrentTopicSlug();
+      const cfg = TOPICS[slug];
+      const main = document.getElementById('topicMain');
+      const heroBg = document.getElementById('topicHeroBg');
+      const chip = document.getElementById('topicChip');
+      const title = document.getElementById('topicTitle');
+      const subtitle = document.getElementById('topicSubtitle');
+
+      heroBg.style.backgroundImage = `url('${cfg.image}')`;
+      chip.textContent = cfg.chip;
+      title.textContent = t(cfg.titleKey, 'Topic');
+      subtitle.textContent = t(cfg.subtitleKey, '');
+      document.title = `VivaSuiza - ${title.textContent}`;
+
+      let html = '';
+      cfg.sections.forEach((section, idx) => {
+        html += '<article class="detail-card">';
+        html += `<h3>${idx + 1}. ${t(section.titleKey, section.titleKey)}</h3>`;
+        html += `<p>${t(section.textKey, section.textKey)}</p>`;
+        if (section.bullets && section.bullets.length) {
+          html += '<ul class="detail-list">';
+          section.bullets.forEach(key => {
+            html += `<li>${t(key, '')}</li>`;
+          });
+          html += '</ul>';
+        }
+        html += '</article>';
+      });
+
+      if (cfg.noteKey) {
+        html += '<article class="detail-card">';
+        html += `<h3>${t('checklist_help_btn', 'Need help with this section?')}</h3>`;
+        html += `<p>${t(cfg.noteKey, '')}</p>`;
+        html += '<a class="solid-btn" style="display:inline-block;background:var(--red);color:#fff;border-color:var(--red);margin-top:4px;" href="/#community-qa">Comunidad</a>';
+        html += '</article>';
+      }
+
+      if (!html) {
+        html = '<div class="empty-topic">No content available for this topic.</div>';
+      }
+
+      main.innerHTML = html;
+
+      const bundle = translations[currentLanguage] || {};
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (bundle[key]) el.textContent = bundle[key];
+      });
+    }
+
+    async function fetchTranslations() {
+      try {
+        const url = 'https://vivasuiza-production.up.railway.app/translations?cb=' + Date.now();
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) {
+          renderTopic();
+          return;
+        }
+        translations = await response.json();
+      } catch (e) {
+        console.error('Translations error', e);
+      }
+      renderTopic();
+    }
+
+    fetchTranslations();
+  </script>
+</body>
+</html>

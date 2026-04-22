@@ -596,6 +596,14 @@ def get_root():
     return FileResponse("index.html")
 
 
+@app.get("/topics/{topic}")
+def get_topic_page(topic: str):
+    allowed_topics = {"moving", "arrival", "housing", "pillars", "insurance", "taxes"}
+    if topic not in allowed_topics:
+        return RedirectResponse(url="/")
+    return FileResponse("topic.html")
+
+
 @app.get("/admin")
 def get_admin_html(session_id: str = Cookie(None)):
     # optionally restrict the admin UI itself to admin users

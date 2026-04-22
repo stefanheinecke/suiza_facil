@@ -1893,6 +1893,287 @@
         font-size: 12px;
       }
     }
+
+    /* ── Hero Carousel ─────────────────────────────────── */
+    body { overflow-x: hidden; }
+
+    .hero-carousel {
+      position: relative;
+      left: 50%;
+      width: 100vw;
+      transform: translateX(-50%);
+      height: 540px;
+      overflow: hidden;
+      margin-bottom: 64px;
+      margin-top: -20px;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+
+    .carousel-slide.active { opacity: 1; }
+
+    .carousel-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(15,25,50,0.78) 0%, rgba(15,25,50,0.4) 55%, rgba(15,25,50,0.1) 100%);
+    }
+
+    .carousel-content {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      padding: 0 64px;
+      max-width: 680px;
+    }
+
+    .carousel-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 12px;
+    }
+
+    .carousel-title {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .carousel-subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .carousel-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red);
+      color: #fff;
+      padding: 11px 24px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+
+    .carousel-cta:hover { background: #c0303c; transform: translateY(-1px); }
+
+    .carousel-nav {
+      position: absolute;
+      bottom: 28px;
+      left: 64px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: #fff;
+      transform: scale(1.35);
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 5;
+    }
+
+    .carousel-arrow:hover { background: rgba(255,255,255,0.3); }
+    .carousel-arrow-prev { left: 20px; }
+    .carousel-arrow-next { right: 20px; }
+
+    /* ── Topics Grid ────────────────────────────────────── */
+    .topics-section {
+      padding: 0 0 64px;
+    }
+
+    .topics-section-header {
+      margin-bottom: 36px;
+    }
+
+    .topics-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .topics-main-title {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .topics-main-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 560px;
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .topic-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      height: 290px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    }
+
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.20);
+    }
+
+    .topic-card-img {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.45s ease;
+    }
+
+    .topic-card:hover .topic-card-img { transform: scale(1.07); }
+
+    .topic-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,20,45,0.82) 0%, rgba(10,20,45,0.2) 55%, transparent 100%);
+    }
+
+    .topic-card-body {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 22px;
+    }
+
+    .topic-card-step {
+      display: inline-block;
+      background: rgba(230,57,70,0.9);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .topic-card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .topic-card-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .topic-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(255,255,255,0.14);
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .topic-card:hover .topic-card-link {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    @media (max-width: 900px) {
+      .topics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-carousel { height: 380px; margin-bottom: 48px; }
+      .carousel-title { font-size: 26px; }
+      .carousel-content { padding: 0 28px; }
+      .carousel-nav { left: 28px; }
+      .topics-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .topic-card { height: 230px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-carousel { height: 300px; margin-bottom: 36px; }
+      .carousel-title { font-size: 20px; }
+      .carousel-subtitle { font-size: 13px; }
+      .carousel-content { padding: 0 18px; }
+      .carousel-nav { left: 18px; }
+      .topics-grid { grid-template-columns: 1fr; gap: 12px; }
+      .topic-card { height: 210px; }
+    }
   </style>
 </head>
 <body>
@@ -1928,666 +2209,134 @@
     </header>
 
     <main>
-      <!-- HERO -->
-      <section class="hero">
-        <div>
-          <h1 class="hero-title" data-i18n="hero_title">La forma más fácil de empezar tu vida en Suiza.</h1>
-          <p class="hero-subtitle" data-i18n="hero_subtitle">
-            Tu guía en español para trámites, seguros y vivienda.
-          </p>
-          <div class="hero-henley">
-            <span class="hero-henley-badge">🏆</span>
-            <div>
-              <a href="https://www.henleyglobal.com/publications/henley-education-report-2026" target="_blank" rel="noopener noreferrer" data-i18n="hero_henley_title" style="color:inherit;text-decoration:underline;font-weight:700;">Suiza #1 en el Henley Opportunity Index 2026</a>
-              <span data-i18n="hero_henley_desc"> — El mejor país del mundo en oportunidades de educación, inversión y calidad de vida.</span>
-            </div>
+      <!-- HERO CAROUSEL -->
+      <div class="hero-carousel" id="heroCarousel" aria-label="Hero slides">
+        <!-- Slide 1 -->
+        <div class="carousel-slide active" style="background-image:url('https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=1800&auto=format&fit=crop')">
+          <div class="carousel-content">
+            <div class="carousel-kicker" data-i18n="carousel_kicker_1">Tu nueva vida en Suiza</div>
+            <h1 class="carousel-title" data-i18n="hero_title">La forma más fácil de empezar tu vida en Suiza.</h1>
+            <p class="carousel-subtitle" data-i18n="hero_subtitle">Tu guía en español para trámites, seguros y vivienda.</p>
+            <button class="carousel-cta" onclick="document.getElementById('arrival-checklist').scrollIntoView({behavior:'smooth'})">
+              <span data-i18n="carousel_cta_explore">Explorar temas</span>
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
-          <div class="hero-cta">
-            <button class="btn btn-secondary" onclick="scrollToSection('newsletter')">
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1527668752968-14dc70a27c95?q=80&w=1800&auto=format&fit=crop')">
+          <div class="carousel-content">
+            <div class="carousel-kicker" data-i18n="carousel_kicker_2">Suiza #1 en el mundo</div>
+            <h2 class="carousel-title" data-i18n="hero_henley_title">Suiza #1 en el Henley Opportunity Index 2026</h2>
+            <p class="carousel-subtitle" data-i18n="hero_henley_desc">El mejor país del mundo en oportunidades de educación, inversión y calidad de vida.</p>
+            <button class="carousel-cta" onclick="scrollToSection('newsletter')">
               <span data-i18n="hero_btn_community">Únete a la comunidad</span>
+              <span aria-hidden="true">→</span>
             </button>
-            <button class="btn btn-secondary" onclick="scrollToSection('community-qa')" style="border-color:var(--red);color:var(--red);">
-              <span>💡</span>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1580086319619-3ed498161c77?q=80&w=1800&auto=format&fit=crop')">
+          <div class="carousel-content">
+            <div class="carousel-kicker" data-i18n="carousel_kicker_3">Comunidad</div>
+            <h2 class="carousel-title" data-i18n="carousel_slide3_title">¿Tienes dudas sobre tu mudanza a Suiza?</h2>
+            <p class="carousel-subtitle" data-i18n="carousel_slide3_subtitle">Pregunta a nuestra comunidad de hispanohablantes.</p>
+            <button class="carousel-cta" onclick="scrollToSection('community-qa')">
               <span data-i18n="feedback_banner_btn">Dejar feedback</span>
+              <span aria-hidden="true">→</span>
             </button>
           </div>
         </div>
+        <!-- Arrow buttons -->
+        <button class="carousel-arrow carousel-arrow-prev" aria-label="Previous slide" onclick="carouselGo(-1)">&#8249;</button>
+        <button class="carousel-arrow carousel-arrow-next" aria-label="Next slide" onclick="carouselGo(1)">&#8250;</button>
+        <!-- Dots -->
+        <div class="carousel-nav" role="tablist" aria-label="Slide navigation">
+          <button class="carousel-dot active" data-slide="0" role="tab" aria-label="Slide 1"></button>
+          <button class="carousel-dot" data-slide="1" role="tab" aria-label="Slide 2"></button>
+          <button class="carousel-dot" data-slide="2" role="tab" aria-label="Slide 3"></button>
+        </div>
+      </div>
+
+      <!-- TOPICS GRID -->
+      <section id="arrival-checklist" class="topics-section">
+        <div class="topics-section-header">
+          <div class="topics-kicker" data-i18n="checklist_kicker">Topics</div>
+          <h2 class="topics-main-title" data-i18n="checklist_title">Temas de información para tu mudanza a Suiza.</h2>
+          <p class="topics-main-subtitle" data-i18n="checklist_subtitle">Haz clic en un tema para ver la guía completa paso a paso.</p>
+        </div>
+        <div class="topics-grid">
+
+          <a href="/topics/moving" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1600518464441-9154a4dea21b?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_1">Paso 1</span>
+              <div class="topic-card-title" data-i18n="checklist_card2_title">Mudanza e importación</div>
+              <div class="topic-card-desc" data-i18n="checklist_card2_subtitle">Qué puedes llevar y qué necesitas declarar al cruzar la frontera.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+          <a href="/topics/arrival" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_2">Paso 2</span>
+              <div class="topic-card-title" data-i18n="checklist_card1_title">Llegada y trámites</div>
+              <div class="topic-card-desc" data-i18n="checklist_card1_subtitle">Empadronamiento, permisos de residencia y apertura de cuentas.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+          <a href="/topics/housing" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_3">Paso 3</span>
+              <div class="topic-card-title" data-i18n="checklist_card3_title">Vivienda y trabajo</div>
+              <div class="topic-card-desc" data-i18n="checklist_card3_subtitle">Cómo buscar piso y encontrar trabajo en Suiza.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+          <a href="/topics/pillars" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_4">Paso 4</span>
+              <div class="topic-card-title" data-i18n="checklist_card6_title">Sistema de pensiones</div>
+              <div class="topic-card-desc" data-i18n="checklist_card6_subtitle">Los 3 pilares del sistema de pensiones suizo explicados.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+          <a href="/topics/insurance" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_5">Paso 5</span>
+              <div class="topic-card-title" data-i18n="checklist_card4_title">Seguro médico</div>
+              <div class="topic-card-desc" data-i18n="checklist_card4_subtitle">Todo sobre el seguro obligatorio de salud en Suiza.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+          <a href="/topics/taxes" class="topic-card">
+            <div class="topic-card-img" style="background-image:url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop')"></div>
+            <div class="topic-card-overlay"></div>
+            <div class="topic-card-body">
+              <span class="topic-card-step" data-i18n="topic_step_6">Paso 6</span>
+              <div class="topic-card-title" data-i18n="checklist_card5_title">Sistema fiscal</div>
+              <div class="topic-card-desc" data-i18n="checklist_card5_subtitle">Cómo funcionan los impuestos y cuánto se paga.</div>
+              <span class="topic-card-link"><span data-i18n="topic_explore_btn">Explorar</span> →</span>
+            </div>
+          </a>
+
+        </div>
       </section>
 
-      <!-- IMMIGRATION CHECKLIST -->
-      <section id="arrival-checklist" class="section checklist-section">
-        <div class="section-header">
-          <div class="section-kicker" data-i18n="checklist_kicker">Topics</div>
-          <h2 class="section-title" data-i18n="checklist_title">Temas de información para tu mudanza a Suiza.</h2>
-          <p class="section-subtitle" data-i18n="checklist_subtitle">
-            Trabaja estos temas paso a paso. Todo se guarda localmente en el navegador para que puedas continuar cuando quieras.
-          </p>
-        </div>
-
-        <div class="checklist-container">
-          <!-- LEFT MENU -->
-          <div>
-            <div class="checklist-mobile-select">
-              <select id="mobileTopicSelect" onchange="selectChecklistItem(this.value)">
-                <option value="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</option>
-                <option value="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</option>
-                <option value="housing" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</option>
-                <option value="pillars" data-i18n="checklist_card6_title">Sistema de los 3 pilares</option>
-                <option value="insurance" data-i18n="checklist_card4_title">Seguro médico</option>
-                <option value="taxes" data-i18n="checklist_card5_title">Sistema fiscal</option>
-              </select>
-            </div>
-            <div class="checklist-menu" id="checklistMenu">
-              <button class="checklist-menu-btn active" onclick="selectChecklistItem('moving')" data-topic="moving" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('arrival')" data-topic="arrival" data-i18n="checklist_card1_title">Ankommen & anmelden</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('housing')" data-topic="housing" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('pillars')" data-topic="pillars" data-i18n="checklist_card6_title">Sistema de los 3 pilares</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('insurance')" data-topic="insurance" data-i18n="checklist_card4_title">Seguro médico</button>
-              <button class="checklist-menu-btn" onclick="selectChecklistItem('taxes')" data-topic="taxes" data-i18n="checklist_card5_title">Sistema fiscal</button>
-            </div>
-          </div>
-
-          <!-- RIGHT CONTENT -->
-          <div class="checklist-content">
-
-          <!-- Rechte Spalte: Umzugsgut & praktische Hinweise -->
-          <div class="checklist-section-content active" data-checklist-id="moving">
-          <article class="checklist-card" data-module="basic" data-stage="plan,move">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">1</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card2_title">Umzugsgut & praktische Tipps</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card2_subtitle">Was du in die Schweiz mitbringen darfst – und wie.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item4_title">🚚 Hausrat & persönliche Gegenstände</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item4_text">
-                    Als Umzugsgut können deine persönlichen Sachen in der Regel zollfrei eingeführt werden, wenn:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item4_li1">die Gegenstände seit mindestens 6 Monaten in deinem Besitz sind</li>
-                    <li data-i18n="checklist_item4_li2">sie weiterhin in der Schweiz genutzt werden</li>
-                    <li data-i18n="checklist_item4_li3">du das Formular 18.44 (Übersiedlungsgut) ausfüllst</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item5_title">🚗 Auto mitbringen</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item5_text">
-                    Ein Auto kann zollfrei eingeführt werden, wenn es:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item5_li1">seit mindestens 6 Monaten auf dich zugelassen ist</li>
-                    <li data-i18n="checklist_item5_li2">als persönliches Umzugsgut deklariert wird</li>
-                    <li data-i18n="checklist_item5_li3">innerhalb von 12 Monaten in der Schweiz geprüft und eingelöst wird (MFK)</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item6_title">🍽 Lebensmittel</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item6_text">
-                    Für den Eigenbedarf ist vieles erlaubt, aber beachte:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item6_li1">für Fleisch, Alkohol und Tabak gelten Mengen- und Wertgrenzen</li>
-                    <li data-i18n="checklist_item6_li2">Pflanzen und tierische Produkte haben teilweise zusätzliche Einschränkungen</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item7_title">🐾 Haustiere</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item7_text">
-                    Hunde und Katzen benötigen für die Einreise:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item7_li1">Mikrochip</li>
-                    <li data-i18n="checklist_item7_li2">EU-Heimtierpass</li>
-                    <li data-i18n="checklist_item7_li3">gültige Tollwutimpfung</li>
-                    <li data-i18n="checklist_item7_li4">Anmeldung beim Schweizer Zoll und später bei der Gemeinde</li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-
-            <div class="checklist-note">
-              <span data-i18n="checklist_note2_intro">Praktische Hinweise:</span>
-              <ul class="checklist-sublist">
-                <li data-i18n="checklist_note2_li1">Eine detaillierte Inventarliste erleichtert die Zollabfertigung.</li>
-                <li data-i18n="checklist_note2_li2">Bei professionellen Umzugsfirmen wird die Zollabwicklung oft übernommen.</li>
-                <li data-i18n="checklist_note2_li3">Bei Selbstumzug über Frankreich: Ausweis und Fahrzeugpapiere bereithalten.</li>
-                <li data-i18n="checklist_note2_li4">In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.</li>
-              </ul>
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="moving" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="moving">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-
-          <!-- Linke Spalte: Verwaltung & Formalitäten -->
-          <div class="checklist-section-content" data-checklist-id="arrival">
-          <article class="checklist-card" data-module="basic" data-stage="move">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">2</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card1_title">Ankommen & anmelden</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card1_subtitle">Die wichtigsten ersten Wochen nach der Einreise.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item1_title">1) Anmeldung bei der Wohngemeinde</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item1_text">
-                    Innerhalb von 14 Tagen nach der Einreise persönlich bei der Gemeinde anmelden, in der du wohnst. Dort erhältst du in der Regel die Aufenthaltsbewilligung (z. B. B-Bewilligung für EU/EFTA-Bürger).
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item1_li1">Reisepass (bei EU/EFTA Staatsangehörigen genügt auch der Personalausweis)</li>
-                    <li data-i18n="checklist_item1_li2">Mietvertrag, Wohnungsausweis oder Untermietvertrag</li>
-                    <li data-i18n="checklist_item1_li3">Zusicherung der Aufenthaltsbewilligung (sofern vorhanden)</li>
-                    <li data-i18n="checklist_item1_li4">Ermächtigung der Visumserteilung (sofern vorhanden)</li>
-                    <li data-i18n="checklist_item1_li5">Arbeitsvertrag oder Studienbestätigung</li>
-                    <li data-i18n="checklist_item1_li6">Migrationsamtliche Gebühren (je nach Art der Bewilligung unterschiedlich)</li>
-                    <li data-i18n="checklist_item1_li7">Zivilstandspapiere im Original (Ehepapiere und Geburtsscheine der Kinder)</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item2_title">2) Krankenversicherung abschliessen</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item2_text">
-                    Innerhalb von 3 Monaten nach Einreise musst du eine Schweizer Grundversicherung (KVG) abschliessen. Der Versicherungsschutz gilt rückwirkend ab Einreisedatum.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li>
-                      <a href="#topic-insurance" data-i18n="checklist_item2_link">➜ Más información sobre seguro médico, franquicia y consejos de ahorro</a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item3_title">3) Spanische Abmeldung (optional, aber sinnvoll)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item3_text">
-                    Spanien verlangt keine formelle Abmeldung, trotzdem kann es sinnvoll sein:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item3_li1">Abmeldung im Padrón Municipal</li>
-                    <li data-i18n="checklist_item3_li2">Information der Steuerbehörde (Hacienda), um Doppelbesteuerung zu vermeiden</li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-
-            <div class="checklist-note" data-i18n="checklist_note1">
-              Tipp: Plane für Termine bei der Gemeinde und für Versicherungen frühzeitig Zeit ein – viele Stellen arbeiten nur mit Termin oder haben eingeschränkte Öffnungszeiten.
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="arrival" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="arrival">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-
-          <!-- Wohnung & Jobs -->
-          <div class="checklist-section-content" data-checklist-id="housing">
-          <article class="checklist-card" data-module="housing" data-stage="explore,plan">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">3</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card3_title">Vivienda y trabajo en Suiza</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card3_subtitle">Dónde buscar oportunidades y qué preparar.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item8_title">Documentos básicos para buscar piso</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item8_text">
-                    Para que tomen en serio tu solicitud de alquiler, prepara de antemano tu documentación más importante.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item8_li1">Pasaporte o DNI vigente.</li>
-                    <li data-i18n="checklist_item8_li2">Contrato de trabajo u ofertas por escrito (si ya las tienes).</li>
-                    <li data-i18n="checklist_item8_li3">Resumen de ingresos aproximados y referencias de antiguos propietarios si las tienes.</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item9_title">Dónde buscar pisos online</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item9_text">
-                    Principales portales suizos para buscar alquileres.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li>
-                      <a href="https://www.homegate.ch" target="_blank" rel="noopener noreferrer">homegate.ch</a>
-                      <span data-i18n="checklist_item9_li1_desc"> – Portal inmobiliario muy utilizado en toda Suiza.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.immoscout24.ch" target="_blank" rel="noopener noreferrer">immoscout24.ch</a>
-                      <span data-i18n="checklist_item9_li2_desc"> – Muchas ofertas de pisos y casas en alquiler.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.comparis.ch/immobilien" target="_blank" rel="noopener noreferrer">comparis.ch</a>
-                      <span data-i18n="checklist_item9_li3_desc"> – Buscador que agrupa anuncios de varias plataformas.</span>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item10_title">Dónde buscar trabajo en Suiza</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item10_text">
-                    Algunos portales de empleo conocidos para empezar a orientarte en el mercado laboral suizo.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li>
-                      <a href="https://www.jobs.ch" target="_blank" rel="noopener noreferrer">jobs.ch</a>
-                      <span data-i18n="checklist_item10_li1_desc"> – Uno de los portales de empleo más grandes del país.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.jobup.ch" target="_blank" rel="noopener noreferrer">jobup.ch</a>
-                      <span data-i18n="checklist_item10_li2_desc"> – Muy utilizado en la Suiza francófona.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.indeed.ch" target="_blank" rel="noopener noreferrer">indeed.ch</a>
-                      <span data-i18n="checklist_item10_li3_desc"> – Agregador con ofertas de distintas fuentes.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.linkedin.com/jobs" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                      <span data-i18n="checklist_item10_li4_desc"> – Muy útil para empleos cualificados y networking.</span>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-
-            <div class="checklist-note">
-              <span data-i18n="checklist_note3_intro">Consejos para vivienda y trabajo:</span>
-              <ul class="checklist-sublist">
-                <li data-i18n="checklist_note3_li1">Adapta tu CV al formato suizo y prepara una carta de motivación breve.</li>
-                <li data-i18n="checklist_note3_li2">Responde rápido a los anuncios y lleva toda la documentación impresa a las visitas.</li>
-              </ul>
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="housing_jobs" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="housing_jobs">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-
-          <!-- 3-Säulen-System / Sistema de los 3 pilares -->
-          <div class="checklist-section-content" data-checklist-id="pillars">
-          <article class="checklist-card" id="topic-pillars" data-module="pillars" data-stage="explore,plan">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">4</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card6_title">Sistema de los 3 pilares (Vorsorge)</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card6_subtitle">Cómo funciona la previsión para la jubilación en Suiza.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-
-              <!-- Pilar 1 – AHV/IV -->
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_pillar1_title">🏛️ 1.er pilar – AHV/IV (previsión estatal)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_pillar1_text">
-                    El primer pilar es el seguro estatal obligatorio de vejez y supervivencia (<strong>AHV</strong>) e invalidez (<strong>IV</strong>). Es obligatorio para toda persona que trabaje o resida en Suiza a partir de los 18 años (no trabajadores desde los 20).
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n-html="checklist_pillar1_li1"><strong>Objetivo:</strong> cubrir las necesidades vitales básicas en la jubilación.</li>
-                    <li data-i18n-html="checklist_pillar1_li2"><strong>Cotización:</strong> 8,7 % del salario bruto, repartido a partes iguales entre empleado (4,35 %) y empleador (4,35 %).</li>
-                    <li data-i18n-html="checklist_pillar1_li3"><strong>Renta mínima (2024):</strong> CHF 1 225/mes (si has cotizado todos los años sin lagunas).</li>
-                    <li data-i18n-html="checklist_pillar1_li4"><strong>Renta máxima (2024):</strong> CHF 2 450/mes (el doble de la mínima). Para matrimonios, el tope conjunto es CHF 3 675/mes (150 % de la máxima individual).</li>
-                    <li data-i18n-html="checklist_pillar1_li5"><strong>Requisito de años:</strong> Para recibir la renta completa necesitas 44 años de cotización (hombres) / 43 años (mujeres). Cada año que falta reduce la renta proporcionalmente.</li>
-                    <li data-i18n-html="checklist_pillar1_li6"><strong>Edad de jubilación:</strong> 65 años (hombres) / 64 años (mujeres, aumentando gradualmente a 65 hasta 2028).</li>
-                    <li data-i18n-html="checklist_pillar1_li7"><strong>Ejemplo:</strong> Un empleado con salario bruto de CHF 6 000/mes paga CHF 261/mes en AHV (4,35 %). Si ha cotizado 44 años sin lagunas y su renta media anual determinante es ≥ CHF 88 200, recibirá la renta máxima de CHF 2 450/mes.</li>
-                    <li data-i18n-html="checklist_pillar1_li8">
-                      <a href="https://www.ahv-iv.ch" target="_blank" rel="noopener noreferrer">ahv-iv.ch</a> – Página oficial de la AHV/IV.
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <!-- Pilar 2 – BVG -->
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_pillar2_title">🏢 2.° pilar – BVG/LPP (previsión profesional)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_pillar2_text">
-                    El segundo pilar es la previsión profesional obligatoria. Junto con el 1.er pilar debe permitir mantener el nivel de vida habitual tras la jubilación (objetivo: ~60 % del último salario).
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n-html="checklist_pillar2_li1"><strong>Obligatorio:</strong> para empleados con salario anual superior a CHF 22 050 (umbral de entrada 2024).</li>
-                    <li data-i18n-html="checklist_pillar2_li2"><strong>Salario asegurado:</strong> del salario bruto se descuenta la «deducción de coordinación» (CHF 25 725 en 2024). El salario asegurado máximo BVG es CHF 62 475.</li>
-                    <li data-i18n-html="checklist_pillar2_li3"><strong>Cotización:</strong> empleado y empleador aportan cada uno al menos el 50 %. El porcentaje sube con la edad: 7 % (25-34 años), 10 % (35-44), 15 % (45-54), 18 % (55-65).</li>
-                    <li data-i18n-html="checklist_pillar2_li4"><strong>Tipo de conversión:</strong> 6,8 % (BVG mínimo). Con un capital acumulado de CHF 400 000, la renta anual sería CHF 27 200 (≈ CHF 2 267/mes).</li>
-                    <li data-i18n-html="checklist_pillar2_li5"><strong>Ejemplo:</strong> Salario bruto CHF 80 000/año → salario coordinado = CHF 54 275 (80 000 − 25 725). Con 35 años, la cotización es ~10 % = CHF 5 428/año, repartido entre empleado y empleador.</li>
-                    <li data-i18n-html="checklist_pillar2_li6"><strong>Cuenta de libre paso:</strong> si dejas de trabajar en Suiza, el capital se transfiere a una cuenta de libre paso (Freizügigkeitskonto). Puedes retirarlo al salir de Suiza definitivamente (la parte obligatoria queda bloqueada si te mudas a la UE/EFTA).</li>
-                    <li data-i18n-html="checklist_pillar2_li7">
-                      <a href="https://www.bsv.admin.ch" target="_blank" rel="noopener noreferrer">bsv.admin.ch</a> – Oficina Federal de Seguros Sociales.
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <!-- Pilar 3 – Pilar privado -->
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_pillar3_title">💰 3.er pilar – Previsión privada (Säule 3a/3b)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_pillar3_text">
-                    El tercer pilar es voluntario y complementa los dos primeros. El pilar 3a tiene ventajas fiscales importantes; el pilar 3b es ahorro libre sin tope ni deducción especial.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n-html="checklist_pillar3_li1"><strong>Pilar 3a (vinculado):</strong> aportación máxima deducible de CHF 7 056/año (2024) para empleados con 2.° pilar. Autónomos sin 2.° pilar: hasta CHF 35 280 o el 20 % del ingreso neto.</li>
-                    <li data-i18n-html="checklist_pillar3_li2"><strong>Ventaja fiscal:</strong> cada franco aportado al 3a se deduce íntegramente de la renta imponible. Ejemplo: con un tipo marginal del 30 %, aportar CHF 7 056 supone un ahorro fiscal de ~CHF 2 117/año.</li>
-                    <li data-i18n-html="checklist_pillar3_li3"><strong>Retiro:</strong> al jubilarse, comprar vivienda propia, iniciar actividad por cuenta propia o abandonar Suiza definitivamente. Se tributa a un tipo reducido.</li>
-                    <li data-i18n-html="checklist_pillar3_li4"><strong>Pilar 3b (libre):</strong> sin límite de aportación ni deducción fiscal federal, pero algunos cantones ofrecen deducciones parciales. Puede ser una cuenta de ahorro, seguro de vida, fondos de inversión, etc.</li>
-                    <li data-i18n-html="checklist_pillar3_li5"><strong>Ejemplo:</strong> Si aportas CHF 7 056/año al pilar 3a durante 30 años con un rendimiento medio del 3 %, acumularías aprox. CHF 340 000 de capital adicional para la jubilación.</li>
-                    <li data-i18n-html="checklist_pillar3_li6">
-                      <a href="https://www.moneyland.ch/de/saeule-3a" target="_blank" rel="noopener noreferrer">moneyland.ch</a> – Comparador de cuentas y productos del pilar 3a.
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-            </ul>
-
-            <div class="checklist-note" data-i18n="checklist_note_pillars">
-              Consejo: Abre una cuenta del pilar 3a lo antes posible al llegar a Suiza para aprovechar la deducción fiscal desde el primer año. Muchos bancos y apps (VIAC, Frankly, finpension) permiten abrir una cuenta en pocos minutos.
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="pillars" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="pillars">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-
-          <!-- Krankenversicherung -->
-          <div class="checklist-section-content" data-checklist-id="insurance">
-          <article class="checklist-card" id="topic-insurance" data-module="insurance" data-stage="plan,move">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">5</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card4_title">Seguro médico (Krankenversicherung)</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card4_subtitle">Cómo elegir seguro, franquicia y modelo.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item11_title">Cómo elegir tu seguro médico (Krankenversicherung)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item11_text">
-                    En Suiza el seguro básico es obligatorio, pero puedes elegir aseguradora, franquicia y modelo.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item11_li1">Compara varias aseguradoras y franquicias (deducible anual).</li>
-                    <li data-i18n="checklist_item11_li2">Valora si te conviene un modelo más barato (Hausarzt, Telmed, etc.).</li>
-                    <li>
-                      <a href="https://www.priminfo.ch" target="_blank" rel="noopener noreferrer">priminfo.ch</a>
-                      <span data-i18n="checklist_item11_li3_desc"> – Comparador oficial de primas del seguro básico.</span>
-                    </li>
-                    <li>
-                      <a href="https://www.comparis.ch/krankenkassen" target="_blank" rel="noopener noreferrer">comparis.ch</a>
-                      <span data-i18n="checklist_item11_li4_desc"> – Comparador muy conocido de seguros de salud.</span>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item_franchise_title">🏥 El sistema de franquicia (Franchise)</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item_franchise_text">
-                    La franquicia es el importe anual que pagas de tu bolsillo antes de que el seguro cubra gastos. Puedes elegir entre 300 y 2’500 CHF al año.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item_franchise_li1">Franquicia baja (300 CHF): prima mensual más alta, pero pagas menos si vas mucho al médico.</li>
-                    <li data-i18n="checklist_item_franchise_li2">Franquicia alta (2’500 CHF): prima mensual más baja, ideal si rara vez necesitas atención médica.</li>
-                    <li data-i18n="checklist_item_franchise_li3">Además de la franquicia, pagas un 10 % de los costes restantes (participación, máx. 700 CHF/año).</li>
-                    <li data-i18n="checklist_item_franchise_li4">Para niños la franquicia va de 0 a 600 CHF y no hay participación hasta los 18 años.</li>
-                    <li data-i18n="checklist_item_franchise_li5">Consejo: si eres joven y sano, una franquicia alta ahorra mucho en primas. Si tienes gastos médicos frecuentes, elige franquicia baja.</li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item_saving_title">💰 Consejos para ahorrar en primas</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item_saving_text">
-                    Hay varias formas de reducir tus costes de seguro médico cada año.
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li1">Compara y cambia de aseguradora</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li1_desc">Las prestaciones de la Grundversicherung son idénticas en todas las cajas, pero las primas varían mucho. El cambio es posible cada 1 de enero; la carta de cancelación debe llegar a tu caja actual antes de fin de noviembre.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li2">Elige un modelo alternativo (Hausarzt, Telmed, HMO)</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li2_desc">Con un modelo alternativo ahorras entre un 10 % y un 20 % en primas. A cambio renuncias a la libre elección de médico y debes contactar primero la vía definida (médico de cabecera, línea telefónica, etc.).</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li3">Excluye la cobertura de accidentes</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li3_desc">Si trabajas 8 o más horas por semana, ya estás asegurado contra accidentes a través de tu empleador. Mantener la cobertura en la Krankenkasse es una doble cobertura innecesaria que puedes eliminar para ahorrar.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li4">Solicita la reducción de primas (Prämienverbilligung)</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li4_desc">Todos los cantones ofrecen subsidios a personas con ingresos bajos o medios. Las reglas son cantonales: en algunos la ayuda es automática, en otros hay que solicitarla. Merece la pena comprobarlo.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li5">Asegura a cada familiar por separado</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li5_desc">Las primas para adultos, jóvenes y niños difieren entre aseguradoras. No es obligatorio que toda la familia esté en la misma caja; buscar la más barata para cada perfil puede suponer un ahorro importante.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li6">Separa seguro básico y complementario</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li6_desc">No estás obligado a tener ambos en la misma aseguradora. Puedes optimizar precios eligiendo la mejor caja para cada tipo. Importante: no canceles la Zusatzversicherung antes de tener la confirmación de la nueva.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li7">Paga la prima anual de golpe</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li7_desc">Algunas cajas ofrecen un descuento (Skonto) de entre 0,5 % y 2 % si pagas la prima semestral o anualmente por adelantado. Ese rendimiento suele superar el interés de una cuenta de ahorro.</p>
-                    </li>
-                    <li>
-                      <strong data-i18n="checklist_item_saving_li8">Ten en cuenta la región de primas al mudarte</strong>
-                      <p class="saving-desc" data-i18n="checklist_item_saving_li8_desc">Las primas varían enormemente según la comuna. Suiza está dividida en 42 regiones de primas, por lo que al elegir dónde vivir vale la pena comparar también este coste.</p>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-
-            <div class="checklist-note">
-              <span data-i18n="checklist_note4a_intro">Nota sobre seguro médico:</span>
-              <ul class="checklist-sublist">
-                <li data-i18n="checklist_note4a_li1">La información es orientativa. Verifica siempre los detalles en las webs oficiales o con un asesor.</li>
-              </ul>
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="insurance" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="insurance">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-
-          <!-- Steuern -->
-          <div class="checklist-section-content" data-checklist-id="taxes">
-          <article class="checklist-card" data-module="taxes" data-stage="plan,move">
-            <div class="checklist-card-header">
-              <div class="checklist-step-label">
-                <div class="checklist-step-number">6</div>
-                <div>
-                  <div class="checklist-card-title" data-i18n="checklist_card5_title">Sistema fiscal (Steuern)</div>
-                  <div class="checklist-card-subtitle" data-i18n="checklist_card5_subtitle">Cómo funcionan los impuestos y cuánto se paga.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-card-body">
-            <ul class="checklist-items">
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item12_title">Cómo funcionan los impuestos en Suiza</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item12_text">
-                    El sistema fiscal suizo tiene tres niveles de imposición que se suman:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n="checklist_item12_li1">Impuesto federal directo (Direkte Bundessteuer) – lo fija la Confederación y es igual en toda Suiza.</li>
-                    <li data-i18n="checklist_item12_li2">Impuesto cantonal y municipal (Staats- und Gemeindesteuer) – varía mucho según dónde vivas.</li>
-                    <li data-i18n="checklist_item12_li3">Impuesto sobre el patrimonio (Vermögenssteuer) – se aplica a nivel cantonal sobre los activos netos.</li>
-                    <li data-i18n="checklist_item12_li4">Al principio, muchos extranjeros pagan impuesto en la fuente (Quellensteuer), descontado directamente de la nómina.</li>
-                    <li>
-                      <a href="https://www.ch.ch" target="_blank" rel="noopener noreferrer">ch.ch</a>
-                      <span data-i18n="checklist_item12_li5_desc"> – Portal oficial con explicaciones sobre impuestos y vida en Suiza.</span>
-                    </li>
-                    <li>
-                      <a href="https://swisstaxcalculator.estv.admin.ch" target="_blank" rel="noopener noreferrer">swisstaxcalculator.estv.admin.ch</a>
-                      <span data-i18n="checklist_item12_li6_desc"> – Calculadora oficial de impuestos de la Confederación.</span>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item_tax_examples_title">📊 Ejemplos orientativos de carga fiscal anual</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item_tax_examples_text">
-                    Estos valores son aproximados y dependen de deducciones, confesionalidad, comuna exacta y otros factores. Solo sirven para hacerse una idea.
-                  </div>
-                  <table class="tax-table">
-                    <thead>
-                      <tr>
-                        <th data-i18n="tax_th_profile">Perfil</th>
-                        <th data-i18n="tax_th_income">Ingreso bruto/año</th>
-                        <th data-i18n="tax_th_canton">Cantón</th>
-                        <th data-i18n="tax_th_approx">Impuestos aprox./año</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td data-i18n="tax_row1_profile">Persona sola</td>
-                        <td>80’000 CHF</td>
-                        <td data-i18n="tax_row1_canton">Zúrich (ZH)</td>
-                        <td>≈12’000 CHF</td>
-                      </tr>
-                      <tr>
-                        <td data-i18n="tax_row2_profile">Persona sola</td>
-                        <td>80’000 CHF</td>
-                        <td data-i18n="tax_row2_canton">Zug (ZG)</td>
-                        <td>≈6’800 CHF</td>
-                      </tr>
-                      <tr>
-                        <td data-i18n="tax_row3_profile">Pareja sin hijos</td>
-                        <td>120’000 CHF</td>
-                        <td data-i18n="tax_row3_canton">Berna (BE)</td>
-                        <td>≈18’500 CHF</td>
-                      </tr>
-                      <tr>
-                        <td data-i18n="tax_row4_profile">Pareja con 2 hijos</td>
-                        <td>120’000 CHF</td>
-                        <td data-i18n="tax_row4_canton">Berna (BE)</td>
-                        <td>≈14’500 CHF</td>
-                      </tr>
-                      <tr>
-                        <td data-i18n="tax_row5_profile">Pareja con 2 hijos</td>
-                        <td>120’000 CHF</td>
-                        <td data-i18n="tax_row5_canton">Schwyz (SZ)</td>
-                        <td>≈8’200 CHF</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </li>
-
-              <li class="checklist-item">
-                <div>
-                  <div class="checklist-item-main-title" data-i18n="checklist_item_tax_tips_title">💡 Spartipps – Steuern legal optimieren</div>
-                  <div class="checklist-item-text" data-i18n="checklist_item_tax_tips_text">
-                    En Suiza existen varias maneras legales de reducir tu carga fiscal. Aquí las más importantes:
-                  </div>
-                  <ul class="checklist-sublist">
-                    <li data-i18n-html="checklist_tax_tip1"><b>Pilar 3a:</b> Cada franco que aportas al pilar 3a (máx. CHF 7 056/año con 2.° pilar) se descuenta íntegramente de tu renta imponible. Ejemplo: con un tipo marginal del 30 %, aportar el máximo te ahorra ~CHF 2 117 en impuestos cada año.</li>
-                    <li data-i18n-html="checklist_tax_tip2"><b>Primas de seguros:</b> Las primas del seguro médico obligatorio, seguro de accidentes y seguro de vida son deducibles hasta un importe máximo. En el impuesto federal directo: máx. CHF 1 800 (individual) / CHF 3 600 (matrimonio) si cotizas al 2.° pilar o 3a, o CHF 2 700 / CHF 5 400 si no. Los cantones aplican importes más altos (p. ej. Zúrich: CHF 2 900 / CHF 5 800). No son deducibles: seguro de auto, responsabilidad civil, hogar ni viaje.</li>
-                    <li data-i18n-html="checklist_tax_tip3"><b>Gastos por enfermedad o accidente:</b> Los gastos médicos no cubiertos por el seguro (franquicia, participación, dentista, gafas con receta, naturópatas autorizados) son deducibles si superan el 5 % de tu renta neta (en la mayoría de cantones y a nivel federal). Algunos cantones aplican umbrales más bajos: Glarus, St. Gallen y Valais el 2 %, Ginebra el 0,5 %, y Basel-Land no tiene umbral mínimo.</li>
-                    <li data-i18n-html="checklist_tax_tip4"><b>Formación continua:</b> Los gastos en formación profesional continua (no la formación inicial) son deducibles hasta CHF 13 000/año a nivel federal. Según el cantón varía: Aargau hasta CHF 18 000, Basel-Stadt hasta CHF 19 100, Ticino CHF 10 500. En Zúrich y Schaffhausen hay una deducción forfait de CHF 500 sin justificante.</li>
-                    <li data-i18n-html="checklist_tax_tip5"><b>Transporte público y bicicleta:</b> Puedes deducir el coste del abono de transporte público para ir al trabajo. La bicicleta tiene un forfait de CHF 700/año (CHF 824 en Basel-Stadt). El máximo deducible federal es CHF 3 300; varía por cantón (Zúrich: CHF 5 200, Berna: CHF 7 000). El coche solo es deducible en circunstancias especiales (sin ÖV disponible, ahorro de &gt;1 h, etc.).</li>
-                    <li data-i18n-html="checklist_tax_tip6"><b>Compra en la caja de pensiones (2.° pilar):</b> Los aportes voluntarios (Einkauf) a tu Pensionskasse son 100 % deducibles de la renta imponible. Al retirarlo se aplica un tipo impositivo reducido. Solo conviene si tu caja de pensiones está sólidamente financiada.</li>
-                    <li data-i18n-html="checklist_tax_tip7"><b>Deducción por hijos:</b> Cada hijo menor permite un descuento fijo sobre la renta imponible: CHF 6 800 (federal), CHF 9 300 (Zúrich). También se aplica a hijos mayores de edad en formación. Además, a nivel federal hay un crédito fiscal de CHF 263 por hijo. Si los padres viven separados con custodia compartida sin pensión alimenticia, cada uno deduce la mitad.</li>
-                    <li data-i18n-html="checklist_tax_tip8"><b>Donaciones:</b> Las donaciones a entidades benéficas reconocidas son deducibles hasta el 20 % de la renta neta (federal y mayoría de cantones). Mínimo: CHF 100/año en la mayoría de cantones. Basel-Land no tiene límite máximo. Jura permite solo el 10 %, Neuchâtel el 5 %. Consulta la lista de la fundación <a href="https://zewo.ch/de/spenden-von-der-steuer-abziehen/" target="_blank" rel="noopener noreferrer">Zewo</a> para verificar qué organizaciones son deducibles.</li>
-                    <li data-i18n-html="checklist_tax_tip9"><b>Pagar impuestos por anticipado:</b> Si pagas tus impuestos antes del plazo, muchos cantones te bonifican con un interés preferencial (Vergütungszins). El tipo varía por cantón, pero suele ser más alto que el interés de una cuenta de ahorro bancaria normal.</li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-
-            <div class="checklist-note">
-              <span data-i18n="checklist_note4b_intro">Nota sobre impuestos:</span>
-              <ul class="checklist-sublist">
-                <li data-i18n="checklist_note4b_li1">Estos valores son aproximados. Usa la calculadora oficial o consulta a un asesor fiscal para tu caso concreto.</li>
-              </ul>
-            </div>
-
-            <button type="button" class="btn btn-secondary help-btn" data-help-context="taxes" data-i18n="checklist_help_btn">Need help with this section?</button>
-            <div class="vote-bar" data-vote-target="card" data-vote-id="taxes">
-              <button class="vote-btn" data-vote="1">👍 <span class="vote-count">0</span></button>
-              <button class="vote-btn" data-vote="-1">👎 <span class="vote-count">0</span></button>
-            </div>
-            </div>
-          </article>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- Q&A / COMMUNITY FEEDBACK -->
+            <!-- Q&A / COMMUNITY FEEDBACK -->
       <section id="community-qa" class="section qa-section">
         <div class="section-header">
           <div class="section-kicker" data-i18n="qa_kicker">Community</div>
@@ -2860,7 +2609,7 @@
     }
 
     function collapseAllTopLevelChecklistCards() {
-      document.querySelectorAll('.checklist-card open').forEach(card => {
+      document.querySelectorAll('.checklist-card.open').forEach(card => {
         card.classList.remove('open');
       });
     }
@@ -4112,7 +3861,42 @@
       });
     }
 
+    // ── Hero Carousel ─────────────────────────────────────────
+    let _carouselCurrent = 0;
+    let _carouselTimer = null;
+    const _carouselTotal = 3;
+
+    function carouselGoTo(idx) {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.carousel-dot');
+      if (!slides.length) return;
+      slides[_carouselCurrent].classList.remove('active');
+      if (dots[_carouselCurrent]) dots[_carouselCurrent].classList.remove('active');
+      _carouselCurrent = ((idx % _carouselTotal) + _carouselTotal) % _carouselTotal;
+      slides[_carouselCurrent].classList.add('active');
+      if (dots[_carouselCurrent]) dots[_carouselCurrent].classList.add('active');
+    }
+
+    function carouselGo(delta) {
+      carouselGoTo(_carouselCurrent + delta);
+      clearInterval(_carouselTimer);
+      _carouselTimer = setInterval(() => carouselGoTo(_carouselCurrent + 1), 6000);
+    }
+
+    function initCarousel() {
+      const dots = document.querySelectorAll('.carousel-dot');
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          carouselGoTo(parseInt(dot.getAttribute('data-slide'), 10));
+          clearInterval(_carouselTimer);
+          _carouselTimer = setInterval(() => carouselGoTo(_carouselCurrent + 1), 6000);
+        });
+      });
+      _carouselTimer = setInterval(() => carouselGoTo(_carouselCurrent + 1), 6000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      initCarousel();
       initChecklist();
 
       // Keep top-level checklist cards collapsed by default.
