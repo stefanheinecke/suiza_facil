@@ -4,6 +4,8 @@ import datetime
 import uuid
 import secrets
 import re
+import html as _html
+import threading
 from typing import Optional, List
 from urllib.parse import urlencode
 import smtplib
@@ -1366,6 +1368,50 @@ def cast_vote(target_type: str, target_id: str, vote: int = Form(...), session_i
         return {"error": str(e)}
 
 
+# ── Fedlex legal content cache ────────────────────────────────────────────────
+_FEDLEX_URLS = [
+    "https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de",  # AHVG (AHV)
+]
+_FEDLEX_CACHE: dict = {"content": "", "fetched_at": None}
+_FEDLEX_LOCK = threading.Lock()
+_FEDLEX_TTL = 86400  # 24 hours
+
+
+def _fetch_fedlex_content() -> str:
+    """Fetch Swiss legal text from fedlex.admin.ch, cache for 24 h."""
+    now = datetime.datetime.utcnow()
+    with _FEDLEX_LOCK:
+        cached_at = _FEDLEX_CACHE.get("fetched_at")
+        if cached_at and (now - cached_at).total_seconds() < _FEDLEX_TTL and _FEDLEX_CACHE["content"]:
+            return _FEDLEX_CACHE["content"]
+
+    all_text: list = []
+    for url in _FEDLEX_URLS:
+        try:
+            resp = requests.get(url, timeout=10, headers={"Accept-Language": "de"})
+            if resp.status_code == 200:
+                raw = resp.text
+                # Remove <script> and <style> blocks
+                raw = re.sub(r"<(script|style)[^>]*>.*?</(script|style)>", "", raw,
+                             flags=re.DOTALL | re.IGNORECASE)
+                # Strip all remaining HTML tags
+                text = re.sub(r"<[^>]+>", " ", raw)
+                # Collapse whitespace and decode HTML entities
+                text = re.sub(r"\s+", " ", text).strip()
+                text = _html.unescape(text)
+                all_text.append(f"[Quelle / Source: {url}]\n{text[:5000]}")
+            else:
+                print(f"[FEDLEX] HTTP {resp.status_code} for {url}")
+        except Exception as exc:
+            print(f"[FEDLEX] Failed to fetch {url}: {exc}")
+
+    combined = "\n\n".join(all_text)
+    with _FEDLEX_LOCK:
+        _FEDLEX_CACHE["content"] = combined
+        _FEDLEX_CACHE["fetched_at"] = now
+    return combined
+
+
 class ChatRequest(BaseModel):
     question: str
     language: str = "es"
@@ -1404,6 +1450,14 @@ def chat_endpoint(body: ChatRequest):
 
     page_content = "\n".join(context_lines)
 
+    # Inject cached fedlex legal content
+    fedlex_text = _fetch_fedlex_content()
+    legal_section = (
+        "\n\nHere is relevant Swiss legal content fetched from fedlex.admin.ch:\n---\n"
+        f"{fedlex_text}\n"
+        "---"
+    ) if fedlex_text else ""
+
     lang_names = {"es": "Spanish", "de": "German", "en": "English"}
     resp_lang = lang_names.get(language, "the user's language")
 
@@ -1411,14 +1465,15 @@ def chat_endpoint(body: ChatRequest):
         "You are VivaSuiza's friendly assistant. VivaSuiza helps people relocate from Spain to Switzerland.\n\n"
         "Here is the complete content of the VivaSuiza website:\n---\n"
         f"{page_content}\n"
-        "---\n\n"
+        "---"
+        f"{legal_section}\n\n"
         "Rules:\n"
-        "1. ONLY answer based on the website content above. Do not invent information.\n"
+        "1. Answer based on the website content and the Swiss legal content provided above. Do not invent information.\n"
         "2. If the answer is NOT found in the content above, respond with exactly and only: NO_ANSWER\n"
         "3. Be concise, helpful, and friendly. Use 2-4 sentences maximum.\n"
         f"4. Respond in {resp_lang}.\n"
         "5. You may use **bold** for emphasis on key terms.\n"
-        "6. Use https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de to find appropriate legal references when relevant, but only if they are explicitly mentioned in the website content above and give a reference to where this law can be found."
+        "6. When citing Swiss law, reference the specific article and law name (e.g., 'Art. 3 AHVG')."
     )
 
     messages = [{"role": "system", "content": system_prompt}]
