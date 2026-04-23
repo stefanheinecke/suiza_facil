@@ -159,8 +159,18 @@
 
     .language-switcher {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       align-items: center;
+      margin-left: auto;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .language-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       margin-left: auto;
     }
 
@@ -169,18 +179,19 @@
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
+      margin-left: auto;
     }
 
     .auth-btn {
       border: none;
       border-radius: 999px;
-      min-height: 38px;
-      padding: 0 14px;
-      min-width: 86px;
+      min-height: 34px;
+      padding: 0 12px;
+      min-width: 74px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       line-height: 1;
       letter-spacing: 0.01em;
@@ -218,9 +229,9 @@
     }
 
     .lang-btn {
-      min-height: 38px;
-      padding: 0 14px;
-      min-width: 44px;
+      min-height: 34px;
+      padding: 0 10px;
+      min-width: 36px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -228,7 +239,7 @@
       border: 1px solid transparent;
       background: transparent;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       line-height: 1;
       cursor: pointer;
@@ -1228,17 +1239,25 @@
       }
 
       .auth-btn {
-        min-height: 34px;
-        min-width: 74px;
-        padding: 0 11px;
+        min-height: 32px;
+        min-width: 66px;
+        padding: 0 10px;
         font-size: 11px;
       }
 
       .lang-btn {
-        min-height: 34px;
-        min-width: 40px;
-        padding: 0 10px;
+        min-height: 32px;
+        min-width: 34px;
+        padding: 0 9px;
         font-size: 11px;
+      }
+
+      .language-switcher {
+        width: 100%;
+      }
+
+      .language-buttons {
+        margin-left: 0;
       }
 
       .nav-toggle {
@@ -2264,9 +2283,11 @@
         </div>
       </div>
       <div class="language-switcher">
-        <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
-        <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
-        <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+        <div class="language-buttons">
+          <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
+          <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
+          <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+        </div>
         <div id="authContainer" class="auth-actions">
           <button class="auth-btn chat-header-btn" type="button" onclick="openChatFromHeader()" data-i18n="chat_header_cta">AI Chat</button>
           <button class="auth-btn login-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
@@ -2893,17 +2914,20 @@
       const usernameDisplay = document.getElementById('usernameDisplay');
       const logoutBtn = document.getElementById('logoutBtn');
       const docsSection = document.getElementById('documents');
+      const newsletterSection = document.getElementById('newsletter');
       if (user) {
         authBtn.style.display = 'none';
         usernameDisplay.textContent = user;
         usernameDisplay.style.display = 'inline';
         logoutBtn.style.display = 'block';
         if (docsSection) docsSection.style.display = '';
+        if (newsletterSection) newsletterSection.style.display = 'none';
       } else {
         authBtn.style.display = 'block';
         usernameDisplay.style.display = 'none';
         logoutBtn.style.display = 'none';
         if (docsSection) docsSection.style.display = 'none';
+        if (newsletterSection) newsletterSection.style.display = '';
       }
     }
 
