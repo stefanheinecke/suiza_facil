@@ -56,12 +56,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0 24px;
+      padding: 12px clamp(14px, 2.8vw, 34px);
       gap: 10px;
       position: sticky;
       top: 0;
       z-index: 30;
       background: var(--bg);
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      border-bottom: 1px solid rgba(29, 53, 87, 0.1);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     }
 
     .logo {
@@ -158,6 +162,53 @@
       gap: 8px;
       align-items: center;
       margin-left: auto;
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .auth-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .chat-header-btn {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 0 8px 20px rgba(29, 53, 87, 0.22);
+    }
+
+    .chat-header-btn:hover {
+      box-shadow: 0 12px 24px rgba(29, 53, 87, 0.32);
+    }
+
+    .login-btn {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 0 8px 20px rgba(230, 57, 70, 0.24);
+    }
+
+    .login-btn:hover {
+      box-shadow: 0 12px 24px rgba(230, 57, 70, 0.32);
+    }
+
+    .logout-btn {
+      background: rgba(29, 53, 87, 0.1);
+      color: var(--blue);
     }
 
     .lang-btn {
@@ -1162,6 +1213,11 @@
       header {
         align-items: center;
         flex-wrap: wrap;
+      }
+
+      .auth-btn {
+        padding: 7px 11px;
+        font-size: 11px;
       }
 
       .nav-toggle {
@@ -2190,10 +2246,11 @@
         <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
         <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
         <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
-        <div id="authContainer" style="display:flex;gap:8px;align-items:center;">
-          <button class="lang-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
+        <div id="authContainer" class="auth-actions">
+          <button class="auth-btn chat-header-btn" type="button" onclick="openChatFromHeader()" data-i18n="chat_header_cta">AI Chat (OR Law)</button>
+          <button class="auth-btn login-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
           <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
-          <button class="lang-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
+          <button class="auth-btn logout-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
         </div>
       </div>
       <div class="search-wrapper">
@@ -3289,6 +3346,11 @@
     }
 
     // Chat widget
+    function openChatFromHeader() {
+      const fab = document.getElementById('chatFab');
+      if (fab) fab.click();
+    }
+
     function initChat() {
       const fab = document.getElementById('chatFab');
       const panel = document.getElementById('chatPanel');
