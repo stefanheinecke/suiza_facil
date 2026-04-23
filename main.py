@@ -1366,90 +1366,72 @@ def cast_vote(target_type: str, target_id: str, vote: int = Form(...), session_i
         return {"error": str(e)}
 
 
-# ── Swiss legal knowledge base (key OR / AHVG / AuG articles) ─────────────────
-# fedlex.admin.ch is a JS SPA and cannot be scraped; key articles are hardcoded here.
-_SWISS_LEGAL_KNOWLEDGE = """
-=== Kündigungsfristen (OR Art. 335–337c) ===
-Quelle: Schweizerisches Obligationenrecht (OR), https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de
-
-Art. 335 OR – Recht zur Kündigung
-Das unbefristete Arbeitsverhältnis kann von jeder Vertragspartei gekündigt werden.
-Die Kündigung muss auf Verlangen der anderen Partei schriftlich begründet werden.
-
-Art. 335a OR – Gleiche Fristen
-Die Kündigungsfristen müssen für Arbeitgeber und Arbeitnehmer gleich lang sein.
-Durch schriftliche Vereinbarung, Normalarbeitsvertrag oder Gesamtarbeitsvertrag kann eine abweichende Regelung getroffen werden, jedoch nicht kürzer als einen Monat.
-
-Art. 335b OR – Probezeit
-Die ersten drei Monate des Arbeitsverhältnisses gelten als Probezeit (wenn nicht anders vereinbart).
-Während der Probezeit kann das Arbeitsverhältnis mit einer Frist von 7 Tagen jederzeit (auch während Urlaub oder Krankheit) gekündigt werden.
-Durch schriftliche Abrede kann die Probezeit auf höchstens 3 Monate verlängert werden.
-
-Art. 335c OR – Kündigungsfristen nach Probezeit
-Im 1. Dienstjahr: 1 Monat auf das Ende eines Monats.
-Im 2. bis und mit 9. Dienstjahr: 2 Monate auf das Ende eines Monats.
-Ab dem 10. Dienstjahr: 3 Monate auf das Ende eines Monats.
-Durch schriftliche Vereinbarung kann die Frist auf höchstens 6 Monate verlängert werden.
-
-Art. 336 OR – Missbräuchliche Kündigung
-Eine Kündigung ist missbräuchlich, wenn sie ausgesprochen wird, weil der Arbeitnehmer einer gesetzlichen Pflicht nachkommt, ein Recht ausübt, oder aufgrund persönlicher Merkmale.
-Entschädigung bei missbräuchlicher Kündigung: bis zu 6 Monatslöhne.
-
-Art. 336a OR – Rechtsfolgen missbräuchlicher Kündigung
-Die Partei, die missbräuchlich kündigt, schuldet der anderen Partei eine Entschädigung von bis zu 6 Monatslöhnen.
-
-Art. 336c OR – Sperrfristen (Kündigungsschutz)
-Der Arbeitgeber darf nach Ablauf der Probezeit nicht kündigen:
-- Während Militär-/Zivilschutzdienst sowie 4 Wochen davor und danach.
-- Während unverschuldeter Krankheit oder Unfall, und zwar:
-  - Im 1. Dienstjahr: 30 Tage
-  - Im 2. bis 5. Dienstjahr: 90 Tage
-  - Ab 6. Dienstjahr: 180 Tage
-- Während Schwangerschaft und 16 Wochen nach der Niederkunft.
-Eine während der Sperrfrist ausgesprochene Kündigung ist nichtig.
-
-Art. 337 OR – Fristlose Kündigung
-Aus wichtigen Gründen kann der Arbeitgeber oder Arbeitnehmer jederzeit fristlos kündigen.
-Wichtige Gründe: Umstände, bei denen die Fortsetzung des Arbeitsverhältnisses unzumutbar wäre.
-
-=== AHV / Sozialversicherungen (AHVG) ===
-Quelle: Bundesgesetz über die Alters- und Hinterlassenenversicherung (AHVG), https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de
-
-AHV-Beitragssatz (2024): 8.7% des Bruttolohns (Arbeitgeber und Arbeitnehmer je 4.35%).
-IV-Beitragssatz: 1.4% (Arbeitgeber und Arbeitnehmer je 0.7%).
-EO-Beitragssatz: 0.5% (Arbeitgeber und Arbeitnehmer je 0.25%).
-Gesamtbeitrag AHV/IV/EO: 10.6% des Bruttolohns.
-ALV (Arbeitslosenversicherung): 2.2% bis CHF 148'200 Jahreslohn (je 1.1% AN und AG).
-Beitrittspflicht: Ab dem 1. Januar nach Vollendung des 17. Lebensjahres (ohne Erwerbstätigkeit), ab 1. Januar nach dem 20. Lebensjahr mit Erwerbstätigkeit.
-Rentenalter: Frauen 65 Jahre, Männer 65 Jahre (Angleichung erfolgte 2024 per AHV 21-Reform).
-Maximale AHV-Rente (2024): CHF 2'450/Monat (Einzelperson), CHF 3'675/Monat (Ehepaar).
-Minimale AHV-Rente (2024): CHF 1'225/Monat.
-
-=== Aufenthaltsrecht (AuG / AIG) ===
-Quelle: Ausländer- und Integrationsgesetz (AIG), https://www.fedlex.admin.ch/eli/cc/2007/758/de
-
-EU/EFTA-Bürger (Freizügigkeitsabkommen FZA):
-- Ausweis L (Kurzaufenthalt): für Aufenthalte bis 1 Jahr.
-- Ausweis B (Aufenthaltsbewilligung): für Aufenthalte über 1 Jahr, erneuerbar.
-- Ausweis C (Niederlassungsbewilligung): nach 5 Jahren ununterbrochenen Aufenthalts automatisch.
-- Ausweis G (Grenzgänger): für Grenzgänger aus der EU.
-Anmeldepflicht: Innerhalb von 14 Tagen nach Einreise bei der Einwohnerkontrolle der Wohngemeinde.
-
-=== 3-Säulen-System (BVG / 1. 2. 3. Säule) ===
-1. Säule (AHV/IV): Staatliche Altersvorsorge, obligatorisch, finanziert durch Lohnbeiträge.
-2. Säule (BVG – Berufliche Vorsorge):
-  - Obligatorisch für Arbeitnehmer ab einem Jahreslohn von CHF 22'050 (2024).
-  - Koordinationsabzug: CHF 25'725 (2024).
-  - Beiträge abhängig vom Alter: 7% (25–34 J.), 10% (35–44 J.), 15% (45–54 J.), 18% (55–65 J.).
-3. Säule (Private Vorsorge):
-  - Säule 3a (gebunden): Steuerabzugsfähig, max. CHF 7'056/Jahr (2024, unselbstständig Erwerbende).
-  - Säule 3b (frei): Keine Einschränkungen, nicht steuerabzugsfähig.
-"""
+# ── PDF-based legal knowledge loader ─────────────────────────────────────────
+# Reads OR_law.pdf (and any other PDFs listed) once at startup.
+# Replace OR_law.pdf with the actual Swiss Obligationenrecht PDF from fedlex.
+_PDF_LEGAL_FILES = ["OR_law.pdf"]
+_pdf_legal_cache: str = ""
 
 
-def _get_legal_knowledge() -> str:
-    """Return the hardcoded Swiss legal knowledge base."""
-    return _SWISS_LEGAL_KNOWLEDGE.strip()
+def _load_pdf_legal_knowledge() -> str:
+    """Extract text from all configured legal PDF files and return combined text."""
+    import pypdf
+    parts: list = []
+    for path in _PDF_LEGAL_FILES:
+        if not os.path.exists(path):
+            print(f"[LEGAL-PDF] File not found: {path}")
+            continue
+        try:
+            reader = pypdf.PdfReader(path)
+            text = "".join(page.extract_text() or "" for page in reader.pages)
+            text = re.sub(r"\n{3,}", "\n\n", text).strip()
+            parts.append(f"[Quelle: {path}]\n{text}")
+            print(f"[LEGAL-PDF] Loaded {path}: {len(text)} chars, {len(reader.pages)} pages")
+        except Exception as exc:
+            print(f"[LEGAL-PDF] Failed to read {path}: {exc}")
+    return "\n\n".join(parts)
+
+
+# Load once at startup
+_pdf_legal_cache = _load_pdf_legal_knowledge()
+# Split into article-level chunks for retrieval (OR PDF uses \nArt. N boundaries)
+_pdf_legal_paragraphs: list = []
+if _pdf_legal_cache:
+    # Split on article boundaries: "Art. NNN" at start of a token
+    raw_chunks = re.split(r"(?=\bArt\.\s*\d+)", _pdf_legal_cache)
+    _pdf_legal_paragraphs = [c.strip() for c in raw_chunks if len(c.strip()) > 40]
+    print(f"[LEGAL-PDF] Indexed {len(_pdf_legal_paragraphs)} article chunks for retrieval")
+
+
+def _get_relevant_legal_context(question: str, max_chars: int = 4000) -> str:
+    """Return the most relevant paragraphs from the PDF for the given question.
+
+    Uses simple keyword overlap scoring — no external ML dependencies.
+    """
+    if not _pdf_legal_paragraphs:
+        return ""
+    # Tokenise question into lowercase words (≥3 chars)
+    q_words = set(w.lower() for w in re.findall(r"[a-zA-ZäöüÄÖÜß]{3,}", question))
+    if not q_words:
+        return ""
+
+    scored: list = []
+    for para in _pdf_legal_paragraphs:
+        para_lower = para.lower()
+        hits = sum(1 for w in q_words if w in para_lower)
+        if hits > 0:
+            scored.append((hits, para))
+
+    # Sort by score descending, then take top paragraphs up to max_chars
+    scored.sort(key=lambda x: x[0], reverse=True)
+    selected: list = []
+    total = 0
+    for _, para in scored:
+        if total + len(para) > max_chars:
+            break
+        selected.append(para)
+        total += len(para)
+    return "\n\n".join(selected)
 
 
 class ChatRequest(BaseModel):
@@ -1490,8 +1472,8 @@ def chat_endpoint(body: ChatRequest):
 
     page_content = "\n".join(context_lines)
 
-    # Inject Swiss legal knowledge base
-    fedlex_text = _get_legal_knowledge()
+    # Retrieve relevant paragraphs from the legal PDF based on the question
+    fedlex_text = _get_relevant_legal_context(question)
     legal_section = (
         "\n\nHere is relevant Swiss legal content fetched from fedlex.admin.ch:\n---\n"
         f"{fedlex_text}\n"
