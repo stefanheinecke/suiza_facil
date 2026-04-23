@@ -162,12 +162,10 @@
     "newsletter_thank_you": "¡Gracias por suscribirse!",
     "newsletter_error_subscribe": "Hubo un error al suscribirse. Intenta de nuevo.",
     "newsletter_error_processing": "Error al procesar tu suscripción.",
-
     "checklist_help_btn": "¿Necesitas ayuda con este bloque?",
     "help_sent": "Tu solicitud de ayuda ha sido enviada.",
     "help_error_generic": "Ha ocurrido un error al enviar tu solicitud.",
     "help_error_not_logged_in": "Inicia sesión para solicitar ayuda.",
-
     "auth_nav_login": "Entrar",
     "auth_nav_logout": "Salir",
     "auth_title": "Accede con tu cuenta",
@@ -187,12 +185,10 @@
     "auth_register_failed": "El registro ha fallado",
     "auth_login_invalid": "Credenciales no válidas",
     "auth_login_failed": "El inicio de sesión ha fallado",
-
     "docs_title": "Documentos",
     "docs_intro": "Aquí puedes descargar documentos.",
     "docs_doc1": "Documento 1",
     "docs_doc2": "Documento 2",
-
     "checklist_kicker": "Temas",
     "checklist_title": "Temas de información para tu mudanza a Suiza.",
     "checklist_subtitle": "Trabaja estos temas paso a paso. Todo se guarda localmente en el navegador para que puedas continuar cuando quieras.",
@@ -215,7 +211,6 @@
     "checklist_item3_li1": "Baja en el padrón municipal",
     "checklist_item3_li2": "Informar a la Agencia Tributaria para evitar la doble imposición",
     "checklist_note1": "Consejo: Reserva con tiempo citas en el municipio y con aseguradoras; muchas oficinas solo atienden con cita previa o tienen horarios limitados.",
-
     "checklist_card2_title": "Enseres de mudanza y consejos prácticos",
     "checklist_card2_subtitle": "Qué puedes traer a Suiza y cómo.",
     "checklist_item4_title": "🚚 Enseres domésticos y objetos personales",
@@ -243,7 +238,6 @@
     "checklist_note2_li2": "Si utilizas una empresa de mudanzas profesional, a menudo se encargan del trámite aduanero.",
     "checklist_note2_li3": "En mudanzas por cuenta propia vía Francia: ten a mano documento de identidad y papeles del vehículo.",
     "checklist_note2_li4": "En Suiza, organiza con antelación citas con el municipio, aseguradoras y, en su caso, escuela/trabajo.",
-
     "checklist_card3_title": "Vivienda y trabajo en Suiza",
     "checklist_card3_subtitle": "Dónde buscar oportunidades y qué preparar.",
     "checklist_item8_title": "Documentos básicos para buscar piso",
@@ -265,7 +259,6 @@
     "checklist_note3_intro": "Consejos para vivienda y trabajo:",
     "checklist_note3_li1": "Adapta tu CV al formato suizo y prepara una carta de motivación breve.",
     "checklist_note3_li2": "Responde rápido a los anuncios y lleva toda la documentación impresa a las visitas.",
-
     "checklist_card4_title": "Seguro médico (Krankenversicherung)",
     "checklist_card4_subtitle": "Cómo elegir seguro, franquicia y modelo.",
     "checklist_item11_title": "Cómo elegir tu seguro médico (Krankenversicherung)",
@@ -370,7 +363,6 @@
     "checklist_pillar3_li5": "<strong>Ejemplo:</strong> Si aportas CHF 7 056/año al pilar 3a durante 30 años con un rendimiento medio del 3 %, acumularías aprox. CHF 340 000 de capital adicional para la jubilación.",
     "checklist_pillar3_li6": "<a href=\"https://www.moneyland.ch/de/saeule-3a\" target=\"_blank\" rel=\"noopener noreferrer\">moneyland.ch</a> – Comparador de cuentas y productos del pilar 3a.",
     "checklist_note_pillars": "Consejo: Abre una cuenta del pilar 3a lo antes posible al llegar a Suiza para aprovechar la deducción fiscal desde el primer año. Muchos bancos y apps (VIAC, Frankly, finpension) permiten abrir una cuenta en pocos minutos.",
-
     "faq_kicker": "FAQ",
     "faq_title": "Preguntas frecuentes sobre tu mudanza a Suiza.",
     "faq_subtitle": "Algunas de las dudas más habituales cuando preparas tu llegada a Suiza.",
@@ -380,7 +372,6 @@
     "faq_a2": "No es obligatorio en todos los casos, pero tener una oferta de trabajo facilita el permiso de residencia, la búsqueda de vivienda y la apertura de cuentas bancarias.",
     "faq_q3": "¿Puedo usar todavía la sanidad española después de llegar?",
     "faq_a3": "Tras mudarte de forma permanente deberás afiliarte al sistema suizo. En algunos casos puedes usar la Tarjeta Sanitaria Europea de forma temporal, pero no sustituye al seguro suizo.",
-
     "nav_qa": "Comunidad",
     "qa_kicker": "Comunidad",
     "qa_title": "Preguntas y comentarios",
@@ -410,7 +401,22 @@
     "module_requesting": "Enviando…",
     "module_requested": "✓ Solicitud enviada",
     "module_request_error": "Error – inténtalo de nuevo",
-    "module_login_required": "Inicia sesión para solicitar acceso."
+    "module_login_required": "Inicia sesión para solicitar acceso.",
+    "carousel_kicker_1": "Tu nueva vida en Suiza",
+    "carousel_kicker_2": "Suiza #1 en el mundo",
+    "carousel_kicker_3": "Comunidad",
+    "carousel_slide3_title": "¿Tienes dudas sobre tu mudanza a Suiza?",
+    "carousel_slide3_subtitle": "Pregunta a nuestra comunidad de hispanohablantes.",
+    "carousel_cta_explore": "Explorar temas",
+    "topic_step_1": "Paso 1",
+    "topic_step_2": "Paso 2",
+    "topic_step_3": "Paso 3",
+    "topic_step_4": "Paso 4",
+    "topic_step_5": "Paso 5",
+    "topic_step_6": "Paso 6",
+    "topic_explore_btn": "Explorar",
+    "topic_menu_title": "Temas",
+    "topic_back_home": "Inicio"
   },
   "de": {
     "pageTitle": "VivaSuiza – Dein neues Leben in der Schweiz, Schritt für Schritt",
@@ -575,12 +581,10 @@
     "newsletter_thank_you": "Vielen Dank!",
     "newsletter_error_subscribe": "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "newsletter_error_processing": "Fehler bei der Verarbeitung deiner Anmeldung.",
-
     "checklist_help_btn": "Brauchst du Hilfe bei diesem Block?",
     "help_sent": "Deine Hilfeanfrage wurde gesendet.",
     "help_error_generic": "Beim Senden deiner Anfrage ist ein Fehler aufgetreten.",
     "help_error_not_logged_in": "Bitte logge dich ein, um Hilfe anzufordern.",
-
     "auth_nav_login": "Login",
     "auth_nav_logout": "Logout",
     "auth_title": "Melde dich mit deinem Konto an",
@@ -600,12 +604,10 @@
     "auth_register_failed": "Registrierung fehlgeschlagen",
     "auth_login_invalid": "Ungültige Zugangsdaten",
     "auth_login_failed": "Login fehlgeschlagen",
-
     "docs_title": "Dokumente",
     "docs_intro": "Hier kannst du Dokumente herunterladen.",
     "docs_doc1": "Dokument 1",
     "docs_doc2": "Dokument 2",
-
     "checklist_kicker": "Themen",
     "checklist_title": "Informationsthemen für deinen Umzug in die Schweiz.",
     "checklist_subtitle": "Arbeite diese Themen Schritt für Schritt durch. Alles bleibt lokal im Browser gespeichert, damit du jederzeit weitermachen kannst.",
@@ -628,7 +630,6 @@
     "checklist_item3_li1": "Abmeldung im Padrón Municipal",
     "checklist_item3_li2": "Information der Steuerbehörde (Hacienda), um Doppelbesteuerung zu vermeiden",
     "checklist_note1": "Tipp: Plane für Termine bei der Gemeinde und für Versicherungen frühzeitig Zeit ein – viele Stellen arbeiten nur mit Termin oder haben eingeschränkte Öffnungszeiten.",
-
     "checklist_card2_title": "Umzugsgut & praktische Tipps",
     "checklist_card2_subtitle": "Was du in die Schweiz mitbringen darfst – und wie.",
     "checklist_item4_title": "🚚 Hausrat & persönliche Gegenstände",
@@ -656,7 +657,6 @@
     "checklist_note2_li2": "Bei professionellen Umzugsfirmen wird die Zollabwicklung oft übernommen.",
     "checklist_note2_li3": "Bei Selbstumzug über Frankreich: Ausweis und Fahrzeugpapiere bereithalten.",
     "checklist_note2_li4": "In der Schweiz frühzeitig Termine für Gemeinde, Versicherung und ggf. Schule/Arbeit organisieren.",
-
     "checklist_card3_title": "Wohnen und Arbeiten in der Schweiz",
     "checklist_card3_subtitle": "Wo du suchen kannst und was du vorbereitest.",
     "checklist_item8_title": "Grunddokumente für die Wohnungssuche",
@@ -678,7 +678,6 @@
     "checklist_note3_intro": "Tipps zu Wohnen und Arbeit:",
     "checklist_note3_li1": "Passe deinen Lebenslauf an das Schweizer Format an und bereite ein kurzes Motivationsschreiben vor.",
     "checklist_note3_li2": "Reagiere schnell auf Inserate und nimm alle Unterlagen ausgedruckt zu Besichtigungen mit.",
-
     "checklist_card4_title": "Krankenversicherung",
     "checklist_card4_subtitle": "Kasse, Franchise und Modell wählen.",
     "checklist_item11_title": "Wie du deine Krankenversicherung auswählst",
@@ -783,7 +782,6 @@
     "checklist_pillar3_li5": "<strong>Beispiel:</strong> Wer CHF 7 056/Jahr in die Säule 3a einzahlt und über 30 Jahre eine durchschnittliche Rendite von 3 % erzielt, hätte ca. CHF 340 000 zusätzliches Kapital für die Pensionierung angespart.",
     "checklist_pillar3_li6": "<a href=\"https://www.moneyland.ch/de/saeule-3a\" target=\"_blank\" rel=\"noopener noreferrer\">moneyland.ch</a> – Vergleich von Konten und Produkten der Säule 3a.",
     "checklist_note_pillars": "Tipp: Eröffne so früh wie möglich nach der Ankunft in der Schweiz ein Säule-3a-Konto, um den Steuerabzug ab dem ersten Jahr zu nutzen. Viele Banken und Apps (VIAC, Frankly, finpension) ermöglichen die Eröffnung in wenigen Minuten.",
-
     "faq_kicker": "FAQ",
     "faq_title": "Häufige Fragen zu deinem Umzug in die Schweiz.",
     "faq_subtitle": "Einige der häufigsten Fragen, wenn du deine Ankunft in der Schweiz planst.",
@@ -793,7 +791,6 @@
     "faq_a2": "Nicht in allen Fällen zwingend, aber ein Jobangebot erleichtert die Aufenthaltsbewilligung, die Wohnungssuche und die Eröffnung von Bankkonten.",
     "faq_q3": "Kann ich nach der Ankunft noch das spanische Gesundheitssystem nutzen?",
     "faq_a3": "Nach einem dauerhaften Umzug musst du dich im Schweizer System versichern. In manchen Fällen kannst du die Europäische Krankenversicherungskarte vorübergehend nutzen, sie ersetzt die Schweizer Versicherung aber nicht.",
-
     "nav_qa": "Community",
     "qa_kicker": "Community",
     "qa_title": "Fragen und Feedback",
@@ -823,7 +820,22 @@
     "module_requesting": "Wird gesendet…",
     "module_requested": "✓ Anfrage gesendet",
     "module_request_error": "Fehler – versuche es erneut",
-    "module_login_required": "Bitte melde dich an, um Zugang anzufordern."
+    "module_login_required": "Bitte melde dich an, um Zugang anzufordern.",
+    "carousel_kicker_1": "Dein neues Leben in der Schweiz",
+    "carousel_kicker_2": "Schweiz #1 weltweit",
+    "carousel_kicker_3": "Community",
+    "carousel_slide3_title": "Hast du Fragen zu deinem Umzug in die Schweiz?",
+    "carousel_slide3_subtitle": "Stell deine Frage unserer deutsch- und spanischsprachigen Community.",
+    "carousel_cta_explore": "Themen entdecken",
+    "topic_step_1": "Schritt 1",
+    "topic_step_2": "Schritt 2",
+    "topic_step_3": "Schritt 3",
+    "topic_step_4": "Schritt 4",
+    "topic_step_5": "Schritt 5",
+    "topic_step_6": "Schritt 6",
+    "topic_explore_btn": "Erkunden",
+    "topic_menu_title": "Themen",
+    "topic_back_home": "Startseite"
   },
   "en": {
     "pageTitle": "VivaSuiza – Your new life in Switzerland, step by step",
@@ -988,12 +1000,10 @@
     "newsletter_thank_you": "Thank you for subscribing!",
     "newsletter_error_subscribe": "There was an error subscribing. Please try again.",
     "newsletter_error_processing": "Error processing your subscription.",
-
     "checklist_help_btn": "Need help with this section?",
     "help_sent": "Your help request has been sent.",
     "help_error_generic": "There was an error sending your request.",
     "help_error_not_logged_in": "Please log in to request help.",
-
     "auth_nav_login": "Login",
     "auth_nav_logout": "Logout",
     "auth_title": "Enter with your login",
@@ -1013,12 +1023,10 @@
     "auth_register_failed": "Register failed",
     "auth_login_invalid": "Invalid credentials",
     "auth_login_failed": "Login failed",
-
     "docs_title": "Documents",
     "docs_intro": "Here you can download documents.",
     "docs_doc1": "Document 1",
     "docs_doc2": "Document 2",
-
     "checklist_kicker": "Topics",
     "checklist_title": "Information topics for your move to Switzerland.",
     "checklist_subtitle": "Work through these topics step by step. Everything is stored locally in your browser so you can continue at any time.",
@@ -1041,7 +1049,6 @@
     "checklist_item3_li1": "Deregistration from the municipal register (Padrón Municipal)",
     "checklist_item3_li2": "Inform the tax authority (Hacienda) to avoid double taxation",
     "checklist_note1": "Tip: Book appointments with the municipality and insurers early – many offices work by appointment only or have limited opening hours.",
-
     "checklist_card2_title": "Removal goods & practical tips",
     "checklist_card2_subtitle": "What you can bring to Switzerland – and how.",
     "checklist_item4_title": "🚚 Household goods & personal belongings",
@@ -1069,7 +1076,6 @@
     "checklist_note2_li2": "If you use a professional moving company, they often handle customs formalities.",
     "checklist_note2_li3": "If you move yourself via France: keep your ID and vehicle documents ready.",
     "checklist_note2_li4": "In Switzerland, arrange appointments early with the municipality, insurers and, if applicable, school/work.",
-
     "checklist_card3_title": "Housing and jobs in Switzerland",
     "checklist_card3_subtitle": "Where to search and what to prepare.",
     "checklist_item8_title": "Basic documents for renting a flat",
@@ -1091,7 +1097,6 @@
     "checklist_note3_intro": "Tips for housing and jobs:",
     "checklist_note3_li1": "Adapt your CV to the Swiss style and prepare a short motivation letter.",
     "checklist_note3_li2": "Reply quickly to listings and bring printed documents to viewings.",
-
     "checklist_card4_title": "Health insurance (Krankenversicherung)",
     "checklist_card4_subtitle": "How to choose insurance, deductible and model.",
     "checklist_item11_title": "How to choose your health insurance (Krankenversicherung)",
@@ -1196,7 +1201,6 @@
     "checklist_pillar3_li5": "<strong>Example:</strong> Contributing CHF 7,056/year to pillar 3a for 30 years at an average return of 3% would accumulate approx. CHF 340,000 in additional retirement capital.",
     "checklist_pillar3_li6": "<a href=\"https://www.moneyland.ch/de/saeule-3a\" target=\"_blank\" rel=\"noopener noreferrer\">moneyland.ch</a> – Comparison of pillar 3a accounts and products.",
     "checklist_note_pillars": "Tip: Open a pillar 3a account as soon as possible after arriving in Switzerland to benefit from the tax deduction from year one. Many banks and apps (VIAC, Frankly, finpension) let you open an account in minutes.",
-
     "faq_kicker": "FAQ",
     "faq_title": "Frequently asked questions about moving to Switzerland.",
     "faq_subtitle": "Some of the most common questions when you prepare your arrival in Switzerland.",
@@ -1206,7 +1210,6 @@
     "faq_a2": "It's not mandatory in every case, but having a job offer makes the residence permit, housing search and opening bank accounts much easier.",
     "faq_q3": "Can I still use Spanish healthcare after I arrive?",
     "faq_a3": "After a permanent move you must join the Swiss system. In some cases you can use the European Health Insurance Card temporarily, but it does not replace Swiss health insurance.",
-
     "nav_qa": "Community",
     "qa_kicker": "Community",
     "qa_title": "Questions & Feedback",
@@ -1236,6 +1239,21 @@
     "module_requesting": "Sending…",
     "module_requested": "✓ Request sent",
     "module_request_error": "Error – try again",
-    "module_login_required": "Please log in to request access."
+    "module_login_required": "Please log in to request access.",
+    "carousel_kicker_1": "Your new life in Switzerland",
+    "carousel_kicker_2": "Switzerland #1 worldwide",
+    "carousel_kicker_3": "Community",
+    "carousel_slide3_title": "Do you have questions about moving to Switzerland?",
+    "carousel_slide3_subtitle": "Ask our international community and get practical answers.",
+    "carousel_cta_explore": "Explore topics",
+    "topic_step_1": "Step 1",
+    "topic_step_2": "Step 2",
+    "topic_step_3": "Step 3",
+    "topic_step_4": "Step 4",
+    "topic_step_5": "Step 5",
+    "topic_step_6": "Step 6",
+    "topic_explore_btn": "Explore",
+    "topic_menu_title": "Topics",
+    "topic_back_home": "Home"
   }
 }

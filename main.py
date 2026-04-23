@@ -1417,7 +1417,8 @@ def chat_endpoint(body: ChatRequest):
         "2. If the answer is NOT found in the content above, respond with exactly and only: NO_ANSWER\n"
         "3. Be concise, helpful, and friendly. Use 2-4 sentences maximum.\n"
         f"4. Respond in {resp_lang}.\n"
-        "5. You may use **bold** for emphasis on key terms."
+        "5. You may use **bold** for emphasis on key terms.\n"
+        "6. Use https://www.fedlex.admin.ch/eli/cc/27/317_321_377/de to find appropriate legal references when relevant, but only if they are explicitly mentioned in the website content above and give a reference to where this law can be found."
     )
 
     messages = [{"role": "system", "content": system_prompt}]

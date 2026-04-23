@@ -269,7 +269,7 @@
         <button class="lang-btn active" data-lang="es" onclick="changeLanguage('es')">ES</button>
         <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
         <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
-        <a class="ghost-btn" href="/">Inicio</a>
+        <a class="ghost-btn" href="/" data-i18n="topic_back_home">Inicio</a>
       </div>
     </header>
 
@@ -285,7 +285,7 @@
 
       <section class="topic-layout">
         <aside class="topic-side">
-          <h3>Temas</h3>
+          <h3 data-i18n="topic_menu_title">Temas</h3>
           <ul>
             <li><a href="/topics/moving" data-i18n="checklist_card2_title">Mudanza e importación</a></li>
             <li><a href="/topics/arrival" data-i18n="checklist_card1_title">Llegada y trámites</a></li>
@@ -307,7 +307,7 @@
 
     const TOPICS = {
       moving: {
-        chip: 'Paso 1',
+        chipKey: 'topic_step_1',
         image: 'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card2_title',
         subtitleKey: 'checklist_card2_subtitle',
@@ -319,7 +319,7 @@
         ]
       },
       arrival: {
-        chip: 'Paso 2',
+        chipKey: 'topic_step_2',
         image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card1_title',
         subtitleKey: 'checklist_card1_subtitle',
@@ -331,7 +331,7 @@
         ]
       },
       housing: {
-        chip: 'Paso 3',
+        chipKey: 'topic_step_3',
         image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card3_title',
         subtitleKey: 'checklist_card3_subtitle',
@@ -343,7 +343,7 @@
         ]
       },
       pillars: {
-        chip: 'Paso 4',
+        chipKey: 'topic_step_4',
         image: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card6_title',
         subtitleKey: 'checklist_card6_subtitle',
@@ -355,7 +355,7 @@
         ]
       },
       insurance: {
-        chip: 'Paso 5',
+        chipKey: 'topic_step_5',
         image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card4_title',
         subtitleKey: 'checklist_card4_subtitle',
@@ -367,7 +367,7 @@
         ]
       },
       taxes: {
-        chip: 'Paso 6',
+        chipKey: 'topic_step_6',
         image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1800&auto=format&fit=crop',
         titleKey: 'checklist_card5_title',
         subtitleKey: 'checklist_card5_subtitle',
@@ -411,7 +411,7 @@
       const subtitle = document.getElementById('topicSubtitle');
 
       heroBg.style.backgroundImage = `url('${cfg.image}')`;
-      chip.textContent = cfg.chip;
+      chip.textContent = t(cfg.chipKey, cfg.chip || '');
       title.textContent = t(cfg.titleKey, 'Topic');
       subtitle.textContent = t(cfg.subtitleKey, '');
       document.title = `VivaSuiza - ${title.textContent}`;
@@ -435,7 +435,7 @@
         html += '<article class="detail-card">';
         html += `<h3>${t('checklist_help_btn', 'Need help with this section?')}</h3>`;
         html += `<p>${t(cfg.noteKey, '')}</p>`;
-        html += '<a class="solid-btn" style="display:inline-block;background:var(--red);color:#fff;border-color:var(--red);margin-top:4px;" href="/#community-qa">Comunidad</a>';
+        html += '<a class="solid-btn" style="display:inline-block;background:var(--red);color:#fff;border-color:var(--red);margin-top:4px;" href="/#community-qa">' + t('nav_qa', 'Community') + '</a>';
         html += '</article>';
       }
 

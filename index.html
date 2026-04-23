@@ -2236,7 +2236,7 @@
           </div>
         </div>
         <!-- Slide 3 -->
-        <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1580086319619-3ed498161c77?q=80&w=1800&auto=format&fit=crop')">
+        <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1800&auto=format&fit=crop')">
           <div class="carousel-content">
             <div class="carousel-kicker" data-i18n="carousel_kicker_3">Comunidad</div>
             <h2 class="carousel-title" data-i18n="carousel_slide3_title">¿Tienes dudas sobre tu mudanza a Suiza?</h2>
@@ -2576,6 +2576,11 @@
       });
       const btn = document.querySelector(`[data-lang="${lang}"]`);
       if (btn) btn.classList.add('active');
+
+      // Refresh dynamic Q&A text blocks that are rendered via JS.
+      if (typeof window.__reloadQA === "function") {
+        window.__reloadQA();
+      }
     }
 
     // Initialize page with saved language
