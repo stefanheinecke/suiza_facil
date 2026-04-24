@@ -228,6 +228,63 @@
       color: var(--blue);
     }
 
+    .profile-menu {
+      position: relative;
+      display: none;
+    }
+
+    .profile-toggle {
+      min-width: 34px;
+      width: 34px;
+      padding: 0;
+      border-radius: 999px;
+      background: rgba(29, 53, 87, 0.12);
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 230px;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid rgba(29, 53, 87, 0.12);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+      padding: 10px;
+      display: none;
+      z-index: 60;
+    }
+
+    .profile-dropdown.open {
+      display: block;
+    }
+
+    .profile-email {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      padding: 2px 4px;
+      word-break: break-all;
+    }
+
+    .profile-logout-btn {
+      width: 100%;
+      min-height: 32px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(230, 57, 70, 0.1);
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .profile-logout-btn:hover {
+      background: rgba(230, 57, 70, 0.18);
+    }
+
     .lang-btn {
       min-height: 34px;
       padding: 0 10px;
@@ -2291,8 +2348,13 @@
         <div id="authContainer" class="auth-actions">
           <button class="auth-btn chat-header-btn" type="button" onclick="openChatFromHeader()" data-i18n="chat_header_cta">AI Chat</button>
           <button class="auth-btn login-btn" id="authBtn" onclick="openAuth()" data-i18n="auth_nav_login">Login</button>
-          <span id="usernameDisplay" style="display:none;font-size:12px;color:var(--muted);"></span>
-          <button class="auth-btn logout-btn" id="logoutBtn" style="display:none;" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
+          <div class="profile-menu" id="profileMenu">
+            <button class="auth-btn profile-toggle" id="profileToggle" type="button" aria-expanded="false">U</button>
+            <div class="profile-dropdown" id="profileDropdown">
+              <div class="profile-email" id="profileEmail"></div>
+              <button class="profile-logout-btn" type="button" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="search-wrapper">
@@ -2911,24 +2973,63 @@
     function updateAuthUI() {
       const user = localStorage.getItem('loggedInUser');
       const authBtn = document.getElementById('authBtn');
-      const usernameDisplay = document.getElementById('usernameDisplay');
-      const logoutBtn = document.getElementById('logoutBtn');
+      const profileMenu = document.getElementById('profileMenu');
+      const profileToggle = document.getElementById('profileToggle');
+      const profileDropdown = document.getElementById('profileDropdown');
+      const profileEmail = document.getElementById('profileEmail');
       const docsSection = document.getElementById('documents');
       const newsletterSection = document.getElementById('newsletter');
+
+      function initialsFromEmail(email) {
+        const safe = (email || '').trim();
+        if (!safe) return 'U';
+        const local = safe.split('@')[0] || safe;
+        const parts = local.split(/[._\-\s]+/).filter(Boolean);
+        if (parts.length >= 2) {
+          return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        if (local.length >= 2) return local.slice(0, 2).toUpperCase();
+        return local[0].toUpperCase();
+      }
+
       if (user) {
         authBtn.style.display = 'none';
-        usernameDisplay.textContent = user;
-        usernameDisplay.style.display = 'inline';
-        logoutBtn.style.display = 'block';
+        if (profileMenu) profileMenu.style.display = 'block';
+        if (profileToggle) profileToggle.textContent = initialsFromEmail(user);
+        if (profileEmail) profileEmail.textContent = user;
+        if (profileDropdown) profileDropdown.classList.remove('open');
+        if (profileToggle) profileToggle.setAttribute('aria-expanded', 'false');
         if (docsSection) docsSection.style.display = '';
         if (newsletterSection) newsletterSection.style.display = 'none';
       } else {
         authBtn.style.display = 'block';
-        usernameDisplay.style.display = 'none';
-        logoutBtn.style.display = 'none';
+        if (profileMenu) profileMenu.style.display = 'none';
+        if (profileDropdown) profileDropdown.classList.remove('open');
+        if (profileToggle) profileToggle.setAttribute('aria-expanded', 'false');
         if (docsSection) docsSection.style.display = 'none';
         if (newsletterSection) newsletterSection.style.display = '';
       }
+    }
+
+    function initProfileMenu() {
+      const profileToggle = document.getElementById('profileToggle');
+      const profileDropdown = document.getElementById('profileDropdown');
+      if (!profileToggle || !profileDropdown) return;
+
+      profileToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = profileDropdown.classList.toggle('open');
+        profileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      document.addEventListener('click', (e) => {
+        const profileMenu = document.getElementById('profileMenu');
+        if (!profileMenu) return;
+        if (!profileMenu.contains(e.target)) {
+          profileDropdown.classList.remove('open');
+          profileToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
 
     // ── Analytics tracking (clicks + section time) ──────────────────────────
@@ -4019,6 +4120,7 @@
 
       initFAQ();
       initSearch();
+      initProfileMenu();
       initChat();
       initQA();
       initVoting();
