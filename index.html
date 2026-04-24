@@ -2852,6 +2852,8 @@
         });
 
         if (response.ok) {
+          window.__isSubscriber = true;
+          updateAuthUI();
           alert(translations[currentLanguage]['newsletter_thank_you'] || '¡Gracias por suscribirse!');
         } else {
           if (btn) btn.disabled = false;
@@ -2932,6 +2934,7 @@
       document.cookie = 'session_id=; path=/; max-age=0';
       window.__isAdmin = false;
       window.__userModules = ['basic'];
+      window.__isSubscriber = false;
       updateAuthUI();
       applyModuleGating();
       if (typeof window.__reloadQA === 'function') window.__reloadQA();
@@ -2972,6 +2975,7 @@
 
     function updateAuthUI() {
       const user = localStorage.getItem('loggedInUser');
+      const isSubscriber = !!window.__isSubscriber;
       const authBtn = document.getElementById('authBtn');
       const profileMenu = document.getElementById('profileMenu');
       const profileToggle = document.getElementById('profileToggle');
@@ -3000,7 +3004,7 @@
         if (profileDropdown) profileDropdown.classList.remove('open');
         if (profileToggle) profileToggle.setAttribute('aria-expanded', 'false');
         if (docsSection) docsSection.style.display = '';
-        if (newsletterSection) newsletterSection.style.display = 'none';
+        if (newsletterSection) newsletterSection.style.display = isSubscriber ? 'none' : '';
       } else {
         authBtn.style.display = 'block';
         if (profileMenu) profileMenu.style.display = 'none';
@@ -3151,6 +3155,7 @@
 
     // ── Module gating (freemium) ──────────────────────────────
     window.__userModules = ['basic']; // default: free module only
+    window.__isSubscriber = false;
 
     function t_mod(key, fallback) {
       return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
@@ -3227,10 +3232,14 @@
         if (data.is_admin) window.__isAdmin = true;
         else window.__isAdmin = false;
         window.__userModules = data.modules || ['basic'];
+        window.__isSubscriber = !!data.is_subscriber;
+        updateAuthUI();
         applyModuleGating();
         if (typeof window.__reloadQA === 'function') window.__reloadQA();
       }).catch(() => {
         window.__userModules = ['basic'];
+        window.__isSubscriber = false;
+        updateAuthUI();
         applyModuleGating();
       });
     }

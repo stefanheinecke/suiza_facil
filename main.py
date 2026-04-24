@@ -570,9 +570,10 @@ def get_me(session_id: str = Cookie(None)):
     """Return current user info including admin status and module permissions."""
     username = get_username_from_session(session_id) if session_id else None
     if not username:
-        return {"user": None, "is_admin": False, "modules": list(FREE_MODULES)}
+        return {"user": None, "is_admin": False, "modules": list(FREE_MODULES), "is_subscriber": False}
     admin = False
     modules = list(FREE_MODULES)
+    is_subscriber = False
     try:
         conn = get_conn()
         cur = conn.cursor()
@@ -585,11 +586,13 @@ def get_me(session_id: str = Cookie(None)):
             cur.execute("SELECT module FROM module_permissions WHERE username = %s", (username,))
             granted = {r[0] for r in cur.fetchall()}
             modules = list(FREE_MODULES | granted)
+        cur.execute("SELECT 1 FROM subscriber WHERE email = %s", (username,))
+        is_subscriber = bool(cur.fetchone())
         cur.close()
         conn.close()
     except Exception:
         pass
-    return {"user": username, "is_admin": admin, "modules": modules}
+    return {"user": username, "is_admin": admin, "modules": modules, "is_subscriber": is_subscriber}
 
 @app.get("/")
 def get_root():
