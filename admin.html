@@ -26,11 +26,15 @@
         .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
         .drilldown-row { margin-top: 14px; display: flex; gap: 10px; align-items: center; }
         .drilldown-row select { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; }
+        .top-actions { margin-bottom: 12px; }
         @media (max-width: 900px) { .analytics-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 <div class="container">
+    <div class="top-actions">
+        <a href="/" class="btn">Back to main page</a>
+    </div>
     <h1>Admin Panel: User Permissions</h1>
     <div id="status" class="status"></div>
     <table id="users-table">

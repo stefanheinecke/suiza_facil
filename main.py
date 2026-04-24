@@ -566,6 +566,7 @@ print(pwd_context.schemes())
 VALID_MODULES = {"basic", "housing", "pillars", "insurance", "taxes"}
 # Modules that are free (no permission required)
 FREE_MODULES = set(VALID_MODULES)
+ALLOWED_DOC_FILES = ["doc1.pdf", "doc2.pdf"]
 
 # check whether a given username has permission for a filename
 def user_has_permission(username: str, filename: str) -> bool:
@@ -597,10 +598,17 @@ def get_me(session_id: str = Cookie(None)):
     username = get_username_from_session(session_id) if session_id else None
     normalized_username = username.strip().lower() if username else None
     if not username:
-        return {"user": None, "is_admin": False, "modules": list(FREE_MODULES), "is_subscriber": False}
+        return {
+            "user": None,
+            "is_admin": False,
+            "modules": list(FREE_MODULES),
+            "is_subscriber": False,
+            "doc_files": [],
+        }
     admin = False
     modules = list(FREE_MODULES)
     is_subscriber = False
+    doc_files: list[str] = []
     try:
         conn = get_conn()
         cur = conn.cursor()
@@ -609,10 +617,13 @@ def get_me(session_id: str = Cookie(None)):
         admin = bool(row and row[0])
         if admin:
             modules = list(VALID_MODULES)
+            doc_files = list(ALLOWED_DOC_FILES)
         else:
             cur.execute("SELECT module FROM module_permissions WHERE username = %s", (username,))
             granted = {r[0] for r in cur.fetchall()}
             modules = list(FREE_MODULES | granted)
+            cur.execute("SELECT filename FROM permissions WHERE username = %s", (username,))
+            doc_files = [r[0] for r in cur.fetchall() if r and r[0] in ALLOWED_DOC_FILES]
         cur.execute(
             """
             SELECT 1
@@ -627,7 +638,13 @@ def get_me(session_id: str = Cookie(None)):
         conn.close()
     except Exception:
         pass
-    return {"user": username, "is_admin": admin, "modules": modules, "is_subscriber": is_subscriber}
+    return {
+        "user": username,
+        "is_admin": admin,
+        "modules": modules,
+        "is_subscriber": is_subscriber,
+        "doc_files": doc_files,
+    }
 
 @app.get("/")
 def get_root():

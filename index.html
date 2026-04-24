@@ -282,6 +282,7 @@
     }
 
     .profile-unsubscribe-btn,
+    .profile-admin-btn,
     .profile-deregister-btn {
       width: 100%;
       min-height: 32px;
@@ -300,6 +301,15 @@
 
     .profile-unsubscribe-btn:hover {
       background: rgba(29, 53, 87, 0.2);
+    }
+
+    .profile-admin-btn {
+      background: rgba(29, 53, 87, 0.16);
+      color: #0d2a4d;
+    }
+
+    .profile-admin-btn:hover {
+      background: rgba(29, 53, 87, 0.24);
     }
 
     .profile-deregister-btn {
@@ -2382,6 +2392,7 @@
             <button class="auth-btn profile-toggle" id="profileToggle" type="button" aria-expanded="false">U</button>
             <div class="profile-dropdown" id="profileDropdown">
               <div class="profile-email" id="profileEmail"></div>
+              <button class="profile-admin-btn" id="profileAdminBtn" type="button" onclick="openAdminPage()" data-i18n="auth_admin_panel">Admin page</button>
               <button class="profile-unsubscribe-btn" id="profileUnsubscribeBtn" type="button" onclick="unsubscribeUser()" data-i18n="auth_unsubscribe">Unsubscribe newsletter</button>
               <button class="profile-deregister-btn" id="profileDeregisterBtn" type="button" onclick="deregisterUser()" data-i18n="auth_deregister">Deregister</button>
               <button class="profile-logout-btn" type="button" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
@@ -2973,6 +2984,7 @@
         if (data.status === 'ok') {
           window.__isSubscriber = false;
           updateAuthUI();
+          refreshUserState();
           alert((translations[currentLanguage] && translations[currentLanguage]['auth_unsubscribe_done']) || 'You have been unsubscribed.');
         } else {
           alert((translations[currentLanguage] && translations[currentLanguage]['auth_unsubscribe_error']) || 'Could not unsubscribe right now.');
@@ -3038,9 +3050,33 @@
       window.__isAdmin = false;
       window.__userModules = ['basic'];
       window.__isSubscriber = false;
+      window.__docFiles = [];
       updateAuthUI();
       applyModuleGating();
       if (typeof window.__reloadQA === 'function') window.__reloadQA();
+    }
+
+    function openAdminPage() {
+      window.location.href = '/admin';
+    }
+
+    function applyDocumentVisibility() {
+      const user = localStorage.getItem('loggedInUser');
+      const docsSection = document.getElementById('documents');
+      const docFiles = new Set(window.__docFiles || []);
+      const hasDocAccess = !!window.__isAdmin || docFiles.size > 0;
+
+      if (docsSection) {
+        docsSection.style.display = (user && hasDocAccess) ? '' : 'none';
+      }
+
+      document.querySelectorAll('#documents .doc-card a[href^="/download/"]').forEach(link => {
+        const href = link.getAttribute('href') || '';
+        const filename = href.split('/').pop();
+        const card = link.closest('.doc-card');
+        if (!card || !filename) return;
+        card.style.display = (user && (window.__isAdmin || docFiles.has(filename))) ? '' : 'none';
+      });
     }
     // Direct help request from checklist buttons
     async function sendHelpRequest(stepText, contextKey) {
@@ -3084,6 +3120,7 @@
       const profileToggle = document.getElementById('profileToggle');
       const profileDropdown = document.getElementById('profileDropdown');
       const profileEmail = document.getElementById('profileEmail');
+      const profileAdminBtn = document.getElementById('profileAdminBtn');
       const profileUnsubscribeBtn = document.getElementById('profileUnsubscribeBtn');
       const profileDeregisterBtn = document.getElementById('profileDeregisterBtn');
       const docsSection = document.getElementById('documents');
@@ -3106,6 +3143,7 @@
         if (profileMenu) profileMenu.style.display = 'block';
         if (profileToggle) profileToggle.textContent = initialsFromEmail(user);
         if (profileEmail) profileEmail.textContent = user;
+        if (profileAdminBtn) profileAdminBtn.style.display = window.__isAdmin ? 'block' : 'none';
         if (profileUnsubscribeBtn) profileUnsubscribeBtn.style.display = isSubscriber ? 'block' : 'none';
         if (profileDeregisterBtn) profileDeregisterBtn.style.display = window.__isAdmin ? 'none' : 'block';
         if (profileDropdown) profileDropdown.classList.remove('open');
@@ -3115,6 +3153,7 @@
       } else {
         authBtn.style.display = 'block';
         if (profileMenu) profileMenu.style.display = 'none';
+        if (profileAdminBtn) profileAdminBtn.style.display = 'none';
         if (profileUnsubscribeBtn) profileUnsubscribeBtn.style.display = 'none';
         if (profileDeregisterBtn) profileDeregisterBtn.style.display = 'none';
         if (profileDropdown) profileDropdown.classList.remove('open');
@@ -3122,6 +3161,7 @@
         if (docsSection) docsSection.style.display = 'none';
         if (newsletterSection) newsletterSection.style.display = '';
       }
+      applyDocumentVisibility();
     }
 
     function initProfileMenu() {
@@ -3263,8 +3303,10 @@
     }
 
     // ── Module gating (freemium) ──────────────────────────────
+    window.__isAdmin = false;
     window.__userModules = ['basic']; // default: free module only
     window.__isSubscriber = false;
+    window.__docFiles = [];
 
     function t_mod(key, fallback) {
       return (translations[currentLanguage] && translations[currentLanguage][key]) || fallback;
@@ -3336,21 +3378,43 @@
       }
     });
 
-    function fetchUserModulesAndApply() {
-      fetch('/me').then(r => r.json()).then(data => {
-        if (data.is_admin) window.__isAdmin = true;
-        else window.__isAdmin = false;
-        window.__userModules = data.modules || ['basic'];
-        window.__isSubscriber = !!data.is_subscriber;
-        updateAuthUI();
-        applyModuleGating();
-        if (typeof window.__reloadQA === 'function') window.__reloadQA();
-      }).catch(() => {
+    function refreshUserState() {
+      const user = localStorage.getItem('loggedInUser');
+      if (!user) {
+        window.__isAdmin = false;
         window.__userModules = ['basic'];
         window.__isSubscriber = false;
+        window.__docFiles = [];
         updateAuthUI();
         applyModuleGating();
-      });
+        return Promise.resolve();
+      }
+
+      return fetch('/me', { cache: 'no-store' })
+        .then(r => {
+          if (!r.ok) throw new Error('me_failed');
+          return r.json();
+        })
+        .then(data => {
+          window.__isAdmin = !!data.is_admin;
+          window.__userModules = data.modules || ['basic'];
+          window.__isSubscriber = !!data.is_subscriber;
+          window.__docFiles = Array.isArray(data.doc_files) ? data.doc_files : [];
+          updateAuthUI();
+          applyModuleGating();
+          if (typeof window.__reloadQA === 'function') window.__reloadQA();
+        })
+        .catch(() => {
+          // Keep last known state on transient failures and retry shortly.
+          updateAuthUI();
+          setTimeout(() => {
+            if (localStorage.getItem('loggedInUser')) refreshUserState();
+          }, 2000);
+        });
+    }
+
+    function fetchUserModulesAndApply() {
+      return refreshUserState();
     }
 
     // Mobile nav toggle (hamburger)
@@ -3403,6 +3467,18 @@
 
       // Check admin status, load modules and re-render Q&A
       fetchUserModulesAndApply();
+
+      window.addEventListener('focus', () => {
+        if (localStorage.getItem('loggedInUser')) refreshUserState();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && localStorage.getItem('loggedInUser')) refreshUserState();
+      });
+
+      setInterval(() => {
+        if (localStorage.getItem('loggedInUser')) refreshUserState();
+      }, 30000);
     });
     
     // Also try to fetch immediately in case DOM is ready
