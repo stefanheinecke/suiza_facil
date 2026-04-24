@@ -850,6 +850,15 @@ def end_user_account(request: Request, response: Response):
         conn = get_conn()
         cur = conn.cursor()
         cur.execute(
+            "SELECT is_admin FROM users WHERE LOWER(username) = %s",
+            (normalized_username,),
+        )
+        row = cur.fetchone()
+        if row and bool(row[0]):
+            cur.close()
+            conn.close()
+            return {"error": "admin_cannot_deactivate"}
+        cur.execute(
             """
             UPDATE users
             SET end_date = NOW()

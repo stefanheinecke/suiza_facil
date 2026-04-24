@@ -2382,7 +2382,7 @@
             <button class="auth-btn profile-toggle" id="profileToggle" type="button" aria-expanded="false">U</button>
             <div class="profile-dropdown" id="profileDropdown">
               <div class="profile-email" id="profileEmail"></div>
-              <button class="profile-unsubscribe-btn" id="profileUnsubscribeBtn" type="button" onclick="unsubscribeUser()" data-i18n="auth_unsubscribe">Unsubscribe</button>
+              <button class="profile-unsubscribe-btn" id="profileUnsubscribeBtn" type="button" onclick="unsubscribeUser()" data-i18n="auth_unsubscribe">Unsubscribe newsletter</button>
               <button class="profile-deregister-btn" id="profileDeregisterBtn" type="button" onclick="deregisterUser()" data-i18n="auth_deregister">Deregister</button>
               <button class="profile-logout-btn" type="button" onclick="logout()" data-i18n="auth_nav_logout">Logout</button>
             </div>
@@ -2984,6 +2984,10 @@
     }
 
     async function deregisterUser() {
+      if (window.__isAdmin) {
+        alert((translations[currentLanguage] && translations[currentLanguage]['auth_deregister_admin_forbidden']) || 'Admin accounts cannot be deregistered.');
+        return;
+      }
       const firstCheck = confirm(
         (translations[currentLanguage] && translations[currentLanguage]['auth_deregister_confirm_1']) ||
         'Do you really want to deregister your account?'
@@ -3081,6 +3085,7 @@
       const profileDropdown = document.getElementById('profileDropdown');
       const profileEmail = document.getElementById('profileEmail');
       const profileUnsubscribeBtn = document.getElementById('profileUnsubscribeBtn');
+      const profileDeregisterBtn = document.getElementById('profileDeregisterBtn');
       const docsSection = document.getElementById('documents');
       const newsletterSection = document.getElementById('newsletter');
 
@@ -3102,6 +3107,7 @@
         if (profileToggle) profileToggle.textContent = initialsFromEmail(user);
         if (profileEmail) profileEmail.textContent = user;
         if (profileUnsubscribeBtn) profileUnsubscribeBtn.style.display = isSubscriber ? 'block' : 'none';
+        if (profileDeregisterBtn) profileDeregisterBtn.style.display = window.__isAdmin ? 'none' : 'block';
         if (profileDropdown) profileDropdown.classList.remove('open');
         if (profileToggle) profileToggle.setAttribute('aria-expanded', 'false');
         if (docsSection) docsSection.style.display = '';
@@ -3110,6 +3116,7 @@
         authBtn.style.display = 'block';
         if (profileMenu) profileMenu.style.display = 'none';
         if (profileUnsubscribeBtn) profileUnsubscribeBtn.style.display = 'none';
+        if (profileDeregisterBtn) profileDeregisterBtn.style.display = 'none';
         if (profileDropdown) profileDropdown.classList.remove('open');
         if (profileToggle) profileToggle.setAttribute('aria-expanded', 'false');
         if (docsSection) docsSection.style.display = 'none';
