@@ -53,6 +53,15 @@ def init_db():
                 subscription_date TIMESTAMP NOT NULL
             )
         """)
+        # Keep compatibility with existing deployments while supporting subscription periods.
+        cur.execute("ALTER TABLE subscriber ADD COLUMN IF NOT EXISTS start_date TIMESTAMP")
+        cur.execute("ALTER TABLE subscriber ADD COLUMN IF NOT EXISTS end_date TIMESTAMP")
+        cur.execute("""
+            UPDATE subscriber
+            SET start_date = COALESCE(start_date, subscription_date, NOW())
+            WHERE start_date IS NULL
+        """)
+        cur.execute("ALTER TABLE subscriber ALTER COLUMN start_date SET NOT NULL")
         # users table for simple auth
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
@@ -62,6 +71,14 @@ def init_db():
                 is_admin BOOLEAN DEFAULT FALSE
             )
         """)
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS start_date TIMESTAMP")
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS end_date TIMESTAMP")
+        cur.execute("""
+            UPDATE users
+            SET start_date = COALESCE(start_date, created_at, NOW())
+            WHERE start_date IS NULL
+        """)
+        cur.execute("ALTER TABLE users ALTER COLUMN start_date SET NOT NULL")
         # sessions table for server-side session IDs
         cur.execute("""
             CREATE TABLE IF NOT EXISTS sessions (
@@ -492,7 +509,16 @@ def get_username_from_session(session_id: str):
         cur = conn.cursor()
         # cleanup expired sessions first
         cur.execute("DELETE FROM sessions WHERE expires_at < %s", (datetime.datetime.utcnow(),))
-        cur.execute("SELECT username FROM sessions WHERE session_id = %s", (session_id,))
+        cur.execute(
+            """
+            SELECT s.username
+            FROM sessions s
+            JOIN users u ON u.username = s.username
+            WHERE s.session_id = %s
+              AND (u.end_date IS NULL OR u.end_date > NOW())
+            """,
+            (session_id,),
+        )
         row = cur.fetchone()
         cur.close()
         conn.commit()
@@ -569,6 +595,7 @@ app.add_middleware(
 def get_me(session_id: str = Cookie(None)):
     """Return current user info including admin status and module permissions."""
     username = get_username_from_session(session_id) if session_id else None
+    normalized_username = username.strip().lower() if username else None
     if not username:
         return {"user": None, "is_admin": False, "modules": list(FREE_MODULES), "is_subscriber": False}
     admin = False
@@ -586,7 +613,15 @@ def get_me(session_id: str = Cookie(None)):
             cur.execute("SELECT module FROM module_permissions WHERE username = %s", (username,))
             granted = {r[0] for r in cur.fetchall()}
             modules = list(FREE_MODULES | granted)
-        cur.execute("SELECT 1 FROM subscriber WHERE email = %s", (username,))
+        cur.execute(
+            """
+            SELECT 1
+            FROM subscriber
+            WHERE LOWER(email) = %s
+              AND (end_date IS NULL OR end_date > NOW())
+            """,
+            (normalized_username,),
+        )
         is_subscriber = bool(cur.fetchone())
         cur.close()
         conn.close()
@@ -620,22 +655,40 @@ def post_subscriber(request: Request):
     username = get_username_from_session(session_id) if session_id else None
     if not username:
         return {"error": "not_logged_in"}
+    normalized_username = username.strip().lower()
     try:
         conn = get_conn()
         cur = conn.cursor()
-        # Check if already subscribed
-        cur.execute("SELECT 1 FROM subscriber WHERE email = %s", (username,))
+        # Check if already actively subscribed (end_date is null or in the future).
+        cur.execute(
+            """
+            SELECT 1
+            FROM subscriber
+            WHERE LOWER(email) = %s
+              AND (end_date IS NULL OR end_date > NOW())
+            """,
+            (normalized_username,),
+        )
         if cur.fetchone():
             cur.close()
             conn.close()
             return {"status": "ok", "already": True}
         cur.execute(
-            "INSERT INTO subscriber (email, subscription_date) VALUES (%s, %s)",
-            (username, datetime.datetime.utcnow())
+            """
+            INSERT INTO subscriber (email, subscription_date, start_date, end_date)
+            VALUES (%s, %s, %s, NULL)
+            ON CONFLICT (email) DO UPDATE
+            SET subscription_date = EXCLUDED.subscription_date,
+                start_date = EXCLUDED.start_date,
+                end_date = NULL
+            """,
+            (normalized_username, datetime.datetime.utcnow(), datetime.datetime.utcnow())
         )
         conn.commit()
-        # verify insertion
-        cur.execute("SELECT count(*) FROM subscriber")
+        # verify insertion and get active subscriber count
+        cur.execute(
+            "SELECT count(*) FROM subscriber WHERE end_date IS NULL OR end_date > NOW()"
+        )
         count = cur.fetchone()[0]
         cur.close()
         conn.close()
@@ -672,6 +725,34 @@ def post_subscriber(request: Request):
         return {"error": str(e)}
 
 
+@app.post("/subscriber/end")
+def end_subscriber(request: Request):
+    session_id = request.cookies.get("session_id")
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "not_logged_in"}
+    normalized_username = username.strip().lower()
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            UPDATE subscriber
+            SET end_date = NOW()
+            WHERE LOWER(email) = %s
+              AND (end_date IS NULL OR end_date > NOW())
+            """,
+            (normalized_username,),
+        )
+        ended = cur.rowcount > 0
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "ok", "ended": ended}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 @app.post("/register")
 def register(username: str = Form(...), password: str = Form(...)):
     try:
@@ -679,11 +760,16 @@ def register(username: str = Form(...), password: str = Form(...)):
         # enforce that username is an email address
         if not is_valid_email(username):
             return {"error": "invalid_email"}
+        normalized_username = username.strip().lower()
         conn = get_conn()
         cur = conn.cursor()
-        # check exists
-        cur.execute("SELECT username FROM users WHERE username = %s", (username,))
-        if cur.fetchone():
+        # check whether user exists; allow reactivation for ended users
+        cur.execute(
+            "SELECT username, end_date FROM users WHERE LOWER(username) = %s",
+            (normalized_username,),
+        )
+        existing = cur.fetchone()
+        if existing and (existing[1] is None or existing[1] > datetime.datetime.utcnow()):
             cur.close()
             conn.close()
             return {"error": "user_exists"}
@@ -695,10 +781,22 @@ def register(username: str = Form(...), password: str = Form(...)):
         else:
             to_hash = password
         pwd_hash = pwd_context.hash(to_hash)
-        cur.execute(
-            "INSERT INTO users (username, password_hash, created_at) VALUES (%s, %s, %s)",
-            (username, pwd_hash, datetime.datetime.utcnow())
-        )
+        if existing:
+            cur.execute(
+                """
+                UPDATE users
+                SET password_hash = %s,
+                    start_date = %s,
+                    end_date = NULL
+                WHERE LOWER(username) = %s
+                """,
+                (pwd_hash, datetime.datetime.utcnow(), normalized_username),
+            )
+        else:
+            cur.execute(
+                "INSERT INTO users (username, password_hash, created_at, start_date, end_date) VALUES (%s, %s, %s, %s, NULL)",
+                (normalized_username, pwd_hash, datetime.datetime.utcnow(), datetime.datetime.utcnow())
+            )
         conn.commit()
         cur.close()
         conn.close()
@@ -710,15 +808,22 @@ def register(username: str = Form(...), password: str = Form(...)):
 @app.post("/login")
 def login(username: str = Form(...), password: str = Form(...), response: Response = None):
     try:
+        normalized_username = username.strip().lower()
         conn = get_conn()
         cur = conn.cursor()
-        cur.execute("SELECT password_hash FROM users WHERE username = %s", (username,))
+        cur.execute(
+            "SELECT password_hash, end_date FROM users WHERE LOWER(username) = %s",
+            (normalized_username,),
+        )
         row = cur.fetchone()
         cur.close()
         conn.close()
         if not row:
             return {"error": "invalid_credentials"}
         pwd_hash = row[0]
+        end_date = row[1]
+        if end_date is not None and end_date <= datetime.datetime.utcnow():
+            return {"error": "account_inactive"}
         # apply same pre-hash rule when verifying
         pw_try = password
         if len(password.encode('utf-8')) > 72:
@@ -726,10 +831,43 @@ def login(username: str = Form(...), password: str = Form(...), response: Respon
         if not pwd_context.verify(pw_try, pwd_hash):
             return {"error": "invalid_credentials"}
         # create server-side session record
-        session_id = create_session_record(username)
+        session_id = create_session_record(normalized_username)
         if response is not None:
             set_session_cookie(response, session_id)
         return {"status": "ok"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.post("/user/end")
+def end_user_account(request: Request, response: Response):
+    session_id = request.cookies.get("session_id")
+    username = get_username_from_session(session_id) if session_id else None
+    if not username:
+        return {"error": "not_logged_in"}
+    normalized_username = username.strip().lower()
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            UPDATE users
+            SET end_date = NOW()
+            WHERE LOWER(username) = %s
+              AND (end_date IS NULL OR end_date > NOW())
+            """,
+            (normalized_username,),
+        )
+        ended = cur.rowcount > 0
+        cur.execute(
+            "DELETE FROM sessions WHERE username = %s",
+            (normalized_username,),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        response.delete_cookie("session_id", path="/")
+        return {"status": "ok", "ended": ended}
     except Exception as e:
         return {"error": str(e)}
 
